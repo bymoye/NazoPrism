@@ -1,1 +1,1 @@
-Sakura重制版
+与 NazoNexus 配套前端
