@@ -1,127 +1,128 @@
-import { useEffect, useRef, useState } from "react";
-import { SvgAnimate, SvgImage } from "./svg_dom";
+import { useEffect, useRef, useCallback, useState } from "react";
+import { SvgAnimate, SvgImage } from "./SvgElements";
 import debounce from "components/utils/debounce";
+
+const SCROLL_THRESHOLD = 100;
+const BLUR_DELTA = 0.1;
+const MAX_BLUR = 8;
+const MIN_BLUR = 0;
+
 const SvgBackground = () => {
-  const svgRef = useRef<SVGSVGElement>();
-  const imageListRef = useRef<Array<SVGImageElement>>([]);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const imageListRef = useRef<SVGImageElement[]>([]);
   const currentIndexRef = useRef<number>(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const timerRef2 = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [stdDeviation, setStdDeviation] = useState<number>(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const stdDeviationRef = useRef<number>(0);
+  const [stdDeviation, setStdDeviation] = useState<number>(0);
 
   const _blur_check = (scrollTop: number) => {
     return (
-      (scrollTop > 100 && stdDeviationRef.current < 8) ||
-      (scrollTop <= 100 && stdDeviationRef.current > 0)
+      (scrollTop > SCROLL_THRESHOLD && stdDeviationRef.current < MAX_BLUR) ||
+      (scrollTop <= SCROLL_THRESHOLD && stdDeviationRef.current > MIN_BLUR)
     );
   };
 
-  const _blur = () => {
+  const _blur = useCallback(() => {
     const scrollTop =
       document.documentElement.scrollTop || document.body.scrollTop;
-
-    const delta = scrollTop > 100 ? 0.1 : -0.1;
+    const delta = scrollTop > SCROLL_THRESHOLD ? BLUR_DELTA : -BLUR_DELTA;
     stdDeviationRef.current = parseFloat(
       (stdDeviationRef.current + delta).toFixed(1)
     );
     setStdDeviation(stdDeviationRef.current);
 
     if (_blur_check(scrollTop)) {
-      timerRef2.current = setTimeout(() => {
-        requestAnimationFrame(_blur);
-      }, 0);
-    } else {
-      clearTimeout(timerRef2.current);
-      timerRef2.current = null;
-    }
-  };
-
-  const blur_rs = () => {
-    const scrollTop =
-      document.documentElement.scrollTop || document.body.scrollTop;
-
-    if (_blur_check(scrollTop) && timerRef2.current === null) {
       requestAnimationFrame(_blur);
     }
-  };
+  }, []);
 
-  const handleScroll = debounce(blur_rs, 100);
+  const blur_rs = useCallback(() => {
+    const scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (_blur_check(scrollTop)) {
+      requestAnimationFrame(_blur);
+    }
+  }, [_blur]);
+
+  const handleScroll = useCallback(debounce(blur_rs, 100), [blur_rs]);
+
+  const background = useCallback(() => {
+    if (imageListRef.current.length === 0 || !svgRef.current) {
+      clearInterval(timerRef.current);
+      return;
+    }
+
+    const prevIndex = currentIndexRef.current;
+    currentIndexRef.current =
+      (currentIndexRef.current + 1) % imageListRef.current.length;
+
+    const currentImage = imageListRef.current[currentIndexRef.current];
+    const previousImage = imageListRef.current[prevIndex];
+    const animate = SvgAnimate();
+
+    currentImage.style.opacity = "0";
+    svgRef.current.appendChild(currentImage);
+    currentImage.appendChild(animate);
+    animate.beginElement();
+
+    animate.addEventListener("endEvent", () => {
+      previousImage.style.opacity = "0";
+      currentImage.style.opacity = "1";
+      animate.remove();
+    });
+  }, []);
+
+  const startTimer = useCallback(() => {
+    timerRef.current = setInterval(background, 5000);
+  }, [background]);
+
+  const stopTimer = useCallback(() => {
+    clearInterval(timerRef.current);
+  }, []);
 
   useEffect(() => {
     handleScroll();
     window.addEventListener("scroll", handleScroll);
+    document.addEventListener("visibilitychange", () => {
+      document.hidden ? stopTimer() : startTimer();
+    });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("visibilitychange", () => {});
+      clearInterval(timerRef.current);
     };
-  }, []);
+  }, [handleScroll, startTimer, stopTimer]);
 
   useEffect(() => {
-    const svg = svgRef.current;
-
-    const addEvent = () => {
-      /// 打开定时器
-      const startTimer = () => {
-        timerRef.current = setInterval(background, 5000);
-      };
-      /// 关闭定时器
-      const stopTimer = () => {
-        clearInterval(timerRef.current);
-      };
-      /// 切换背景
-      const background = () => {
-        if (imageListRef.current.length === 0) {
-          stopTimer();
-          return;
+    const fetchImages = async () => {
+      try {
+        const device =
+          window.screen.height > window.screen.width ? "mobile" : "pc";
+        const url = `https://api.nmxc.ltd/randimg?method=${device}&number=3&encode=json`;
+        const res = await fetch(url);
+        if (res.ok && svgRef.current) {
+          const data = await res.json();
+          // TODO: 这里需要处理数据的格式
+          // const imgurl = data.url;
+          const imgurl = [
+            "https://fp1.fghrsh.net/2020/01/14/7249e2902b45b4620019519a82db1d2e.jpg!q80.webp",
+            "https://fp1.fghrsh.net/2020/01/14/bb445e2a101bbf5a4ca017782dd73b89.jpg!q80.webp",
+            "https://fp1.fghrsh.net/2020/01/14/4939be2513c620c6c15b057b3137307e.jpg!q80.webp",
+          ];
+          imageListRef.current = imgurl.map((item) => SvgImage(item));
+          startTimer();
         }
-
-        currentIndexRef.current =
-          (currentIndexRef.current + 1) % imageListRef.current.length;
-        const currentImage = imageListRef.current[currentIndexRef.current];
-        const previousImage = svg?.querySelector("image");
-        const animate = SvgAnimate();
-        svg.appendChild(currentImage);
-        currentImage.appendChild(animate);
-        animate.beginElement();
-
-        animate.addEventListener("endEvent", function _event() {
-          animate.remove();
-          previousImage.remove();
-          animate.removeEventListener("endEvent", _event);
-        });
-      };
-
-      /// 默认开启定时器
-      startTimer();
-      /// 监听页面可见性
-      document.addEventListener("visibilitychange", () => {
-        document.hidden ? stopTimer() : startTimer();
-      });
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+        imageListRef.current = [
+          "https://fp1.fghrsh.net/2020/01/31/34ac8d52912eb5ffa639ab23cbced140.jpg!q80.webp",
+        ].map((item) => SvgImage(item));
+        startTimer();
+      }
     };
 
-    window.addEventListener("load", () => {
-      const url = `https://api.nmxc.ltd/randimg?method=${
-        window.screen.height > window.screen.width ? "mobile" : "pc"
-      }&number=3&encode=json`;
-      fetch(url)
-        .then(async (res) => {
-          const data = await res.json();
-          if (res.ok) {
-            const imgurl = [
-              "https://fp1.fghrsh.net/2020/01/14/7249e2902b45b4620019519a82db1d2e.jpg!q80.webp",
-              "https://fp1.fghrsh.net/2020/01/14/bb445e2a101bbf5a4ca017782dd73b89.jpg!q80.webp",
-              "https://fp1.fghrsh.net/2020/01/14/4939be2513c620c6c15b057b3137307e.jpg!q80.webp",
-            ];
-            imgurl.unshift(svg.querySelector("image").getAttribute("href"));
-            imageListRef.current = imgurl.map((item) => SvgImage(item));
-            addEvent();
-          }
-        })
-        .catch((error) => {
-          console.error("Failed to fetch images:", error);
-        });
-    });
+    fetchImages();
   }, []);
 
   return (
@@ -142,12 +143,12 @@ const SvgBackground = () => {
         width="108%"
         preserveAspectRatio="xMidYMid slice"
         filter="url(#svg_blurfilter)"
-      ></image>
+      />
       <filter id="svg_blurfilter">
         <feGaussianBlur
           stdDeviation={stdDeviation}
           colorInterpolationFilters="sRGB"
-        ></feGaussianBlur>
+        />
       </filter>
     </svg>
   );

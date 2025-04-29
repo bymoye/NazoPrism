@@ -1,4 +1,5 @@
 const namespaceURI = "http://www.w3.org/2000/svg";
+
 const SvgAnimate = (): SVGAnimateElement => {
   const animate = document.createElementNS(namespaceURI, "animate");
   animate.setAttribute("attributeName", "opacity");
