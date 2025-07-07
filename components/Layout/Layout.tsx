@@ -6,6 +6,7 @@ import SvgBackground from "./SvgBackground";
 import Scrollbar from "./Scrollbar";
 import Footer from "./Footer";
 import ToTop from "./ToTop";
+import BackgroundCarousel from "./BackgroundCarousel";
 const Layout = ({ children }) => {
   return (
     <div className={styles.container}>
@@ -16,7 +17,7 @@ const Layout = ({ children }) => {
       <Scrollbar />
       <Navigation />
       <main>
-        <SvgBackground />
+        <BackgroundCarousel />
         {children}
       </main>
       <ToTop />

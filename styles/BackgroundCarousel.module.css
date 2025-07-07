@@ -1,0 +1,9 @@
+.bg {
+    position: fixed;
+    width: 108%;
+    height: 108%;
+    top: -5%;
+    left: -5%;
+    background-size: cover;
+    z-index: -999;
+}
