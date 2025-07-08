@@ -1,0 +1,29 @@
+---
+// Scrollbar progress indicator
+---
+
+<div id="scrollbar" class="scrollbar"></div>
+
+<script>
+  import { initProgressBar } from "../scripts/progress-bar";
+
+  // 初始化
+  initProgressBar();
+
+  // 监听 Astro 页面加载事件
+  document.addEventListener("astro:page-load", () => {
+    initProgressBar();
+  });
+</script>
+
+<style>
+  .scrollbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    transition-property: width, background;
+    transition-duration: 1s, 1s;
+    z-index: 99999;
+  }
+</style>

@@ -1,0 +1,138 @@
+---
+import { SITE_CONFIG } from "../config";
+
+// 获取当前页面路径
+const currentPath = Astro.url.pathname;
+
+// 检查是否为当前页面
+function isCurrentPage(href: string): boolean {
+  // 处理首页的特殊情况
+  if (href === "/" && currentPath === "/") return true;
+  // 处理其他页面
+  if (href !== "/" && currentPath.startsWith(href)) return true;
+  return false;
+}
+---
+
+<nav id="navigation" class="nav">
+  <ul>
+    {
+      SITE_CONFIG.navigation.map((item) => {
+        const isCurrent = isCurrentPage(item.href);
+        return (
+          <li>
+            <a
+              href={item.href}
+              class:list={[{ current: isCurrent }]}
+              aria-current={isCurrent ? "page" : undefined}
+            >
+              {item.name}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+  <div class="login">
+    <a href="/login" class:list={[{ current: currentPath === "/login" }]}
+      >Login</a
+    >
+  </div>
+</nav>
+
+<script>
+  import { initNavigation } from "../scripts/navigation";
+
+  // 页面加载时初始化
+  initNavigation();
+
+  // 监听 Astro 页面切换事件
+  document.addEventListener("astro:page-load", () => {
+    initNavigation();
+  });
+</script>
+
+<style>
+  .nav {
+    position: fixed;
+    height: 75px;
+    display: flex;
+    width: 95%;
+    left: 2.5%;
+    top: 2.5%;
+    padding: 0.5rem 1rem;
+    transition: all 1s ease;
+    justify-content: flex-end;
+    align-items: center;
+    border-radius: 15px;
+    z-index: 9999;
+  }
+
+  .ceil_nav {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .nav:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 40px -8px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav ul {
+    display: inline-block;
+  }
+
+  .nav li {
+    display: inline-block;
+    margin: 0 1rem;
+  }
+
+  .nav li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition:
+      color 0.2s ease-out,
+      border 0.2s ease-out,
+      opacity 0.2s ease-out;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .nav li a.current {
+    color: #fe9600;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .nav li a:not(.current):hover {
+    color: #fe9600;
+  }
+
+  .nav li a:hover:after {
+    max-width: 100%;
+  }
+
+  .nav li a:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: 6px;
+    background-color: #fe9600;
+    width: 100%;
+    max-width: 0;
+    bottom: -1.3rem;
+    transition: max-width 0.25s ease-in-out;
+  }
+
+  .nav li a.current:after {
+    max-width: 100%;
+  }
+
+  .login {
+    margin-left: 1rem;
+  }
+</style>

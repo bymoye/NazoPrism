@@ -1,0 +1,53 @@
+---
+import Article from "./Article.astro";
+import { SAMPLE_ARTICLES } from "../config";
+---
+
+<div class="page">
+  <div class="content">
+    {
+      SAMPLE_ARTICLES.map((article) => (
+        <Article
+          title={article.title}
+          time={article.time}
+          content={article.content}
+          category={article.category}
+          url={article.url}
+          cover={article.cover}
+          id={article.id}
+        />
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 3px 1px 5px rgba(0, 0, 0, 0.28);
+    padding: 0 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+  }
+
+  @media (max-width: 900px) {
+    .content {
+      width: 100vw;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .content {
+      width: 900px;
+    }
+  }
+</style>

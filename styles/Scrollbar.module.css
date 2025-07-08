@@ -1,9 +1,0 @@
-.scrollbar{
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 3px;
-    transition-property: width, background;
-    transition-duration: 1s, 1s;
-    z-index: 99999;
-}

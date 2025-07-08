@@ -1,0 +1,63 @@
+---
+import { SITE_CONFIG } from "../config";
+---
+
+<figure class="site_cover">
+  <div class="focus_info">
+    <div>
+      <img src={SITE_CONFIG.avatar} alt="avatar" class="avatar" />
+    </div>
+    <div class="focus_info_text">{SITE_CONFIG.description}</div>
+  </div>
+</figure>
+
+<style>
+  .site_cover {
+    margin: 0;
+    padding: 0;
+    z-index: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .focus_info {
+    padding: 0 10px;
+    min-width: 200px;
+    width: 800px;
+    text-align: center;
+    z-index: 99;
+    transition: 0.4s ease all;
+  }
+
+  .avatar {
+    box-shadow: inset 0 0 10px #000;
+    padding: 5px;
+    opacity: 1;
+    width: 130px;
+    height: 130px;
+    border-radius: 100%;
+    transform: rotate(0);
+    transition: all ease 1s;
+  }
+
+  .avatar:hover {
+    transform: rotate(360deg);
+  }
+
+  .focus_info_text {
+    width: 63%;
+    margin: auto;
+    font-size: 16px;
+    color: #eaeadf;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    margin-top: 22px;
+    letter-spacing: 0;
+    line-height: 30px;
+    border-radius: 10px;
+    box-sizing: initial;
+    white-space: nowrap;
+  }
+</style>
