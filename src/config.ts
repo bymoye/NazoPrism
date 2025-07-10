@@ -4,20 +4,20 @@ export const SITE_CONFIG = {
   description: "沉淪在無盡的深淵中...",
   author: "bymoye",
   url: "https://nazo-prism.vercel.app",
-  
+
   // Navigation links
   navigation: [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
     { name: "Users", href: "/users" },
   ],
-  
+
   // Social links
   social: {
     github: "https://github.com/bymoye",
     twitter: "https://twitter.com/bymoye",
   },
-  
+
   // Background images API
   backgroundApi: {
     endpoint: "https://api.nmxc.ltd/randimg",
@@ -27,7 +27,7 @@ export const SITE_CONFIG = {
       "https://fp1.fghrsh.net/2020/01/14/4939be2513c620c6c15b057b3137307e.jpg!q80.webp",
     ]
   },
-  
+
   // Avatar
   avatar: "https://www.nazo.run/wp-content/uploads/2022/03/illust_65428259_20171016_002622-scaled-e1648370671156.jpg",
 };

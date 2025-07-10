@@ -215,6 +215,23 @@ class ThemeManager {
     }
 
     /**
+     * 获取图片 Blob（优先从缓存）
+     */
+    private async getImageBlob(imageUrl: string): Promise<Blob> {
+        // 尝试从缓存获取 Blob
+        const carouselManager = (window as any).backgroundCarouselManager;
+        if (carouselManager?.getCachedImageBlob) {
+            const cachedBlob = carouselManager.getCachedImageBlob(imageUrl);
+            if (cachedBlob) return cachedBlob;
+        }
+
+        // 从网络获取
+        const response = await fetch(imageUrl);
+        if (!response.ok) throw new Error(`图片加载失败: ${response.status}`);
+        return await response.blob();
+    }
+
+    /**
      * 在主线程中获取图片的像素数据
      */
     private async getImagePixelData(imageUrl: string): Promise<{
@@ -222,29 +239,8 @@ class ThemeManager {
         width: number;
         height: number;
     }> {
-        // 尝试从缓存获取 Blob
-        let blob: Blob;
-        try {
-            const carouselManager = (window as any).backgroundCarouselManager;
-            if (carouselManager && typeof carouselManager.getCachedImageBlob === 'function') {
-                const cachedBlob = carouselManager.getCachedImageBlob(imageUrl);
-                if (cachedBlob) {
-                    blob = cachedBlob;
-                } else {
-                    const response = await fetch(imageUrl);
-                    if (!response.ok) throw new Error(`图片加载失败: ${response.status}`);
-                    blob = await response.blob();
-                }
-            } else {
-                const response = await fetch(imageUrl);
-                if (!response.ok) throw new Error(`图片加载失败: ${response.status}`);
-                blob = await response.blob();
-            }
-        } catch (error) {
-            const response = await fetch(imageUrl);
-            if (!response.ok) throw new Error(`图片加载失败: ${response.status}`);
-            blob = await response.blob();
-        }
+        // 获取图片 Blob
+        const blob = await this.getImageBlob(imageUrl);
 
         // 创建 ImageBitmap
         const imageBitmap = await createImageBitmap(blob);
@@ -510,6 +506,22 @@ class ThemeManager {
      */
     prefersDarkMode(): boolean {
         return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    /**
+     * 关闭颜色提取Worker以节省资源
+     */
+    shutdownWorker(): void {
+        if (this.colorExtractionWorker) {
+            this.colorExtractionWorker.terminate();
+            this.colorExtractionWorker = null;
+
+            // 清理待处理的请求
+            this.pendingWorkerRequests.forEach(({ reject }) => {
+                reject(new Error('Worker已关闭'));
+            });
+            this.pendingWorkerRequests.clear();
+        }
     }
 
 

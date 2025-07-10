@@ -1,5 +1,6 @@
 import ThemeManager from '../utils/theme-manager';
 import { onScroll } from './global-event-manager';
+import { onPageVisibilityChange } from './page-visibility-manager';
 
 // 背景轮播状态管理
 interface CarouselState {
@@ -12,6 +13,9 @@ interface CarouselState {
     bgLayer1: HTMLElement | null;
     bgLayer2: HTMLElement | null;
     animationFrameId: number | null;
+    isPaused: boolean;
+    originalTitle: string;
+    allThemeColorsExtracted: boolean;
 }
 
 
@@ -57,6 +61,9 @@ export class BackgroundCarouselManager {
             bgLayer1: null,
             bgLayer2: null,
             animationFrameId: null,
+            isPaused: false,
+            originalTitle: document.title,
+            allThemeColorsExtracted: false,
         };
         this.themeManager = ThemeManager.getInstance();
 
@@ -109,10 +116,7 @@ export class BackgroundCarouselManager {
         return this.imageCache.get(url)?.blob;
     }
 
-    // 获取缓存的主题色
-    getCachedThemeColor(url: string): number | undefined {
-        return this.imageCache.get(url)?.themeColor;
-    }
+
 
     // 设置主题色缓存
     setCachedThemeColor(url: string, color: number): void {
@@ -121,6 +125,9 @@ export class BackgroundCarouselManager {
             ...existing,
             themeColor: color
         });
+
+        // 检查是否所有主题色都已提取完成
+        this.checkAndShutdownWorker();
     }
 
     // 检查是否有缓存的主题色
@@ -186,7 +193,7 @@ export class BackgroundCarouselManager {
 
     // 背景切换
     private async switchBackground(): Promise<void> {
-        if (this.state.isTransitioning || this.state.backgrounds.length <= 1) {
+        if (this.state.isTransitioning || this.state.backgrounds.length <= 1 || this.state.isPaused) {
             return;
         }
 
@@ -224,44 +231,25 @@ export class BackgroundCarouselManager {
         }
     }
 
-    // 从背景图片更新主题 - 确保主题变换不被打断
-    private updateThemeFromBackground(imageUrl: string): void {
+    // 从背景图片更新主题
+    private async updateThemeFromBackground(imageUrl: string): Promise<void> {
         const isDark = this.themeManager.prefersDarkMode();
 
-        const cachedColor = this.getCachedThemeColor(imageUrl);
-        if (cachedColor !== undefined) {
-            this.themeManager.updateThemeFromColor(cachedColor, isDark);
-            return;
-        }
-
-        this.themeManager.updateThemeFromImage(imageUrl, isDark)
-            .then((extractedColor) => {
-                if (extractedColor !== undefined) {
-                    this.setCachedThemeColor(imageUrl, extractedColor);
-                }
-            })
-            .catch(() => {
-                // 静默处理错误
-            });
-    }
-
-    // 同步版本的主题更新 - 返回Promise以便等待完成
-    private async updateThemeFromBackgroundSync(imageUrl: string): Promise<void> {
-        const isDark = this.themeManager.prefersDarkMode();
-
+        // 检查缓存
         const cachedColor = this.getCachedThemeColor(imageUrl);
         if (cachedColor !== undefined) {
             await this.themeManager.updateThemeFromColor(cachedColor, isDark);
             return;
         }
 
+        // 提取新颜色
         try {
             const extractedColor = await this.themeManager.updateThemeFromImage(imageUrl, isDark);
             if (extractedColor !== undefined) {
                 this.setCachedThemeColor(imageUrl, extractedColor);
             }
         } catch (error) {
-            // 静默处理错误，使用默认主题
+            // 使用默认主题
             const defaultTheme = this.themeManager.generateTheme(0xFF6750A4, isDark);
             this.themeManager.applyTheme(defaultTheme);
         }
@@ -311,16 +299,59 @@ export class BackgroundCarouselManager {
     // 启动定时器
     private startTimer(): void {
         if (this.state.timerRef) clearInterval(this.state.timerRef);
-        this.state.timerRef = window.setInterval(
-            () => this.switchBackground(),
-            CONFIG.SWITCH_INTERVAL
+        if (!this.state.isPaused) {
+            this.state.timerRef = window.setInterval(
+                () => this.switchBackground(),
+                CONFIG.SWITCH_INTERVAL
+            );
+        }
+    }
+
+    // 暂停背景切换
+    private pauseCarousel(): void {
+        this.state.isPaused = true;
+        if (this.state.timerRef) {
+            clearInterval(this.state.timerRef);
+            this.state.timerRef = null;
+        }
+        // 更改网站标题
+        document.title = "🌸 等你回来~ | " + this.state.originalTitle;
+    }
+
+    // 恢复背景切换
+    private resumeCarousel(): void {
+        this.state.isPaused = false;
+        // 恢复原始标题
+        document.title = this.state.originalTitle;
+        this.startTimer();
+    }
+
+    // 检查并可能关闭Worker
+    private checkAndShutdownWorker(): void {
+        if (this.state.allThemeColorsExtracted) return;
+
+        const allExtracted = this.state.backgrounds.every(url =>
+            this.getCachedThemeColor(url) !== undefined
         );
+
+        if (allExtracted) {
+            this.state.allThemeColorsExtracted = true;
+            this.themeManager.shutdownWorker();
+            console.log('🎨 所有背景图主题色提取完成，已关闭颜色提取Worker以节省资源');
+        }
     }
 
     // 设置事件监听器和启动定时器
     private setupEventListeners(): void {
         // 使用全局事件管理器添加事件监听
         onScroll('background-carousel', this.handleScroll);
+
+        // 注册页面可见性变化监听
+        onPageVisibilityChange(
+            'background-carousel',
+            () => this.pauseCarousel(),
+            () => this.resumeCarousel()
+        );
 
         this.startTimer();
     }
@@ -367,7 +398,7 @@ export class BackgroundCarouselManager {
                 this.setBackgroundImage(activeLayer, currentBgUrl);
 
                 // 先应用主题，再显示背景，避免闪烁
-                this.updateThemeFromBackgroundSync(currentBgUrl).then(() => {
+                this.updateThemeFromBackground(currentBgUrl).then(() => {
                     // 初始化时直接设置透明度，不播放动画
                     activeLayer.style.opacity = '1';
                 });
@@ -389,6 +420,8 @@ export class BackgroundCarouselManager {
                 this.state.backgrounds.slice(2).forEach((url) => this.preloadImage(url));
             }, 2000);
         }
+
+
 
     }
 
@@ -426,9 +459,21 @@ export class BackgroundCarouselManager {
         // 重新注册滚动事件（确保在页面切换后正确绑定）
         onScroll('background-carousel', this.handleScroll);
 
+        // 重新注册页面可见性变化监听
+        onPageVisibilityChange(
+            'background-carousel',
+            () => this.pauseCarousel(),
+            () => this.resumeCarousel()
+        );
+
         // 重新处理当前滚动状态
         this.handleScroll();
 
+    }
+
+    // 获取缓存的主题色
+    private getCachedThemeColor(imageUrl: string): number | undefined {
+        return this.imageCache.get(imageUrl)?.themeColor;
     }
 }
 
