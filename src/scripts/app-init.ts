@@ -16,6 +16,36 @@ import { initTheme } from './theme-init';
 
 import { SITE_CONFIG } from '../config';
 
+document.addEventListener('astro:before-swap', (event) => {
+    const themeJson = sessionStorage.getItem('nazo-prism-theme-colors');
+    if (!themeJson) return;
+
+    try {
+        const themeColors = JSON.parse(themeJson);
+        const style = document.createElement('style');
+
+        // 将保存的颜色动态生成 CSS 变量
+        const cssVars = Object.entries(themeColors).map(([key, value]) => {
+            const cssVarName = `--md-sys-color-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+
+            // 将十六进制颜色 #RRGGBB 转换为 R, G, B
+            const hex = String(value).replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            return `${cssVarName}: ${r}, ${g}, ${b};`;
+        }).join('\n');
+
+        // 将 CSS 变量注入到 :root
+        style.textContent = `:root { ${cssVars} }`;
+
+        // 将这个 <style> 标签添加到新页面的 <head> 中
+        event.newDocument.head.appendChild(style);
+    } catch (e) {
+        console.error("Failed to apply theme during page swap:", e);
+    }
+});
 
 interface AppConfig {
     debug: boolean;
