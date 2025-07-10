@@ -172,7 +172,7 @@ class ThemeManager {
     }
 
     /**
-     * Extract dominant color from image URL using Worker with pre-processed pixel data
+     * Extract dominant color from image URL using Worker with blob data
      */
     async extractColorFromImage(imageUrl: string): Promise<number> {
         if (!this.colorExtractionWorker) {
@@ -195,13 +195,11 @@ class ThemeManager {
         });
 
         try {
-            // 在主线程中处理图片并提取像素数据
-            const { pixelData, width, height } = await this.getImagePixelData(imageUrl);
+            // 获取图片 Blob 并直接传递给 Worker
+            const blob = await this.getImageBlob(imageUrl);
 
             const message: ColorExtractionWorkerMessage = {
-                pixelData,
-                width,
-                height,
+                blob,
                 messageId
             };
 
@@ -231,49 +229,6 @@ class ThemeManager {
         return await response.blob();
     }
 
-    /**
-     * 在主线程中获取图片的像素数据
-     */
-    private async getImagePixelData(imageUrl: string): Promise<{
-        pixelData: Uint8ClampedArray;
-        width: number;
-        height: number;
-    }> {
-        // 获取图片 Blob
-        const blob = await this.getImageBlob(imageUrl);
-
-        // 创建 ImageBitmap
-        const imageBitmap = await createImageBitmap(blob);
-
-        // 计算缩放尺寸
-        const maxSize = 80; // 减小尺寸以提高性能
-        const scale = Math.min(maxSize / imageBitmap.width, maxSize / imageBitmap.height, 1);
-        const width = Math.floor(imageBitmap.width * scale);
-        const height = Math.floor(imageBitmap.height * scale);
-
-        // 在主线程的 Canvas 上绘制并获取像素数据
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-
-        if (!ctx) {
-            imageBitmap.close();
-            throw new Error('无法获取 Canvas 2D 上下文');
-        }
-
-        ctx.drawImage(imageBitmap, 0, 0, width, height);
-        imageBitmap.close();
-
-        // 获取像素数据
-        const imageData = ctx.getImageData(0, 0, width, height);
-
-        return {
-            pixelData: imageData.data,
-            width,
-            height
-        };
-    }
 
 
 

@@ -4,17 +4,36 @@ import type { ColorExtractionWorkerMessage, ColorExtractionWorkerResponse } from
 declare const self: DedicatedWorkerGlobalScope;
 
 self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) {
-  const { pixelData, width, height, messageId } = e.data;
+  const { blob, messageId } = e.data;
 
   try {
-    if (!pixelData || pixelData.length === 0) {
-      throw new Error("没有接收到有效的像素数据");
+    if (!blob) {
+      throw new Error("没有接收到有效的图片 Blob 数据");
     }
 
-    // 验证数据完整性
-    if (pixelData.length !== width * height * 4) {
-      throw new Error("像素数据长度与图片尺寸不匹配");
+    // 在 Worker 中处理图片 Blob
+    const imageBitmap = await createImageBitmap(blob);
+
+    // 计算缩放尺寸以提高性能
+    const maxSize = 80;
+    const scale = Math.min(maxSize / imageBitmap.width, maxSize / imageBitmap.height, 1);
+    const width = Math.floor(imageBitmap.width * scale);
+    const height = Math.floor(imageBitmap.height * scale);
+
+    // 创建 OffscreenCanvas 并获取像素数据
+    const canvas = new OffscreenCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      throw new Error("无法创建 OffscreenCanvas 上下文");
     }
+
+    // 绘制缩放后的图片
+    ctx.drawImage(imageBitmap, 0, 0, width, height);
+
+    // 获取像素数据
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const pixelData = imageData.data;
 
     // 这个数组只保存那些通过了过滤的、有代表性的颜色
     const filteredPixels: number[] = [];
@@ -38,19 +57,19 @@ self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) 
         continue;
       }
 
-      // 将通过所有考验的“有趣”像素添加到数组中
+      // 将通过所有考验的像素添加到数组中
       filteredPixels.push(argb);
     }
 
-    // 5. 使用“干净”的像素数据进行量化和评分
+    // 使用的像素数据进行量化和评分
     const quantizationResult = QuantizerCelebi.quantize(filteredPixels, 128);
     const ranked = Score.score(quantizationResult);
 
-    // 6. ✨【官方算法选择】✨ 直接取用评分最高的结果，并提供一个备用色
+    // 直接取用评分最高的结果，并提供一个备用色
     const extractedColor = ranked[0] || 0xff4285f4; // Google Blue as a fallback
     const hexColor = hexFromArgb(extractedColor);
 
-    // 7. 发送结果
+    // 发送结果
     const successResponse: ColorExtractionWorkerResponse = {
       messageId,
       success: true,
@@ -65,7 +84,7 @@ self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) 
       success: false,
       error: error instanceof Error ? error.message : String(error),
       color: 0xff6750a4,
-      hex: "#6750a4",
+      hex: "#64B5B9FF",
     };
     self.postMessage(errorResponse);
   }

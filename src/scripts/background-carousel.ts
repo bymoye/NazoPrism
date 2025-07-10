@@ -38,6 +38,7 @@ function easeInOut(t: number): number {
 interface ImageCacheData {
     isLoaded: boolean;
     blob?: Blob;
+    blobUrl?: string;
     themeColor?: number;
 }
 // 背景轮播管理器
@@ -72,7 +73,7 @@ export class BackgroundCarouselManager {
 
 
 
-    // 预加载图片并缓存 Blob 数据用于 Worker
+    // 预加载图片并缓存 Blob 数据用于后续所有操作
     private async preloadImage(url: string): Promise<void> {
         const cached = this.imageCache.get(url);
         if (cached?.isLoaded) {
@@ -80,28 +81,33 @@ export class BackgroundCarouselManager {
         }
 
         try {
-            // 使用 fetch 获取图片数据，这样可以同时缓存 Blob
+            // 使用 fetch 获取图片数据，创建 blob 和 blob URL
             const response = await fetch(url);
             if (!response.ok) return;
 
             const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
 
-            // 创建 Image 对象用于显示（从 Blob 创建 URL）
-            const imageUrl = URL.createObjectURL(blob);
+            // 创建 Image 对象验证图片可用性
             const img = new Image();
 
             return new Promise<void>((resolve) => {
                 img.onload = () => {
-                    // 更新合并的缓存结构
+                    // 缓存 blob 和 blob URL
                     this.imageCache.set(url, {
                         isLoaded: true,
                         blob: blob,
+                        blobUrl: blobUrl,
                         themeColor: cached?.themeColor
                     });
                     resolve();
                 };
-                img.onerror = () => resolve();
-                img.src = imageUrl;
+                img.onerror = () => {
+                    // 清理失败的 blob URL
+                    URL.revokeObjectURL(blobUrl);
+                    resolve();
+                };
+                img.src = blobUrl;
             });
         } catch (error) {
             // 静默处理错误
@@ -111,6 +117,11 @@ export class BackgroundCarouselManager {
     // 获取缓存的图片 Blob 数据
     getCachedImageBlob(url: string): Blob | undefined {
         return this.imageCache.get(url)?.blob;
+    }
+
+    // 获取缓存的 Blob URL
+    getCachedBlobUrl(url: string): string | undefined {
+        return this.imageCache.get(url)?.blobUrl;
     }
 
 
@@ -134,9 +145,13 @@ export class BackgroundCarouselManager {
 
 
 
-    // 设置背景图片
+    // 设置背景图片 - 优先使用缓存的 blob URL
     private setBackgroundImage(element: HTMLElement, url: string): void {
-        element.style.backgroundImage = `url(${url})`;
+        // 优先使用缓存的 blob URL
+        const blobUrl = this.getCachedBlobUrl(url);
+        const finalUrl = blobUrl || url;
+
+        element.style.backgroundImage = `url(${finalUrl})`;
         element.style.filter = `blur(${this.state.currentBlur}px)`;
     }
 

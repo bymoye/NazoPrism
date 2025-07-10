@@ -4,9 +4,7 @@
 
 // Color Extraction Worker 消息类型
 export interface ColorExtractionWorkerMessage {
-  pixelData: Uint8ClampedArray; // 直接传递像素数据
-  width: number; // 图片宽度
-  height: number; // 图片高度
+  blob: Blob; // 直接传递图片 Blob 数据
   messageId: number;
 }
 
