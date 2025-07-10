@@ -19,42 +19,175 @@
 </script>
 
 <style>
+  /* Material Design 3 FAB (Floating Action Button) */
+  .go_top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: var(--md-sys-shape-corner-large);
+    transform: scale(0);
+    transition:
+      transform var(--md-sys-motion-duration-medium2)
+        var(--md-sys-motion-easing-emphasized),
+      background-color var(--md-sys-motion-duration-theme)
+        var(--md-sys-motion-easing-emphasized),
+      color var(--md-sys-motion-duration-theme)
+        var(--md-sys-motion-easing-emphasized),
+      box-shadow var(--md-sys-motion-duration-medium2)
+        var(--md-sys-motion-easing-emphasized);
+
+    /* Enhanced Glass FAB with Anime Glow */
+    background: linear-gradient(
+      135deg,
+      rgba(var(--md-sys-color-primary-rgb), 0.9),
+      rgba(var(--md-sys-color-primary-rgb), 0.7)
+    );
+    backdrop-filter: blur(24px) saturate(150%) brightness(110%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%) brightness(110%);
+    border: 1px solid rgba(var(--md-sys-color-primary-rgb), 0.4);
+    color: rgb(var(--md-sys-color-on-primary));
+    box-shadow: var(--glass-elevation-4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Anime-style glow effect */
+  .go_top::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 70%
+    );
+    transform: rotate(-45deg) translateX(-100%);
+    transition: transform var(--md-sys-motion-duration-medium4)
+      var(--md-sys-motion-easing-emphasized);
+  }
+
+  /* Show state */
+  .go_top.show {
+    transform: scale(1);
+  }
+
+  .go_top.show::before {
+    transform: rotate(-45deg) translateX(100%);
+  }
+
+  /* Hover state with enhanced glass effect */
+  .go_top:hover {
+    transform: scale(1.1) translateY(-2px);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--md-sys-color-primary-rgb), 1),
+      rgba(var(--md-sys-color-primary-rgb), 0.8)
+    );
+    backdrop-filter: blur(32px) saturate(180%) brightness(120%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(120%);
+    box-shadow: var(--glass-elevation-5);
+    border-color: rgba(var(--md-sys-color-primary-rgb), 0.6);
+  }
+
+  .go_top:hover::before {
+    transform: rotate(-45deg) translateX(200%);
+  }
+
+  /* Active state */
+  .go_top:active {
+    transform: scale(0.95);
+    box-shadow:
+      0 2px 4px 0 rgba(0, 0, 0, 0.15),
+      0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* Focus visible */
+  .go_top:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Icon styling */
   .back_top_svg {
-    --svg_backtop: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M905.5 729.5l-83 82.5q-9.5 9.5-22.5 9.5t-22.5-9.5L512 546.5 246.5 812q-9.5 9.5-22.5 9.5t-22.5-9.5l-83-82.5q-9.5-9.5-9.5-22.75t9.5-22.75l371-370.5Q499 304 512 304t22.5 9.5l371 370.5q9.5 9.5 9.5 22.75t-9.5 22.75z'/%3E%3C/svg%3E");
-    --size: 16px;
-    mask: 0 0 / var(--size) var(--size);
-    -webkit-mask: 0 0 / var(--size) var(--size);
-    color: #404040;
+    --svg_backtop: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z' fill='currentColor'/%3E%3C/svg%3E");
+    --size: 24px;
     width: var(--size);
     height: var(--size);
     display: inline-block;
     background-color: currentColor;
-    vertical-align: middle;
     mask-image: var(--svg_backtop);
     -webkit-mask-image: var(--svg_backtop);
-    transition: color 0.5s;
-    margin: 0;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    transition: transform var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-standard);
   }
 
-  .go_top {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    z-index: 99;
-    border: 0;
-    outline: 0;
-    background-color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow:
-      0 0 2px 0 rgba(0, 0, 0, 0.12),
-      0 2px 2px 0 rgba(0, 0, 0, 0.24);
-    transform: scale(0);
-    line-height: 1;
-    transition:
-      transform 0.3s,
-      opacity 0.3s,
-      background-color 0.3s;
+  /* Icon animation on hover */
+  .go_top:hover .back_top_svg {
+    transform: translateY(-2px);
+  }
+
+  /* 移除重复的 ::before 定义，使用上面的 anime-style glow effect */
+
+  /* Extended FAB variant (optional, can be toggled with class) */
+  .go_top.extended {
+    width: auto;
+    padding: 0 20px;
+    gap: 8px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .go_top {
+      bottom: 16px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+    }
+
+    .back_top_svg {
+      --size: 20px;
+    }
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .go_top {
+      background: rgba(var(--md-sys-color-primary-container), 0.8);
+      color: var(--md-sys-color-on-primary-container);
+    }
+
+    .go_top:hover {
+      background: rgba(var(--md-sys-color-primary-container), 0.9);
+    }
+  }
+
+  /* Accessibility - Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .go_top {
+      transition-duration: 0.01ms;
+    }
+
+    .back_top_svg {
+      transition-duration: 0.01ms;
+    }
   }
 </style>

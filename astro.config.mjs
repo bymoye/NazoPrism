@@ -14,5 +14,10 @@ export default defineConfig({
         localsConvention: "camelCase",
       },
     },
+    server: {
+      fs: {
+        strict: false,
+      },
+    },
   },
 });

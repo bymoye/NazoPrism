@@ -46,7 +46,7 @@ NazoPrism/
 │   │   ├── ArticleIndex.astro     # 文章索引组件
 │   │   ├── BackgroundCarousel.astro # 背景轮播组件
 │   │   ├── Cover.astro            # 封面组件
-│   │   ├── CustomScrollbar.astro  # 自定义滚动条组件
+
 │   │   ├── Footer.astro           # 页脚组件
 │   │   ├── Navigation.astro       # 导航栏组件
 │   │   ├── Scrollbar.astro        # 滚动条组件
@@ -64,7 +64,7 @@ NazoPrism/
 │   │   ├── background-carousel.ts # 背景轮播逻辑
 │   │   ├── navigation.ts          # 导航栏逻辑
 │   │   ├── progress-bar.ts        # 进度条逻辑
-│   │   ├── scrollbar.ts           # 滚动条逻辑
+
 │   │   └── to-top.ts              # 返回顶部逻辑
 │   ├── styles/             # 样式文件
 │   │   └── global.css             # 全局样式

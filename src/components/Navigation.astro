@@ -14,7 +14,7 @@ function isCurrentPage(href: string): boolean {
 }
 ---
 
-<nav id="navigation" class="nav">
+<nav id="navigation" class="nav" transition:persist-props>
   <ul>
     {
       SITE_CONFIG.navigation.map((item) => {
@@ -61,37 +61,60 @@ function isCurrentPage(href: string): boolean {
     left: 2.5%;
     top: 2.5%;
     padding: 0.5rem 1rem;
-    transition: all 1s ease;
-    justify-content: flex-end;
+    transition:
+      top 1s ease,
+      left 1s ease,
+      right 1s ease,
+      width 1s ease,
+      border-radius 1s ease,
+      background-color 1s ease,
+      box-shadow 1s ease;
+    justify-content: space-between;
     align-items: center;
     border-radius: 15px;
     z-index: 9999;
+
+    /* Simple background without backdrop-filter */
+    background: rgba(var(--md-sys-color-surface-rgb), 0.9);
+    border: 1px solid rgba(var(--md-sys-color-outline-variant-rgb), 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
 
+  /* Sticky navigation state - like React version */
   .ceil_nav {
     top: 0;
     left: 0;
     width: 100vw;
     border-radius: 0px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(var(--md-sys-color-surface-rgb), 0.7);
+    border: none;
+    border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant-rgb), 0.3);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
   }
 
+  /* Hover state like React version */
   .nav:hover {
-    background-color: rgba(255, 255, 255, 0.9);
+    background: rgba(var(--md-sys-color-surface-rgb), 0.9);
     box-shadow: 0 1px 40px -8px rgba(0, 0, 0, 0.5);
   }
 
   .nav ul {
+    /* Relative to parent element center like React version */
     display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .nav li {
+    /* Horizontal arrangement like React version */
     display: inline-block;
     margin: 0 1rem;
   }
 
   .nav li a {
-    color: #333;
+    position: relative;
+    color: rgb(var(--md-sys-color-on-surface));
     text-decoration: none;
     font-size: 1.2rem;
     transition:
@@ -99,40 +122,196 @@ function isCurrentPage(href: string): boolean {
       border 0.2s ease-out,
       opacity 0.2s ease-out;
     width: 100%;
-    cursor: pointer;
+    display: block;
+    padding: 0.5rem 1rem;
   }
 
-  .nav li a.current {
-    color: #fe9600;
-    pointer-events: none;
-    cursor: default;
+  /* Hover color change like React version */
+  .nav li a:hover {
+    color: rgb(var(--md-sys-color-primary));
   }
 
-  .nav li a:not(.current):hover {
-    color: #fe9600;
-  }
-
-  .nav li a:hover:after {
-    max-width: 100%;
-  }
-
+  /* Animated underline like React version */
   .nav li a:after {
     content: "";
     display: block;
     position: relative;
     height: 6px;
-    background-color: #fe9600;
+    background-color: rgb(var(--md-sys-color-primary));
     width: 100%;
     max-width: 0;
     bottom: -1.3rem;
     transition: max-width 0.25s ease-in-out;
   }
 
-  .nav li a.current:after {
+  .nav li a:hover:after {
     max-width: 100%;
   }
 
+  .nav li a:focus-visible {
+    outline: 2px solid rgb(var(--md-sys-color-primary));
+    outline-offset: 2px;
+  }
+
+  .nav li a:active::before {
+    opacity: 0.12;
+  }
+
+  /* Current page indicator */
+  .nav li a.current {
+    color: rgb(var(--md-sys-color-on-primary-container));
+    background-color: rgb(var(--md-sys-color-primary-container));
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .nav li a:not(.current):hover {
+    color: rgb(var(--md-sys-color-primary));
+    background-color: rgb(var(--md-sys-color-surface-container-high));
+  }
+
+  /* Material Design 3 indicator bar */
+  .nav li a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    height: 3px;
+    width: calc(100% - 32px);
+    background-color: rgb(var(--md-sys-color-primary));
+    border-radius: var(--md-sys-shape-corner-full)
+      var(--md-sys-shape-corner-full) 0 0;
+    transition: transform var(--md-sys-motion-duration-medium2)
+      var(--md-sys-motion-easing-emphasized);
+    transform-origin: center;
+  }
+
+  .nav li a:hover::after {
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  .nav li a.current::after {
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  /* Login button with Material Design 3 */
   .login {
-    margin-left: 1rem;
+    margin-left: auto;
+  }
+
+  .login a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 24px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: rgb(var(--md-sys-color-primary));
+    color: rgb(var(--md-sys-color-on-primary));
+    font-size: var(--md-sys-typescale-label-large);
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    text-decoration: none;
+    transition:
+      background-color var(--md-sys-motion-duration-theme)
+        var(--md-sys-motion-easing-emphasized),
+      color var(--md-sys-motion-duration-theme)
+        var(--md-sys-motion-easing-emphasized),
+      transform var(--md-sys-motion-duration-medium2)
+        var(--md-sys-motion-easing-standard),
+      box-shadow var(--md-sys-motion-duration-medium2)
+        var(--md-sys-motion-easing-standard);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  .login a:hover {
+    box-shadow:
+      0 1px 2px 0 rgba(0, 0, 0, 0.3),
+      0 1px 3px 1px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+
+  .login a:hover::before {
+    opacity: 0.08;
+  }
+
+  .login a:focus-visible {
+    outline: 2px solid rgb(var(--md-sys-color-primary));
+    outline-offset: 2px;
+  }
+
+  .login a:active::before {
+    opacity: 0.12;
+  }
+
+  .login a.current {
+    background: rgb(var(--md-sys-color-primary-container));
+    color: rgb(var(--md-sys-color-on-primary-container));
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .nav {
+      width: calc(100% - 16px);
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      padding: 0 16px;
+      height: 56px;
+    }
+
+    .ceil_nav {
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 0;
+    }
+
+    .nav li {
+      margin: 0;
+    }
+
+    .nav li a {
+      padding: 0 12px;
+      font-size: var(--md-sys-typescale-label-medium);
+    }
+
+    .login a {
+      padding: 0 16px;
+      height: 36px;
+    }
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .nav {
+      background-color: rgb(var(--md-sys-color-surface-container));
+      box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.3),
+        0 4px 8px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .ceil_nav {
+      background-color: rgb(var(--md-sys-color-surface));
+    }
+
+    .nav:not(.ceil_nav):hover {
+      background-color: rgb(var(--md-sys-color-surface-container-high));
+    }
   }
 </style>

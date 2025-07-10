@@ -1,52 +1,45 @@
-import debounce from "../utils/debounce";
+import { registerCleanup } from "./cleanup-manager";
+import { onScroll, offEvents } from "./global-event-manager";
 
 // 导航栏滚动效果管理
 export class NavigationManager {
     private nav: HTMLElement | null;
-    private scrollHandler: (() => void) | null = null;
     private scrollThreshold = 20;
+    private readonly id = 'navigation';
 
     constructor() {
         this.nav = document.getElementById("navigation");
         this.init();
     }
 
-    private updateProgress = () => {
+    private updateNavigation = () => {
+        if (!this.nav) return;
+
         const scrollPosition = window.scrollY;
+
+        // 简单直接的实现，就像React版本一样
         if (scrollPosition > this.scrollThreshold) {
-            this.nav?.classList.add("ceil_nav");
+            this.nav.classList.add("ceil_nav");
         } else {
-            this.nav?.classList.remove("ceil_nav");
+            this.nav.classList.remove("ceil_nav");
         }
     };
 
     private init() {
-        // 创建防抖处理函数
-        const debouncedUpdate = debounce(this.updateProgress, 100);
-
-        // 移除旧的事件监听器（如果存在）
-        if (this.scrollHandler) {
-            window.removeEventListener("scroll", this.scrollHandler);
-        }
-
-        // 保存新的处理函数引用
-        this.scrollHandler = debouncedUpdate;
-
-        // 添加新的事件监听器
-        if (this.scrollHandler) {
-            window.addEventListener("scroll", this.scrollHandler, { passive: true });
-        }
+        // 使用全局事件管理器注册滚动事件
+        onScroll(this.id, this.updateNavigation);
 
         // 初始化时立即检查滚动位置
-        this.updateProgress();
+        this.updateNavigation();
     }
 
     // 清理方法
     public destroy() {
-        if (this.scrollHandler) {
-            window.removeEventListener("scroll", this.scrollHandler);
-            this.scrollHandler = null;
-        }
+        // 使用全局事件管理器移除事件监听器
+        offEvents(this.id);
+
+        // 重置状态
+        this.nav = null;
     }
 
     // 重新初始化
@@ -66,6 +59,8 @@ export function initNavigation() {
         navigationManager.reinit();
     } else {
         navigationManager = new NavigationManager();
+        // 注册清理函数
+        registerCleanup('navigation', destroyNavigation);
     }
 }
 

@@ -4,9 +4,7 @@ import { SITE_CONFIG } from "../config";
 
 <figure class="site_cover">
   <div class="focus_info">
-    <div>
-      <img src={SITE_CONFIG.avatar} alt="avatar" class="avatar" />
-    </div>
+    <img src={SITE_CONFIG.avatar} alt="avatar" class="avatar" />
     <div class="focus_info_text">{SITE_CONFIG.description}</div>
   </div>
 </figure>
@@ -29,6 +27,10 @@ import { SITE_CONFIG } from "../config";
     text-align: center;
     z-index: 99;
     transition: 0.4s ease all;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .avatar {

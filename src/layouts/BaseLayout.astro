@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 
 export interface Props {
   title?: string;
@@ -18,47 +18,96 @@ const { title = "Sakura_re", description = "沉淪在無盡的深淵中..." } =
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>{title}</title>
-    <ViewTransitions />
+    <ClientRouter />
+
+    <!-- 默认主题色 CSS 变量 - 基于 (120,204,192,1) RGBA -->
+    <style>
+      :root {
+        /* 主题色将由 JavaScript 动态更新，这里提供默认值避免闪烁 */
+        --md-sys-color-primary: 120, 204, 192;
+        --md-sys-color-on-primary: 255, 255, 255;
+        --md-sys-color-primary-container: 168, 230, 220;
+        --md-sys-color-on-primary-container: 0, 74, 66;
+
+        --md-sys-color-secondary: 107, 155, 150;
+        --md-sys-color-on-secondary: 255, 255, 255;
+        --md-sys-color-secondary-container: 193, 240, 234;
+        --md-sys-color-on-secondary-container: 31, 74, 70;
+
+        --md-sys-color-tertiary: 122, 139, 154;
+        --md-sys-color-on-tertiary: 255, 255, 255;
+        --md-sys-color-tertiary-container: 184, 201, 216;
+        --md-sys-color-on-tertiary-container: 42, 58, 73;
+
+        --md-sys-color-error: 179, 38, 30;
+        --md-sys-color-on-error: 255, 255, 255;
+        --md-sys-color-error-container: 249, 222, 220;
+        --md-sys-color-on-error-container: 65, 14, 11;
+
+        --md-sys-color-background: 240, 248, 246;
+        --md-sys-color-on-background: 26, 28, 27;
+        --md-sys-color-surface: 240, 248, 246;
+        --md-sys-color-on-surface: 26, 28, 27;
+
+        --md-sys-color-surface-variant: 218, 229, 226;
+        --md-sys-color-on-surface-variant: 63, 73, 70;
+        --md-sys-color-outline: 111, 121, 117;
+        --md-sys-color-outline-variant: 191, 201, 197;
+
+        --md-sys-color-shadow: 0, 0, 0;
+        --md-sys-color-scrim: 0, 0, 0;
+        --md-sys-color-inverse-surface: 47, 49, 48;
+        --md-sys-color-inverse-on-surface: 240, 241, 240;
+        --md-sys-color-inverse-primary: 140, 212, 200;
+
+        /* Surface elevation colors */
+        --md-sys-color-surface-dim: 208, 216, 213;
+        --md-sys-color-surface-bright: 240, 248, 246;
+        --md-sys-color-surface-container-lowest: 255, 255, 255;
+        --md-sys-color-surface-container-low: 234, 242, 239;
+        --md-sys-color-surface-container: 228, 236, 233;
+        --md-sys-color-surface-container-high: 222, 230, 227;
+        --md-sys-color-surface-container-highest: 216, 224, 221;
+      }
+    </style>
   </head>
   <body>
-    <!-- 背景轮播容器 - 整个容器都被持久化 -->
+    <!-- 背景轮播容器 - 整个容器都被持久化，确保在页面切换时不被重新渲染 -->
     <div
       id="background-carousel-container"
       transition:persist="background-carousel"
+      transition:persist-props
     >
       <div
         id="bg-layer-1"
-        style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-1000;opacity:0;pointer-events:none;"
+        style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-2;opacity:0;pointer-events:none;"
       >
       </div>
       <div
         id="bg-layer-2"
-        style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-1000;opacity:0;pointer-events:none;"
+        style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-2;opacity:0;pointer-events:none;"
       >
       </div>
-
-      <!-- 内联脚本，作为容器的一部分被持久化 -->
-      <script>
-        import { initBackgroundCarousel } from "../scripts/background-carousel";
-        import { SITE_CONFIG } from "../config";
-
-        // 扩展 Window 接口
-        declare global {
-          interface Window {
-            BACKGROUND_CAROUSEL_INITIALIZED?: boolean;
-          }
-        }
-
-        // 检查是否已经初始化
-        if (!window.BACKGROUND_CAROUSEL_INITIALIZED) {
-          window.BACKGROUND_CAROUSEL_INITIALIZED = true;
-
-          // 使用配置中的背景图片
-          const backgrounds = SITE_CONFIG.backgroundApi.fallbackImages;
-          initBackgroundCarousel(backgrounds);
-        }
-      </script>
     </div>
+
+    <!-- 初始化脚本移到持久化容器外部，避免重复执行 -->
+    <script>
+      import { initApp } from "../scripts/app-init";
+
+      // 检查是否已经初始化过，避免重复初始化
+      if (!(window as any).nazoPrismInitialized) {
+        (window as any).nazoPrismInitialized = true;
+
+        // 使用统一的应用初始化系统
+        const appConfig = {
+          debug: import.meta.env.DEV,
+        };
+
+        initApp(appConfig).catch(() => {
+          // 静默处理错误
+        });
+      }
+    </script>
 
     <slot />
   </body>

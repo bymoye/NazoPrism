@@ -1,0 +1,545 @@
+/* Material Design 3 Expressive + Glassmorphism Styles */
+
+:root {
+  /* Material Design 3 Color System - will be dynamically updated */
+  /* Using RGB values for smooth transitions */
+  --md-sys-color-primary: 103, 80, 164;
+  --md-sys-color-primary-rgb: 103, 80, 164;
+  --md-sys-color-on-primary: 255, 255, 255;
+  --md-sys-color-primary-container: 234, 221, 255;
+  --md-sys-color-on-primary-container: 33, 0, 93;
+  
+  --md-sys-color-secondary: 98, 91, 113;
+  --md-sys-color-secondary-rgb: 98, 91, 113;
+  --md-sys-color-on-secondary: 255, 255, 255;
+  --md-sys-color-secondary-container: 232, 222, 248;
+  --md-sys-color-on-secondary-container: 29, 25, 43;
+
+  --md-sys-color-tertiary: 125, 82, 96;
+  --md-sys-color-tertiary-rgb: 125, 82, 96;
+  --md-sys-color-on-tertiary: 255, 255, 255;
+  --md-sys-color-tertiary-container: 255, 216, 228;
+  --md-sys-color-on-tertiary-container: 49, 17, 29;
+  
+  --md-sys-color-error: 179, 38, 30;
+  --md-sys-color-on-error: 255, 255, 255;
+  --md-sys-color-error-container: 249, 222, 220;
+  --md-sys-color-on-error-container: 65, 14, 11;
+  
+  --md-sys-color-background: 254, 247, 255;
+  --md-sys-color-on-background: 29, 27, 32;
+  --md-sys-color-surface: 254, 247, 255;
+  --md-sys-color-surface-rgb: 254, 247, 255;
+  --md-sys-color-on-surface: 29, 27, 32;
+
+  --md-sys-color-surface-variant: 231, 224, 236;
+  --md-sys-color-on-surface-variant: 73, 69, 79;
+  --md-sys-color-outline: 121, 116, 126;
+  --md-sys-color-outline-rgb: 121, 116, 126;
+  --md-sys-color-outline-variant: 202, 196, 208;
+  --md-sys-color-outline-variant-rgb: 202, 196, 208;
+  
+  --md-sys-color-shadow: 0, 0, 0;
+  --md-sys-color-scrim: 0, 0, 0;
+  --md-sys-color-inverse-surface: 49, 48, 51;
+  --md-sys-color-inverse-on-surface: 244, 239, 244;
+  --md-sys-color-inverse-primary: 208, 188, 255;
+  
+  /* Surface elevation colors */
+  --md-sys-color-surface-dim: 222, 216, 225;
+  --md-sys-color-surface-bright: 254, 247, 255;
+  --md-sys-color-surface-container-lowest: 255, 255, 255;
+  --md-sys-color-surface-container-low: 247, 242, 250;
+  --md-sys-color-surface-container: 243, 237, 247;
+  --md-sys-color-surface-container-rgb: 243, 237, 247;
+  --md-sys-color-surface-container-high: 236, 230, 240;
+  --md-sys-color-surface-container-highest: 230, 224, 233;
+
+  /* Material Design 3 Typography */
+  --md-sys-typescale-display-large: 57px;
+  --md-sys-typescale-display-medium: 45px;
+  --md-sys-typescale-display-small: 36px;
+  
+  --md-sys-typescale-headline-large: 32px;
+  --md-sys-typescale-headline-medium: 28px;
+  --md-sys-typescale-headline-small: 24px;
+  
+  --md-sys-typescale-title-large: 22px;
+  --md-sys-typescale-title-medium: 16px;
+  --md-sys-typescale-title-small: 14px;
+  
+  --md-sys-typescale-label-large: 14px;
+  --md-sys-typescale-label-medium: 12px;
+  --md-sys-typescale-label-small: 11px;
+  
+  --md-sys-typescale-body-large: 16px;
+  --md-sys-typescale-body-medium: 14px;
+  --md-sys-typescale-body-small: 12px;
+
+  /* Material Design 3 Shape System */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* Glassmorphism Effects */
+  --glass-blur: 16px;
+  --glass-opacity: 0.7;
+  --glass-border-opacity: 0.2;
+  --glass-shadow-opacity: 0.1;
+
+  /* Animation Durations */
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+  --md-sys-motion-duration-extra-long1: 700ms;
+  --md-sys-motion-duration-extra-long2: 800ms;
+  --md-sys-motion-duration-extra-long3: 900ms;
+  --md-sys-motion-duration-extra-long4: 1000ms;
+  
+  /* Theme transition duration - matches background carousel */
+  --md-sys-motion-duration-theme: 1500ms;
+
+  /* Easing Functions */
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+
+  /* Material Design 3 Elevation Levels */
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level2:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level3:
+    0 4px 8px 3px rgba(0, 0, 0, 0.15),
+    0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level4:
+    0 6px 10px 4px rgba(0, 0, 0, 0.15),
+    0 2px 3px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level5:
+    0 8px 12px 6px rgba(0, 0, 0, 0.15),
+    0 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Glassmorphism Base Mixin */
+.glass-surface {
+  background: rgba(255, 255, 255, var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, var(--glass-shadow-opacity)),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition:
+    background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
+}
+
+/* Dark mode glass surface */
+@media (prefers-color-scheme: dark) {
+  .glass-surface {
+    background: rgba(0, 0, 0, var(--glass-opacity));
+    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
+  }
+}
+
+/* Material Design 3 Surface Elevations with Glassmorphism */
+.surface-container-lowest {
+  background: rgba(var(--md-sys-color-surface-container-lowest), var(--glass-opacity));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+}
+
+.surface-container-low {
+  background: rgba(var(--md-sys-color-surface-container-low), var(--glass-opacity));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.7));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.7));
+}
+
+.surface-container {
+  background: rgba(var(--md-sys-color-surface-container), var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.surface-container-high {
+  background: rgba(var(--md-sys-color-surface-container-high), var(--glass-opacity));
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.2));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.2));
+}
+
+.surface-container-highest {
+  background: rgba(var(--md-sys-color-surface-container-highest), var(--glass-opacity));
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.5));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.5));
+}
+
+/* Material Design 3 Typography Classes */
+.display-large {
+  font-size: var(--md-sys-typescale-display-large);
+  line-height: 1.12;
+  letter-spacing: -0.25px;
+  font-weight: 400;
+}
+
+.display-medium {
+  font-size: var(--md-sys-typescale-display-medium);
+  line-height: 1.16;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.display-small {
+  font-size: var(--md-sys-typescale-display-small);
+  line-height: 1.22;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.headline-large {
+  font-size: var(--md-sys-typescale-headline-large);
+  line-height: 1.25;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.headline-medium {
+  font-size: var(--md-sys-typescale-headline-medium);
+  line-height: 1.29;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.headline-small {
+  font-size: var(--md-sys-typescale-headline-small);
+  line-height: 1.33;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.title-large {
+  font-size: var(--md-sys-typescale-title-large);
+  line-height: 1.27;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.title-medium {
+  font-size: var(--md-sys-typescale-title-medium);
+  line-height: 1.5;
+  letter-spacing: 0.15px;
+  font-weight: 500;
+}
+
+.title-small {
+  font-size: var(--md-sys-typescale-title-small);
+  line-height: 1.43;
+  letter-spacing: 0.1px;
+  font-weight: 500;
+}
+
+.label-large {
+  font-size: var(--md-sys-typescale-label-large);
+  line-height: 1.43;
+  letter-spacing: 0.1px;
+  font-weight: 500;
+}
+
+.label-medium {
+  font-size: var(--md-sys-typescale-label-medium);
+  line-height: 1.33;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.label-small {
+  font-size: var(--md-sys-typescale-label-small);
+  line-height: 1.45;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.body-large {
+  font-size: var(--md-sys-typescale-body-large);
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+}
+
+.body-medium {
+  font-size: var(--md-sys-typescale-body-medium);
+  line-height: 1.43;
+  letter-spacing: 0.25px;
+  font-weight: 400;
+}
+
+.body-small {
+  font-size: var(--md-sys-typescale-body-small);
+  line-height: 1.33;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+}
+
+/* Material Design 3 Button Styles with Glassmorphism */
+.md-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 24px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  font-size: var(--md-sys-typescale-label-large);
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  line-height: 1.43;
+  cursor: pointer;
+  transition:
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.md-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.md-button:hover:before {
+  opacity: 0.08;
+}
+
+.md-button:focus-visible:before {
+  opacity: 0.12;
+}
+
+.md-button:active:before {
+  opacity: 0.12;
+}
+
+/* Filled Button */
+.md-button-filled {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+/* Tonal Button with Glassmorphism */
+.md-button-tonal {
+  background: rgba(var(--md-sys-color-secondary-container), var(--glass-opacity));
+  color: var(--md-sys-color-on-secondary-container);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
+}
+
+/* Elevated Button with Glassmorphism */
+.md-button-elevated {
+  background: rgba(var(--md-sys-color-surface-container-low), var(--glass-opacity));
+  color: var(--md-sys-color-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+
+/* Outlined Button */
+.md-button-outlined {
+  background: transparent;
+  color: var(--md-sys-color-primary);
+  border: 1px solid var(--md-sys-color-outline);
+}
+
+/* Text Button */
+.md-button-text {
+  background: transparent;
+  color: var(--md-sys-color-primary);
+  padding: 0 12px;
+}
+
+/* Material Design 3 Card with Glassmorphism */
+.md-card {
+  position: relative;
+  border-radius: var(--md-sys-shape-corner-medium);
+  overflow: hidden;
+  transition:
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized),
+    transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized);
+}
+
+.md-card-filled {
+  background: rgba(var(--md-sys-color-surface-container-highest), var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
+}
+
+.md-card-elevated {
+  background: rgba(var(--md-sys-color-surface-container-low), var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+
+.md-card-outlined {
+  background: rgba(var(--md-sys-color-surface), var(--glass-opacity));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Hover effects for cards */
+.md-card:hover {
+  transform: translateY(-2px);
+}
+
+.md-card-elevated:hover {
+  box-shadow: 
+    0 2px 4px 0 rgba(0, 0, 0, 0.3),
+    0 4px 12px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Material Design 3 Navigation Bar with Glassmorphism */
+.md-navigation-bar {
+  background: rgba(var(--md-sys-color-surface-container), var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  transition:
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
+}
+
+/* Material Design 3 FAB (Floating Action Button) */
+.md-fab {
+  position: fixed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.3),
+    0 6px 12px 4px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition:
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.md-fab:hover {
+  box-shadow: 
+    0 6px 10px 0 rgba(0, 0, 0, 0.3),
+    0 8px 16px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Ripple Effect */
+.md-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0);
+  animation: md-ripple-animation var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-standard);
+}
+
+@keyframes md-ripple-animation {
+  to {
+    opacity: 0.12;
+    transform: scale(4);
+  }
+}
+
+/* Focus Ring */
+.md-focus-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--md-sys-color-primary);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+}
+
+*:focus-visible > .md-focus-ring {
+  opacity: 1;
+}
+
+/* Utility Classes */
+.md-elevation-1 {
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+
+.md-elevation-2 {
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+
+.md-elevation-3 {
+  box-shadow: 
+    0 4px 8px 3px rgba(0, 0, 0, 0.15),
+    0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.md-elevation-4 {
+  box-shadow: 
+    0 6px 10px 4px rgba(0, 0, 0, 0.15),
+    0 2px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.md-elevation-5 {
+  box-shadow: 
+    0 8px 12px 6px rgba(0, 0, 0, 0.15),
+    0 4px 4px 0 rgba(0, 0, 0, 0.3);
+}

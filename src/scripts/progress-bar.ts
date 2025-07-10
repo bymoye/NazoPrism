@@ -1,11 +1,11 @@
-import debounce from "../utils/debounce";
 import { getScrollPercent } from "../utils/scroll-utils";
+import { onScroll, onResize, offEvents } from "./global-event-manager";
 
 // Progress bar manager
 export class ProgressBarManager {
     private progressBar: HTMLElement | null;
-    private scrollHandler: (() => void) | null = null;
     private color: string = "#00BCD4";
+    private readonly id = 'progress-bar';
 
     constructor() {
         this.progressBar = document.getElementById("scrollbar");
@@ -25,22 +25,17 @@ export class ProgressBarManager {
     private init(): void {
         if (!this.progressBar) return;
 
-        // 创建防抖处理函数
-        this.scrollHandler = debounce(this.updateProgress, 100);
-
-        // 添加事件监听
-        window.addEventListener("scroll", this.scrollHandler, { passive: true });
-        window.addEventListener("resize", this.scrollHandler, { passive: true });
+        // 使用全局事件管理器注册事件
+        onScroll(this.id, this.updateProgress);
+        onResize(this.id, this.updateProgress);
 
         // 初始更新
         this.updateProgress();
     }
 
     public destroy(): void {
-        if (this.scrollHandler) {
-            window.removeEventListener("scroll", this.scrollHandler);
-            window.removeEventListener("resize", this.scrollHandler);
-        }
+        // 使用全局事件管理器移除事件监听器
+        offEvents(this.id);
     }
 
     public reinit(): void {
