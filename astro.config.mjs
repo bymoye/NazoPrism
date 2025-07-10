@@ -7,6 +7,15 @@ export default defineConfig({
   prefetch: true,
   build: {
     assets: "assets",
+    inlineStylesheets: "auto",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "material-color-utilities": ["@material/material-color-utilities"],
+          worker: ["./src/workers/color-extraction-worker.ts"],
+        },
+      },
+    },
   },
   vite: {
     css: {
@@ -18,6 +27,12 @@ export default defineConfig({
       fs: {
         strict: false,
       },
+    },
+    build: {
+      rollupOptions: {
+        treeshake: true,
+      },
+      chunkSizeWarningLimit: 1000,
     },
   },
 });

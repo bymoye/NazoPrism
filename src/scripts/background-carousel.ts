@@ -34,20 +34,17 @@ const CONFIG = {
 function easeInOut(t: number): number {
     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 }
-
-// 背景轮播管理器
 // 图片缓存数据结构
 interface ImageCacheData {
     isLoaded: boolean;
     blob?: Blob;
     themeColor?: number;
 }
-
+// 背景轮播管理器
 export class BackgroundCarouselManager {
     private state: CarouselState;
     private imageCache = new Map<string, ImageCacheData>(); // 合并的缓存结构
-    private activeAnimations = new Map<HTMLElement, number>();
-    private blurAnimationId: number | null = null;
+    private activeAnimations = new Map<HTMLElement | string, number>(); // 支持元素和全局动画
     private themeManager: ThemeManager;
 
     constructor(backgrounds: string[]) {
@@ -153,7 +150,46 @@ export class BackgroundCarouselManager {
         }
     }
 
-    // JS动画函数
+    // 简单的通用动画函数
+    private animate(
+        target: HTMLElement | string,
+        startValue: number,
+        endValue: number,
+        duration: number,
+        updateCallback: (value: number) => void,
+        callback?: () => void
+    ): void {
+        // 取消之前的动画
+        const prevAnimation = this.activeAnimations.get(target);
+        if (prevAnimation) {
+            cancelAnimationFrame(prevAnimation);
+        }
+
+        const startTime = performance.now();
+        const deltaValue = endValue - startValue;
+
+        const animateFrame = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeInOut(progress);
+
+            const currentValue = startValue + deltaValue * easedProgress;
+            updateCallback(currentValue);
+
+            if (progress < 1) {
+                const frameId = requestAnimationFrame(animateFrame);
+                this.activeAnimations.set(target, frameId);
+            } else {
+                this.activeAnimations.delete(target);
+                if (callback) callback();
+            }
+        };
+
+        const frameId = requestAnimationFrame(animateFrame);
+        this.activeAnimations.set(target, frameId);
+    }
+
+    // 透明度动画
     private animateOpacity(
         element: HTMLElement,
         startOpacity: number,
@@ -161,34 +197,16 @@ export class BackgroundCarouselManager {
         duration: number,
         callback?: () => void
     ): void {
-        // 取消该元素之前的动画
-        const prevAnimation = this.activeAnimations.get(element);
-        if (prevAnimation) {
-            cancelAnimationFrame(prevAnimation);
-        }
-
-        let startTime = performance.now();
-        const deltaOpacity = endOpacity - startOpacity;
-
-        const animate = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easedProgress = easeInOut(progress);
-
-            const currentOpacity = startOpacity + deltaOpacity * easedProgress;
-            element.style.opacity = currentOpacity.toString();
-
-            if (progress < 1) {
-                const frameId = requestAnimationFrame(animate);
-                this.activeAnimations.set(element, frameId);
-            } else {
-                this.activeAnimations.delete(element);
-                if (callback) callback();
-            }
-        };
-
-        const frameId = requestAnimationFrame(animate);
-        this.activeAnimations.set(element, frameId);
+        this.animate(
+            element,
+            startOpacity,
+            endOpacity,
+            duration,
+            (value) => {
+                element.style.opacity = value.toString();
+            },
+            callback
+        );
     }
 
     // 背景切换
@@ -257,32 +275,16 @@ export class BackgroundCarouselManager {
 
     // 模糊效果动画
     private animateBlur(targetBlur: number): void {
-        if (this.blurAnimationId) {
-            cancelAnimationFrame(this.blurAnimationId);
-        }
-
-        const startBlur = this.state.currentBlur;
-        const deltaBlur = targetBlur - startBlur;
-        const startTime = performance.now();
-        const duration = 300;
-
-        const animate = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easedProgress = easeInOut(progress);
-
-            this.state.currentBlur = startBlur + deltaBlur * easedProgress;
-            this.updateBlurEffect();
-
-            if (progress < 1) {
-                this.blurAnimationId = requestAnimationFrame(animate);
-            } else {
-                this.blurAnimationId = null;
-
+        this.animate(
+            'blur-effect', // 使用字符串键避免冲突
+            this.state.currentBlur,
+            targetBlur,
+            300,
+            (value) => {
+                this.state.currentBlur = value;
+                this.updateBlurEffect();
             }
-        };
-
-        this.blurAnimationId = requestAnimationFrame(animate);
+        );
     }
 
     // 处理滚动

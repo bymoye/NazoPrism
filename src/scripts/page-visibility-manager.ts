@@ -71,7 +71,7 @@ class PageVisibilityManager {
      * 通知所有处理器
      */
     private notifyHandlers(): void {
-        this.handlers.forEach(({ onHidden, onVisible }, id) => {
+        this.handlers.forEach(({ onHidden, onVisible }) => {
             try {
                 if (this.isVisible) {
                     onVisible();
