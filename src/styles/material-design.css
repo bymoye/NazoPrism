@@ -8,7 +8,7 @@
   --md-sys-color-on-primary: 255, 255, 255;
   --md-sys-color-primary-container: 234, 221, 255;
   --md-sys-color-on-primary-container: 33, 0, 93;
-  
+
   --md-sys-color-secondary: 98, 91, 113;
   --md-sys-color-secondary-rgb: 98, 91, 113;
   --md-sys-color-on-secondary: 255, 255, 255;
@@ -20,12 +20,12 @@
   --md-sys-color-on-tertiary: 255, 255, 255;
   --md-sys-color-tertiary-container: 255, 216, 228;
   --md-sys-color-on-tertiary-container: 49, 17, 29;
-  
+
   --md-sys-color-error: 179, 38, 30;
   --md-sys-color-on-error: 255, 255, 255;
   --md-sys-color-error-container: 249, 222, 220;
   --md-sys-color-on-error-container: 65, 14, 11;
-  
+
   --md-sys-color-background: 254, 247, 255;
   --md-sys-color-on-background: 29, 27, 32;
   --md-sys-color-surface: 254, 247, 255;
@@ -38,13 +38,13 @@
   --md-sys-color-outline-rgb: 121, 116, 126;
   --md-sys-color-outline-variant: 202, 196, 208;
   --md-sys-color-outline-variant-rgb: 202, 196, 208;
-  
+
   --md-sys-color-shadow: 0, 0, 0;
   --md-sys-color-scrim: 0, 0, 0;
   --md-sys-color-inverse-surface: 49, 48, 51;
   --md-sys-color-inverse-on-surface: 244, 239, 244;
   --md-sys-color-inverse-primary: 208, 188, 255;
-  
+
   /* Surface elevation colors */
   --md-sys-color-surface-dim: 222, 216, 225;
   --md-sys-color-surface-bright: 254, 247, 255;
@@ -59,19 +59,19 @@
   --md-sys-typescale-display-large: 57px;
   --md-sys-typescale-display-medium: 45px;
   --md-sys-typescale-display-small: 36px;
-  
+
   --md-sys-typescale-headline-large: 32px;
   --md-sys-typescale-headline-medium: 28px;
   --md-sys-typescale-headline-small: 24px;
-  
+
   --md-sys-typescale-title-large: 22px;
   --md-sys-typescale-title-medium: 16px;
   --md-sys-typescale-title-small: 14px;
-  
+
   --md-sys-typescale-label-large: 14px;
   --md-sys-typescale-label-medium: 12px;
   --md-sys-typescale-label-small: 11px;
-  
+
   --md-sys-typescale-body-large: 16px;
   --md-sys-typescale-body-medium: 14px;
   --md-sys-typescale-body-small: 12px;
@@ -108,7 +108,7 @@
   --md-sys-motion-duration-extra-long2: 800ms;
   --md-sys-motion-duration-extra-long3: 900ms;
   --md-sys-motion-duration-extra-long4: 1000ms;
-  
+
   /* Theme transition duration - matches background carousel */
   --md-sys-motion-duration-theme: 1500ms;
 
@@ -123,75 +123,49 @@
 
   /* Material Design 3 Elevation Levels */
   --md-sys-elevation-level0: none;
-  --md-sys-elevation-level1:
-    0 1px 2px 0 rgba(0, 0, 0, 0.3),
-    0 1px 3px 1px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level2:
-    0 1px 2px 0 rgba(0, 0, 0, 0.3),
-    0 2px 6px 2px rgba(0, 0, 0, 0.15);
-  --md-sys-elevation-level3:
-    0 4px 8px 3px rgba(0, 0, 0, 0.15),
-    0 1px 3px 0 rgba(0, 0, 0, 0.3);
-  --md-sys-elevation-level4:
-    0 6px 10px 4px rgba(0, 0, 0, 0.15),
-    0 2px 3px 0 rgba(0, 0, 0, 0.3);
-  --md-sys-elevation-level5:
-    0 8px 12px 6px rgba(0, 0, 0, 0.15),
-    0 4px 4px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level2: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level4: 0 6px 10px 4px rgba(0, 0, 0, 0.15), 0 2px 3px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level5: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* Glassmorphism Base Mixin */
-.glass-surface {
-  background: rgba(255, 255, 255, var(--glass-opacity));
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
-  box-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, var(--glass-shadow-opacity)),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+/* Pure Material Design 3 Surface */
+.md-surface {
+  background: rgb(var(--md-sys-color-surface));
+  color: rgb(var(--md-sys-color-on-surface));
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  box-shadow: var(--md-sys-elevation-level1);
   transition:
     background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     box-shadow var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
 }
 
-/* Dark mode glass surface */
-@media (prefers-color-scheme: dark) {
-  .glass-surface {
-    background: rgba(0, 0, 0, var(--glass-opacity));
-    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity));
-  }
-}
-
-/* Material Design 3 Surface Elevations with Glassmorphism */
+/* Material Design 3 Surface Elevations */
 .surface-container-lowest {
-  background: rgba(var(--md-sys-color-surface-container-lowest), var(--glass-opacity));
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  background: rgb(var(--md-sys-color-surface-container-lowest));
+  color: rgb(var(--md-sys-color-on-surface));
 }
 
 .surface-container-low {
-  background: rgba(var(--md-sys-color-surface-container-low), var(--glass-opacity));
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.7));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.7));
+  background: rgb(var(--md-sys-color-surface-container-low));
+  color: rgb(var(--md-sys-color-on-surface));
 }
 
 .surface-container {
-  background: rgba(var(--md-sys-color-surface-container), var(--glass-opacity));
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: rgb(var(--md-sys-color-surface-container));
+  color: rgb(var(--md-sys-color-on-surface));
 }
 
 .surface-container-high {
-  background: rgba(var(--md-sys-color-surface-container-high), var(--glass-opacity));
-  backdrop-filter: blur(calc(var(--glass-blur) * 1.2));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.2));
+  background: rgb(var(--md-sys-color-surface-container-high));
+  color: rgb(var(--md-sys-color-on-surface));
 }
 
 .surface-container-highest {
-  background: rgba(var(--md-sys-color-surface-container-highest), var(--glass-opacity));
-  backdrop-filter: blur(calc(var(--glass-blur) * 1.5));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.5));
+  background: rgb(var(--md-sys-color-surface-container-highest));
+  color: rgb(var(--md-sys-color-on-surface));
 }
 
 /* Material Design 3 Typography Classes */
@@ -358,24 +332,18 @@
   color: var(--md-sys-color-on-primary);
 }
 
-/* Tonal Button with Glassmorphism */
+/* Tonal Button - Pure M3 */
 .md-button-tonal {
-  background: rgba(var(--md-sys-color-secondary-container), var(--glass-opacity));
-  color: var(--md-sys-color-on-secondary-container);
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
+  background: rgb(var(--md-sys-color-secondary-container));
+  color: rgb(var(--md-sys-color-on-secondary-container));
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
 }
 
-/* Elevated Button with Glassmorphism */
+/* Elevated Button - Pure M3 */
 .md-button-elevated {
-  background: rgba(var(--md-sys-color-surface-container-low), var(--glass-opacity));
-  color: var(--md-sys-color-primary);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: 
-    0 1px 2px 0 rgba(0, 0, 0, 0.3),
-    0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  background: rgb(var(--md-sys-color-surface-container-low));
+  color: rgb(var(--md-sys-color-primary));
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 /* Outlined Button */
@@ -405,19 +373,15 @@
 }
 
 .md-card-filled {
-  background: rgba(var(--md-sys-color-surface-container-highest), var(--glass-opacity));
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
+  background: rgb(var(--md-sys-color-surface-container-highest));
+  color: rgb(var(--md-sys-color-on-surface));
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
 }
 
 .md-card-elevated {
-  background: rgba(var(--md-sys-color-surface-container-low), var(--glass-opacity));
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: 
-    0 1px 2px 0 rgba(0, 0, 0, 0.3),
-    0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  background: rgb(var(--md-sys-color-surface-container-low));
+  color: rgb(var(--md-sys-color-on-surface));
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 .md-card-outlined {
@@ -433,18 +397,17 @@
 }
 
 .md-card-elevated:hover {
-  box-shadow: 
+  box-shadow:
     0 2px 4px 0 rgba(0, 0, 0, 0.3),
     0 4px 12px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Material Design 3 Navigation Bar with Glassmorphism */
+/* Material Design 3 Navigation Bar - Pure M3 */
 .md-navigation-bar {
-  background: rgba(var(--md-sys-color-surface-container), var(--glass-opacity));
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  background: rgb(var(--md-sys-color-surface-container));
+  color: rgb(var(--md-sys-color-on-surface));
+  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
+  box-shadow: var(--md-sys-elevation-level2);
   transition:
     background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
@@ -475,7 +438,7 @@
 }
 
 .md-fab:hover {
-  box-shadow: 
+  box-shadow:
     0 6px 10px 0 rgba(0, 0, 0, 0.3),
     0 8px 16px 4px rgba(0, 0, 0, 0.15);
 }
@@ -488,7 +451,8 @@
   opacity: 0;
   pointer-events: none;
   transform: scale(0);
-  animation: md-ripple-animation var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-standard);
+  animation: md-ripple-animation var(--md-sys-motion-duration-long2)
+    var(--md-sys-motion-easing-standard);
 }
 
 @keyframes md-ripple-animation {
@@ -515,31 +479,31 @@
 
 /* Utility Classes */
 .md-elevation-1 {
-  box-shadow: 
+  box-shadow:
     0 1px 2px 0 rgba(0, 0, 0, 0.3),
     0 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
 .md-elevation-2 {
-  box-shadow: 
+  box-shadow:
     0 1px 2px 0 rgba(0, 0, 0, 0.3),
     0 2px 6px 2px rgba(0, 0, 0, 0.15);
 }
 
 .md-elevation-3 {
-  box-shadow: 
+  box-shadow:
     0 4px 8px 3px rgba(0, 0, 0, 0.15),
     0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .md-elevation-4 {
-  box-shadow: 
+  box-shadow:
     0 6px 10px 4px rgba(0, 0, 0, 0.15),
     0 2px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .md-elevation-5 {
-  box-shadow: 
+  box-shadow:
     0 8px 12px 6px rgba(0, 0, 0, 0.15),
     0 4px 4px 0 rgba(0, 0, 0, 0.3);
 }

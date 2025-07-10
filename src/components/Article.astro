@@ -28,13 +28,13 @@ const { title, time, content, category, url, cover, id } = Astro.props;
 </article>
 
 <script>
-  import { initArticleAnimations } from "../scripts/article-animations";
+  import { initArticleAnimations } from '../scripts/article-animations';
 
   // 初始化
   initArticleAnimations();
 
   // 监听 Astro 页面加载事件
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener('astro:page-load', () => {
     initArticleAnimations();
   });
 </script>
@@ -51,32 +51,19 @@ const { title, time, content, category, url, cover, id } = Astro.props;
     will-change: transform, opacity;
     transform: translateY(80px);
     opacity: 0;
-    transition: all var(--md-sys-motion-duration-medium4)
-      var(--md-sys-motion-easing-emphasized);
+    transition: all var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized);
 
     /* Glassmorphism effect */
-    background: rgba(
-      var(--md-sys-color-surface-container),
-      var(--glass-opacity, 0.7)
-    );
-    backdrop-filter: blur(var(--glass-blur, 16px));
-    -webkit-backdrop-filter: blur(var(--glass-blur, 16px));
-    border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.12);
-    box-shadow:
-      0 1px 3px 0 rgba(0, 0, 0, 0.1),
-      0 1px 2px 0 rgba(0, 0, 0, 0.06),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    background: rgba(var(--md-sys-color-surface-container), var(--glass-opacity, 0.7));
+    border: 1px solid rgb(var(--md-sys-color-outline-variant));
+    box-shadow: var(--md-sys-elevation-level1);
   }
 
   /* Hover state with elevation */
   .post_list_thumb:hover {
     transform: translateY(-4px);
-    box-shadow:
-      0 4px 8px 0 rgba(0, 0, 0, 0.12),
-      0 2px 4px 0 rgba(0, 0, 0, 0.08),
-      0 8px 16px 0 rgba(0, 0, 0, 0.06),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    background: rgba(var(--md-sys-color-surface-container-high), 0.8);
+    box-shadow: var(--md-sys-elevation-level2);
+    background: rgb(var(--md-sys-color-surface-container-high));
   }
 
   /* Show state */
@@ -106,8 +93,7 @@ const { title, time, content, category, url, cover, id } = Astro.props;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all var(--md-sys-motion-duration-long2)
-      var(--md-sys-motion-easing-emphasized);
+    transition: all var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-emphasized);
     filter: saturate(0.8) brightness(0.95);
   }
 
@@ -183,8 +169,7 @@ const { title, time, content, category, url, cover, id } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: color var(--md-sys-motion-duration-short4)
-      var(--md-sys-motion-easing-standard);
+    transition: color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
   .url:hover {

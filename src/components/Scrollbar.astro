@@ -5,13 +5,13 @@
 <div id="scrollbar" class="scrollbar"></div>
 
 <script>
-  import { initProgressBar } from "../scripts/progress-bar";
+  import { initProgressBar } from '../scripts/progress-bar';
 
   // 初始化
   initProgressBar();
 
   // 监听 Astro 页面加载事件
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener('astro:page-load', () => {
     initProgressBar();
   });
 </script>

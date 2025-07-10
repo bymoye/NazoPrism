@@ -1,5 +1,5 @@
-import { QuantizerCelebi, Score, hexFromArgb, Hct } from "@material/material-color-utilities";
-import type { ColorExtractionWorkerMessage, ColorExtractionWorkerResponse } from "../types/worker";
+import { Hct, QuantizerCelebi, Score, hexFromArgb } from '@material/material-color-utilities';
+import type { ColorExtractionWorkerMessage, ColorExtractionWorkerResponse } from '../types/worker';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -8,7 +8,7 @@ self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) 
 
   try {
     if (!blob) {
-      throw new Error("没有接收到有效的图片 Blob 数据");
+      throw new Error('没有接收到有效的图片 Blob 数据');
     }
 
     // 在 Worker 中处理图片 Blob
@@ -25,7 +25,7 @@ self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) 
     const ctx = canvas.getContext('2d');
 
     if (!ctx) {
-      throw new Error("无法创建 OffscreenCanvas 上下文");
+      throw new Error('无法创建 OffscreenCanvas 上下文');
     }
 
     // 绘制缩放后的图片
@@ -77,14 +77,13 @@ self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) 
       hex: hexColor,
     };
     self.postMessage(successResponse);
-
   } catch (error) {
     const errorResponse: ColorExtractionWorkerResponse = {
       messageId,
       success: false,
       error: error instanceof Error ? error.message : String(error),
       color: 0xff6750a4,
-      hex: "#64B5B9FF",
+      hex: '#64B5B9FF',
     };
     self.postMessage(errorResponse);
   }

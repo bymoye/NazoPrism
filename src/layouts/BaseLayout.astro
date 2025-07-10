@@ -1,13 +1,12 @@
 ---
-import { ClientRouter } from "astro:transitions";
+import { ClientRouter } from 'astro:transitions';
 
 export interface Props {
   title?: string;
   description?: string;
 }
 
-const { title = "Sakura_re", description = "沉淪在無盡的深淵中..." } =
-  Astro.props;
+const { title = 'Sakura_re', description = '沉淪在無盡的深淵中...' } = Astro.props;
 ---
 
 <!doctype html>
@@ -92,7 +91,7 @@ const { title = "Sakura_re", description = "沉淪在無盡的深淵中..." } =
 
     <!-- 初始化脚本移到持久化容器外部，避免重复执行 -->
     <script>
-      import { initApp } from "../scripts/app-init";
+      import { initApp } from '../scripts/app-init';
 
       // 检查是否已经初始化过，避免重复初始化
       if (!(window as any).nazoPrismInitialized) {
@@ -114,5 +113,5 @@ const { title = "Sakura_re", description = "沉淪在無盡的深淵中..." } =
 </html>
 
 <style is:global>
-  @import "../styles/global.css";
+  @import '../styles/global.css';
 </style>

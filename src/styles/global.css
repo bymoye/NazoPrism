@@ -1,15 +1,23 @@
-/* Import Material Design 3 + Glassmorphism styles */
+/* Import Material Design 3 styles */
 @import './material-design.css';
-@import './glassmorphism.css';
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /* Global Reset and Base Styles */
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family:
+    'Roboto',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
     sans-serif;
   overflow-x: hidden;
   color: rgb(var(--md-sys-color-on-background));
@@ -48,44 +56,45 @@ button,
     stroke var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
 }
 
-
+/* Material Design 3 滚动条样式 */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
+  background: rgb(var(--md-sys-color-surface-container-lowest));
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(var(--md-sys-color-surface-variant), 0.1);
-  border-radius: var(--md-sys-shape-corner-full);
-  margin: 4px;
+  background: rgb(var(--md-sys-color-surface-container-low));
+  border-radius: var(--md-sys-shape-corner-small);
+  margin: 2px;
   transition: background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--md-sys-color-primary));
-  border-radius: var(--md-sys-shape-corner-full);
-  border: 2px solid transparent;
-  background-clip: padding-box;
+  background: rgb(var(--md-sys-color-outline-variant));
+  border-radius: var(--md-sys-shape-corner-small);
+  border: 1px solid rgb(var(--md-sys-color-surface-container-low));
   transition:
-    background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
-    border-width var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--md-sys-color-primary));
-  border-width: 1px;
+  background: rgb(var(--md-sys-color-on-surface-variant));
+  border-color: rgb(var(--md-sys-color-surface-container));
 }
 
 ::-webkit-scrollbar-thumb:active {
   background: rgb(var(--md-sys-color-primary));
-  border-width: 0;
+  border-color: rgb(var(--md-sys-color-primary-container));
 }
 
-/* Firefox 滚动条样式 - 带主题过渡 */
+/* Firefox Material Design 3 滚动条样式 */
 html {
   scrollbar-width: thin;
-  scrollbar-color: rgb(var(--md-sys-color-primary)) rgba(var(--md-sys-color-surface-variant), 0.1);
-  transition: scrollbar-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
+  scrollbar-color: rgb(var(--md-sys-color-outline-variant)) rgb(var(--md-sys-color-surface-container-low));
+  transition: scrollbar-color var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-emphasized);
 }
 
 /* 移除 IE 和 Edge 的滚动条隐藏 */
@@ -244,38 +253,38 @@ html {
     --md-sys-color-on-primary: 56, 30, 114;
     --md-sys-color-primary-container: 79, 55, 139;
     --md-sys-color-on-primary-container: 234, 221, 255;
-    
+
     --md-sys-color-secondary: 204, 194, 220;
     --md-sys-color-on-secondary: 51, 45, 65;
     --md-sys-color-secondary-container: 74, 68, 88;
     --md-sys-color-on-secondary-container: 232, 222, 248;
-    
+
     --md-sys-color-tertiary: 239, 184, 200;
     --md-sys-color-on-tertiary: 73, 37, 50;
     --md-sys-color-tertiary-container: 99, 59, 72;
     --md-sys-color-on-tertiary-container: 255, 216, 228;
-    
+
     --md-sys-color-error: 242, 184, 181;
     --md-sys-color-on-error: 96, 20, 16;
     --md-sys-color-error-container: 140, 29, 24;
     --md-sys-color-on-error-container: 249, 222, 220;
-    
+
     --md-sys-color-background: 28, 27, 31;
     --md-sys-color-on-background: 230, 225, 229;
     --md-sys-color-surface: 28, 27, 31;
     --md-sys-color-on-surface: 230, 225, 229;
-    
+
     --md-sys-color-surface-variant: 73, 69, 79;
     --md-sys-color-on-surface-variant: 202, 196, 208;
     --md-sys-color-outline: 147, 143, 153;
     --md-sys-color-outline-variant: 73, 69, 79;
-    
+
     --md-sys-color-shadow: 0, 0, 0;
     --md-sys-color-scrim: 0, 0, 0;
     --md-sys-color-inverse-surface: 230, 225, 229;
     --md-sys-color-inverse-on-surface: 49, 48, 51;
     --md-sys-color-inverse-primary: 103, 80, 164;
-    
+
     /* Dark surface elevation colors */
     --md-sys-color-surface-dim: 28, 27, 31;
     --md-sys-color-surface-bright: 59, 56, 62;

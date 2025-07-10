@@ -2,7 +2,7 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable","webworker"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "webworker"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -24,12 +24,6 @@
     "jsx": "preserve",
     "jsxImportSource": "astro"
   },
-  "include": [
-    "src/**/*",
-    "astro.config.mjs"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*", "astro.config.mjs"],
+  "exclude": ["node_modules", "dist"]
 }

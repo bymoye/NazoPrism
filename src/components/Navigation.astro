@@ -1,5 +1,5 @@
 ---
-import { SITE_CONFIG } from "../config";
+import { SITE_CONFIG } from '../config';
 
 // 获取当前页面路径
 const currentPath = Astro.url.pathname;
@@ -7,9 +7,9 @@ const currentPath = Astro.url.pathname;
 // 检查是否为当前页面
 function isCurrentPage(href: string): boolean {
   // 处理首页的特殊情况
-  if (href === "/" && currentPath === "/") return true;
+  if (href === '/' && currentPath === '/') return true;
   // 处理其他页面
-  if (href !== "/" && currentPath.startsWith(href)) return true;
+  if (href !== '/' && currentPath.startsWith(href)) return true;
   return false;
 }
 ---
@@ -17,14 +17,14 @@ function isCurrentPage(href: string): boolean {
 <nav id="navigation" class="nav" transition:persist-props>
   <ul>
     {
-      SITE_CONFIG.navigation.map((item) => {
+      SITE_CONFIG.navigation.map(item => {
         const isCurrent = isCurrentPage(item.href);
         return (
           <li>
             <a
               href={item.href}
               class:list={[{ current: isCurrent }]}
-              aria-current={isCurrent ? "page" : undefined}
+              aria-current={isCurrent ? 'page' : undefined}
             >
               {item.name}
             </a>
@@ -34,20 +34,18 @@ function isCurrentPage(href: string): boolean {
     }
   </ul>
   <div class="login">
-    <a href="/login" class:list={[{ current: currentPath === "/login" }]}
-      >Login</a
-    >
+    <a href="/login" class:list={[{ current: currentPath === '/login' }]}>Login</a>
   </div>
 </nav>
 
 <script>
-  import { initNavigation } from "../scripts/navigation";
+  import { initNavigation } from '../scripts/navigation';
 
   // 页面加载时初始化
   initNavigation();
 
   // 监听 Astro 页面切换事件
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener('astro:page-load', () => {
     initNavigation();
   });
 </script>
@@ -133,7 +131,7 @@ function isCurrentPage(href: string): boolean {
 
   /* Animated underline like React version */
   .nav li a:after {
-    content: "";
+    content: '';
     display: block;
     position: relative;
     height: 6px;
@@ -172,7 +170,7 @@ function isCurrentPage(href: string): boolean {
 
   /* Material Design 3 indicator bar */
   .nav li a::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -180,8 +178,7 @@ function isCurrentPage(href: string): boolean {
     height: 3px;
     width: calc(100% - 32px);
     background-color: rgb(var(--md-sys-color-primary));
-    border-radius: var(--md-sys-shape-corner-full)
-      var(--md-sys-shape-corner-full) 0 0;
+    border-radius: var(--md-sys-shape-corner-full) var(--md-sys-shape-corner-full) 0 0;
     transition: transform var(--md-sys-motion-duration-medium2)
       var(--md-sys-motion-easing-emphasized);
     transform-origin: center;
@@ -214,20 +211,16 @@ function isCurrentPage(href: string): boolean {
     letter-spacing: 0.1px;
     text-decoration: none;
     transition:
-      background-color var(--md-sys-motion-duration-theme)
-        var(--md-sys-motion-easing-emphasized),
-      color var(--md-sys-motion-duration-theme)
-        var(--md-sys-motion-easing-emphasized),
-      transform var(--md-sys-motion-duration-medium2)
-        var(--md-sys-motion-easing-standard),
-      box-shadow var(--md-sys-motion-duration-medium2)
-        var(--md-sys-motion-easing-standard);
+      background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+      color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+      transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
     position: relative;
     overflow: hidden;
   }
 
   .login a::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -235,8 +228,7 @@ function isCurrentPage(href: string): boolean {
     bottom: 0;
     background: currentColor;
     opacity: 0;
-    transition: opacity var(--md-sys-motion-duration-short4)
-      var(--md-sys-motion-easing-standard);
+    transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
   .login a:hover {

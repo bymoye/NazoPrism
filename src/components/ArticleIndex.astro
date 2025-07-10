@@ -1,12 +1,12 @@
 ---
-import Article from "./Article.astro";
-import { SAMPLE_ARTICLES } from "../config";
+import Article from './Article.astro';
+import { SAMPLE_ARTICLES } from '../config';
 ---
 
 <div class="page">
   <div class="content">
     {
-      SAMPLE_ARTICLES.map((article) => (
+      SAMPLE_ARTICLES.map(article => (
         <Article
           title={article.title}
           time={article.time}

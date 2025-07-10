@@ -7,13 +7,13 @@
 </div>
 
 <script>
-  import { initToTop } from "../scripts/to-top";
+  import { initToTop } from '../scripts/to-top';
 
   // 初始化
   initToTop();
 
   // 监听 Astro 页面加载事件
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener('astro:page-load', () => {
     initToTop();
   });
 </script>
@@ -36,32 +36,22 @@
     border-radius: var(--md-sys-shape-corner-large);
     transform: scale(0);
     transition:
-      transform var(--md-sys-motion-duration-medium2)
-        var(--md-sys-motion-easing-emphasized),
-      background-color var(--md-sys-motion-duration-theme)
-        var(--md-sys-motion-easing-emphasized),
-      color var(--md-sys-motion-duration-theme)
-        var(--md-sys-motion-easing-emphasized),
-      box-shadow var(--md-sys-motion-duration-medium2)
-        var(--md-sys-motion-easing-emphasized);
+      transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+      background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+      color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+      box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
 
-    /* Enhanced Glass FAB with Anime Glow */
-    background: linear-gradient(
-      135deg,
-      rgba(var(--md-sys-color-primary-rgb), 0.9),
-      rgba(var(--md-sys-color-primary-rgb), 0.7)
-    );
-    backdrop-filter: blur(24px) saturate(150%) brightness(110%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%) brightness(110%);
-    border: 1px solid rgba(var(--md-sys-color-primary-rgb), 0.4);
+    /* Pure M3 FAB */
+    background: rgb(var(--md-sys-color-primary));
     color: rgb(var(--md-sys-color-on-primary));
-    box-shadow: var(--glass-elevation-4);
+    border: none;
+    box-shadow: var(--md-sys-elevation-level3);
     overflow: hidden;
   }
 
   /* Anime-style glow effect */
   .go_top::before {
-    content: "";
+    content: '';
     position: absolute;
     top: -50%;
     left: -50%;
@@ -86,18 +76,12 @@
     transform: rotate(-45deg) translateX(100%);
   }
 
-  /* Hover state with enhanced glass effect */
+  /* Hover state - Pure M3 */
   .go_top:hover {
     transform: scale(1.1) translateY(-2px);
-    background: linear-gradient(
-      135deg,
-      rgba(var(--md-sys-color-primary-rgb), 1),
-      rgba(var(--md-sys-color-primary-rgb), 0.8)
-    );
-    backdrop-filter: blur(32px) saturate(180%) brightness(120%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(120%);
-    box-shadow: var(--glass-elevation-5);
-    border-color: rgba(var(--md-sys-color-primary-rgb), 0.6);
+    background: rgb(var(--md-sys-color-primary-container));
+    color: rgb(var(--md-sys-color-on-primary-container));
+    box-shadow: var(--md-sys-elevation-level4);
   }
 
   .go_top:hover::before {
@@ -107,9 +91,7 @@
   /* Active state */
   .go_top:active {
     transform: scale(0.95);
-    box-shadow:
-      0 2px 4px 0 rgba(0, 0, 0, 0.15),
-      0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: var(--md-sys-elevation-level1);
   }
 
   /* Focus visible */
@@ -134,8 +116,7 @@
     -webkit-mask-repeat: no-repeat;
     mask-position: center;
     -webkit-mask-position: center;
-    transition: transform var(--md-sys-motion-duration-short4)
-      var(--md-sys-motion-easing-standard);
+    transition: transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
   /* Icon animation on hover */
