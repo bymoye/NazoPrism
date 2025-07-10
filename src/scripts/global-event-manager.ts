@@ -4,7 +4,7 @@
  * 使用统一的工具函数，避免重复实现
  */
 
-import { debounce, rafDebounce } from '../utils/debounce';
+import { debounce, rafScrollDebounce } from '../utils/debounce';
 
 interface EventHandler {
     id: string;
@@ -41,8 +41,8 @@ class GlobalEventManager {
 
 
 
-        // 创建统一的 scroll 监听器 - 使用 RAF 防抖获得最佳性能
-        this.scrollListener = rafDebounce(() => {
+        // 创建统一的 scroll 监听器 - 使用高性能滚动防抖，带阈值检查
+        this.scrollListener = rafScrollDebounce(() => {
             this.scrollHandlers.forEach(({ handler }) => {
                 try {
                     handler();
@@ -50,7 +50,7 @@ class GlobalEventManager {
                     // 静默处理错误
                 }
             });
-        });
+        }, 2); // 2px 阈值，避免微小滚动触发
 
         // 创建统一的 resize 监听器 - 使用传统防抖
         this.resizeListener = debounce(() => {

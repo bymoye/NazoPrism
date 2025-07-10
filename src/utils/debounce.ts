@@ -44,5 +44,35 @@ export function rafDebounce<T extends (...args: any[]) => void>(fn: T): T {
     } as T;
 }
 
+/**
+ * 高性能滚动防抖 - 带阈值检查的 RAF 防抖，避免微小变化触发
+ */
+export function rafScrollDebounce<T extends (...args: any[]) => void>(
+    fn: T,
+    threshold: number = 1
+): T {
+    let rafId: number | null = null;
+    let lastScrollTop = 0;
+    let isFirstCall = true;
+
+    return function (this: any, ...args: any[]) {
+        const currentScrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+        // 首次调用或滚动距离超过阈值才执行
+        if (isFirstCall || Math.abs(currentScrollTop - lastScrollTop) >= threshold) {
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+
+            rafId = requestAnimationFrame(() => {
+                lastScrollTop = currentScrollTop;
+                isFirstCall = false;
+                fn.apply(this, args);
+                rafId = null;
+            });
+        }
+    } as T;
+}
+
 // 保持向后兼容
 export default debounce;

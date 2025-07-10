@@ -6,6 +6,8 @@ export class NavigationManager {
     private nav: HTMLElement | null;
     private scrollThreshold = 20;
     private readonly id = 'navigation';
+    private lastScrollPosition = 0;
+    private isNavSticky = false;
 
     constructor() {
         this.nav = document.getElementById("navigation");
@@ -17,11 +19,21 @@ export class NavigationManager {
 
         const scrollPosition = window.scrollY;
 
-        // 简单直接的实现，就像React版本一样
-        if (scrollPosition > this.scrollThreshold) {
-            this.nav.classList.add("ceil_nav");
-        } else {
-            this.nav.classList.remove("ceil_nav");
+        const scrollDifference = Math.abs(scrollPosition - this.lastScrollPosition);
+        if (scrollDifference < 5) return; // 5px 阈值，避免微小滚动
+
+        this.lastScrollPosition = scrollPosition;
+
+        const shouldBeSticky = scrollPosition > this.scrollThreshold;
+
+        if (shouldBeSticky !== this.isNavSticky) {
+            this.isNavSticky = shouldBeSticky;
+
+            if (this.isNavSticky) {
+                this.nav.classList.add("ceil_nav");
+            } else {
+                this.nav.classList.remove("ceil_nav");
+            }
         }
     };
 

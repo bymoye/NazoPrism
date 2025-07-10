@@ -8,6 +8,7 @@ export class ToTopManager {
     private clickHandler: (() => void) | null = null;
     private readonly SCROLL_THRESHOLD = 300;
     private readonly id = 'to-top';
+    private lastScrollTop = 0;
 
     constructor() {
         this.button = document.getElementById("to-top");
@@ -16,6 +17,11 @@ export class ToTopManager {
 
     private updateVisibility = (): void => {
         const scrollTop = getScrollTop();
+
+        const scrollDifference = Math.abs(scrollTop - this.lastScrollTop);
+        if (scrollDifference < 20) return;
+
+        this.lastScrollTop = scrollTop;
         const shouldShow = scrollTop > this.SCROLL_THRESHOLD;
 
         if (shouldShow !== this.isVisible) {

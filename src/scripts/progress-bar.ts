@@ -6,6 +6,7 @@ export class ProgressBarManager {
     private progressBar: HTMLElement | null;
     private color: string = "#00BCD4";
     private readonly id = 'progress-bar';
+    private lastWidth = -1;
 
     constructor() {
         this.progressBar = document.getElementById("scrollbar");
@@ -16,10 +17,13 @@ export class ProgressBarManager {
         if (!this.progressBar) return;
 
         const scrollPercent = getScrollPercent();
-        const width = scrollPercent * 100;
+        const width = Math.round(scrollPercent * 100 * 10) / 10;
 
-        this.progressBar.style.width = `${width}%`;
-        this.progressBar.style.backgroundColor = this.color;
+        if (Math.abs(width - this.lastWidth) > 0.5) {
+            this.lastWidth = width;
+            this.progressBar.style.width = `${width}%`;
+            this.progressBar.style.backgroundColor = this.color;
+        }
     };
 
     private init(): void {

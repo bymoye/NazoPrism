@@ -301,8 +301,9 @@ export class BackgroundCarouselManager {
     private handleScroll = (): void => {
         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
         const targetBlur = scrollTop > CONFIG.SCROLL_THRESHOLD ? CONFIG.MAX_BLUR : CONFIG.MIN_BLUR;
+        const blurDifference = Math.abs(targetBlur - this.state.currentBlur);
 
-        if (Math.abs(targetBlur - this.state.currentBlur) > 0.1) {
+        if (blurDifference > 0.5) {
             this.animateBlur(targetBlur);
         }
     };
