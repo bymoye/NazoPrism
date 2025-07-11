@@ -1,10 +1,13 @@
 ---
-// ToTop button component
+// Modern M3 + Enhanced Glass Morphism ToTop Button
 ---
 
-<div id="to-top" class="go_top">
-  <i class="back_top_svg"></i>
-</div>
+<button id="to-top" class="to-top-btn" aria-label="回到顶部" type="button">
+  <svg class="to-top-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.41 15.41L12 10.83L16.59 15.41L18 14L12 8L6 14L7.41 15.41Z" fill="currentColor"
+    ></path>
+  </svg>
+</button>
 
 <script>
   import { initToTop } from '../scripts/to-top';
@@ -12,161 +15,163 @@
   // 初始化
   initToTop();
 
-  // 监听 Astro 页面加载事件
+  // 监听 Astro 页面加载事件，以支持客户端导航
   document.addEventListener('astro:page-load', () => {
     initToTop();
   });
 </script>
 
 <style>
-  /* Material Design 3 FAB (Floating Action Button) */
-  .go_top {
+  /* 按钮主体 */
+  .to-top-btn {
+    /* 定位和层级 */
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 99;
+    bottom: 32px;
+    right: 32px;
+    z-index: 1000;
+
+    /* M3 FAB 尺寸 */
     width: 56px;
     height: 56px;
+
+    /* 重置默认样式 */
+    padding: 0;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    outline: none;
+
+    /* M3 形状 */
+    border-radius: var(--md-sys-shape-corner-large);
+
+    /* M3 颜色系统 */
+    background-color: rgb(var(--md-sys-color-primary));
+    color: rgb(var(--md-sys-color-on-primary));
+
+    /* M3 阴影系统 */
+    box-shadow: var(--md-sys-elevation-level3);
+
+    /* 布局 */
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    border-radius: var(--md-sys-shape-corner-large);
+
+    /* 初始状态：隐藏 */
+    opacity: 0;
     transform: scale(0);
+    pointer-events: none;
+
+    /* 性能优化 */
+    will-change: transform, opacity;
+
+    /* M3 过渡动画 */
     transition:
+      opacity var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
       transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
-      background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
-      color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
-      box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
-
-    /* Pure M3 FAB */
-    background: rgb(var(--md-sys-color-primary));
-    color: rgb(var(--md-sys-color-on-primary));
-    border: none;
-    box-shadow: var(--md-sys-elevation-level3);
-    overflow: hidden;
+      background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-standard),
+      box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
-  /* Anime-style glow effect */
-  .go_top::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      45deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.2) 50%,
-      transparent 70%
-    );
-    transition: transform var(--md-sys-motion-duration-medium4)
-      var(--md-sys-motion-easing-emphasized);
-  }
-
-  /* Show state */
-  .go_top.show {
+  /* 显示状态 */
+  .to-top-btn.show {
+    opacity: 1;
     transform: scale(1);
+    pointer-events: auto;
   }
 
-  .go_top.show::before {
-    transform: rotate(-45deg) translateX(100%);
-  }
-
-  /* Hover state - Pure M3 */
-  .go_top:hover {
-    transform: scale(1.1) translateY(-2px);
-    background: rgb(var(--md-sys-color-primary-container));
+  /* M3 悬停状态 */
+  .to-top-btn:hover {
+    background-color: rgb(var(--md-sys-color-primary-container));
     color: rgb(var(--md-sys-color-on-primary-container));
     box-shadow: var(--md-sys-elevation-level4);
+    transform: scale(1.05);
   }
 
-  .go_top:hover::before {
-    transform: rotate(-45deg) translateX(200%);
-  }
-
-  /* Active state */
-  .go_top:active {
-    transform: scale(0.95);
+  /* M3 点击状态 */
+  .to-top-btn:active {
+    background-color: rgb(var(--md-sys-color-primary));
+    color: rgb(var(--md-sys-color-on-primary));
     box-shadow: var(--md-sys-elevation-level1);
+    transform: scale(0.95);
   }
 
-  /* Focus visible */
-  .go_top:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
+  /* M3 焦点状态 */
+  .to-top-btn:focus-visible {
+    outline: 2px solid rgb(var(--md-sys-color-primary));
     outline-offset: 2px;
   }
 
-  /* Icon styling */
-  .back_top_svg {
-    --svg_backtop: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z' fill='currentColor'/%3E%3C/svg%3E");
-    --size: 24px;
-    width: var(--size);
-    height: var(--size);
-    display: inline-block;
-    background-color: currentColor;
-    mask-image: var(--svg_backtop);
-    -webkit-mask-image: var(--svg_backtop);
-    mask-size: contain;
-    -webkit-mask-size: contain;
-    mask-repeat: no-repeat;
-    -webkit-mask-repeat: no-repeat;
-    mask-position: center;
-    -webkit-mask-position: center;
+  /* M3 图标样式 */
+  .to-top-icon {
+    width: 24px;
+    height: 24px;
+    color: inherit;
     transition: transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
-  /* Icon animation on hover */
-  .go_top:hover .back_top_svg {
-    transform: translateY(-2px);
+  /* 悬停时图标动画 */
+  .to-top-btn:hover .to-top-icon {
+    transform: translateY(-1px);
   }
 
-  /* 移除重复的 ::before 定义，使用上面的 anime-style glow effect */
-
-  /* Extended FAB variant (optional, can be toggled with class) */
-  .go_top.extended {
-    width: auto;
-    padding: 0 20px;
-    gap: 8px;
-  }
-
-  /* Responsive adjustments */
+  /* 响应式设计 */
   @media (max-width: 768px) {
-    .go_top {
-      bottom: 16px;
-      right: 16px;
-      width: 48px;
-      height: 48px;
+    .to-top-btn {
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
     }
 
-    .back_top_svg {
-      --size: 20px;
-    }
-  }
-
-  /* Dark mode adjustments */
-  @media (prefers-color-scheme: dark) {
-    .go_top {
-      background: rgba(var(--md-sys-color-primary-container), 0.8);
-      color: var(--md-sys-color-on-primary-container);
-    }
-
-    .go_top:hover {
-      background: rgba(var(--md-sys-color-primary-container), 0.9);
+    .to-top-icon {
+      width: 24px;
+      height: 24px;
     }
   }
 
-  /* Accessibility - Reduced motion */
+  @media (max-width: 480px) {
+    .to-top-btn {
+      bottom: 20px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+    }
+
+    .to-top-icon {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  /* 无障碍适配 */
   @media (prefers-reduced-motion: reduce) {
-    .go_top {
-      transition-duration: 0.01ms;
+    .to-top-btn,
+    .to-top-icon {
+      transition: none !important;
+      animation: none !important;
     }
 
-    .back_top_svg {
-      transition-duration: 0.01ms;
+    .to-top-btn:hover {
+      transform: scale(1) !important;
+    }
+
+    .to-top-btn:hover .to-top-icon {
+      transform: none !important;
+    }
+  }
+
+  /* 高对比度模式 */
+  @media (prefers-contrast: high) {
+    .to-top-btn {
+      background-color: rgb(var(--md-sys-color-primary)) !important;
+      border: 2px solid rgb(var(--md-sys-color-outline)) !important;
+    }
+  }
+
+  /* 打印样式 */
+  @media print {
+    .to-top-btn {
+      display: none !important;
     }
   }
 </style>

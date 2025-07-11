@@ -27,7 +27,11 @@ export class ToTopManager {
     if (shouldShow !== this.isVisible) {
       this.isVisible = shouldShow;
       if (this.button) {
-        this.button.style.transform = this.isVisible ? 'scale(1)' : 'scale(0)';
+        if (this.isVisible) {
+          this.button.classList.add('show');
+        } else {
+          this.button.classList.remove('show');
+        }
       }
     }
   };

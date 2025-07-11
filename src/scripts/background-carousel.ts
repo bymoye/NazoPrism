@@ -142,8 +142,22 @@ export class BackgroundCarouselManager {
     const blobUrl = this.getCachedBlobUrl(url);
     const finalUrl = blobUrl || url;
 
-    element.style.backgroundImage = `url(${finalUrl})`;
-    element.style.filter = `blur(${this.state.currentBlur}px)`;
+    // 批量设置所有属性，避免多次重排
+    const styles = {
+      backgroundImage: `url(${finalUrl})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'scroll',
+      filter: `blur(${this.state.currentBlur}px)`,
+      // 确保容器属性稳定，避免动画
+      transform: 'none',
+      transition: 'none',
+      animation: 'none',
+    };
+
+    // 一次性应用所有样式
+    Object.assign(element.style, styles);
   }
 
   // 更新模糊效果

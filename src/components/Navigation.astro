@@ -15,26 +15,92 @@ function isCurrentPage(href: string): boolean {
 ---
 
 <nav id="navigation" class="nav" transition:persist-props>
-  <ul>
-    {
-      SITE_CONFIG.navigation.map(item => {
-        const isCurrent = isCurrentPage(item.href);
-        return (
-          <li>
-            <a
-              href={item.href}
-              class:list={[{ current: isCurrent }]}
-              aria-current={isCurrent ? 'page' : undefined}
-            >
-              {item.name}
-            </a>
-          </li>
-        );
-      })
-    }
-  </ul>
-  <div class="login">
-    <a href="/login" class:list={[{ current: currentPath === '/login' }]}>Login</a>
+  <!-- Logo Section -->
+  <div class="nav-logo">
+    <a href="/" class="logo-link" aria-label="返回首页">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="16" cy="16" r="14" fill="currentColor" opacity="0.1"></circle>
+            <path
+              d="M8 16L14 22L24 10"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <span class="logo-text">{SITE_CONFIG.title}</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Navigation Menu -->
+  <div class="nav-menu">
+    <ul class="nav-list">
+      {
+        SITE_CONFIG.navigation.map(item => {
+          const isCurrent = isCurrentPage(item.href);
+          return (
+            <li class="nav-item">
+              <a
+                href={item.href}
+                class:list={['nav-link', { current: isCurrent }]}
+                aria-current={isCurrent ? 'page' : undefined}
+              >
+                <span class="nav-link-text">{item.name}</span>
+                <div class="nav-link-indicator" />
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+
+  <!-- Login Button -->
+  <div class="nav-actions">
+    <a
+      href="/login"
+      class:list={['login-btn', { current: currentPath === '/login' }]}
+      aria-label="登录"
+    >
+      <span class="login-text">Login</span>
+      <div class="login-icon">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            d="M10 17L15 12L10 7"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            d="M15 12H3"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </div>
+    </a>
   </div>
 </nav>
 
@@ -51,14 +117,15 @@ function isCurrentPage(href: string): boolean {
 </script>
 
 <style>
+  /* M3 + Morphic Glass Navigation */
   .nav {
     position: fixed;
-    height: 75px;
+    height: 80px;
     display: flex;
     width: 95%;
     left: 2.5%;
     top: 2.5%;
-    padding: 0.5rem 1rem;
+    padding: 0 2rem;
     transition:
       top 1s ease,
       left 1s ease,
@@ -66,194 +133,362 @@ function isCurrentPage(href: string): boolean {
       width 1s ease,
       border-radius 1s ease,
       background-color 1s ease,
-      box-shadow 1s ease;
+      backdrop-filter 1s ease,
+      box-shadow 1s ease,
+      transform 0.3s ease;
     justify-content: space-between;
     align-items: center;
-    border-radius: 15px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
     z-index: 9999;
 
-    /* Simple background without backdrop-filter */
-    background: rgba(var(--md-sys-color-surface-rgb), 0.9);
-    border: 1px solid rgba(var(--md-sys-color-outline-variant-rgb), 0.2);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    /* M3 + Morphic Glass Effect */
+    background: rgba(var(--md-sys-color-surface-container), 0.85);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.3);
+    box-shadow:
+      0 8px 32px rgba(var(--md-sys-color-shadow), 0.12),
+      0 2px 8px rgba(var(--md-sys-color-shadow), 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  /* Sticky navigation state - like React version */
+  /* Sticky navigation state */
   .ceil_nav {
     top: 0;
     left: 0;
     width: 100vw;
-    border-radius: 0px;
-    background: rgba(var(--md-sys-color-surface-rgb), 0.7);
+    border-radius: 0;
+    background: rgba(var(--md-sys-color-surface), 0.9);
+    backdrop-filter: blur(32px) saturate(2);
+    -webkit-backdrop-filter: blur(32px) saturate(2);
     border: none;
-    border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant-rgb), 0.3);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.4);
+    box-shadow:
+      0 4px 24px rgba(var(--md-sys-color-shadow), 0.15),
+      0 1px 4px rgba(var(--md-sys-color-shadow), 0.1);
   }
 
-  /* Hover state like React version */
+  /* Enhanced hover state */
   .nav:hover {
-    background: rgba(var(--md-sys-color-surface-rgb), 0.9);
-    box-shadow: 0 1px 40px -8px rgba(0, 0, 0, 0.5);
+    background: rgba(var(--md-sys-color-surface-container-high), 0.9);
+    backdrop-filter: blur(28px) saturate(2);
+    -webkit-backdrop-filter: blur(28px) saturate(2);
+    box-shadow:
+      0 12px 40px rgba(var(--md-sys-color-shadow), 0.16),
+      0 4px 12px rgba(var(--md-sys-color-shadow), 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 
-  .nav ul {
-    /* Relative to parent element center like React version */
-    display: inline-block;
+  /* Logo Section */
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .logo-link {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+  }
+
+  .logo-link:hover {
+    transform: scale(1.02);
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    background: rgba(var(--md-sys-color-primary), 0.12);
+    color: rgb(var(--md-sys-color-primary));
+    transition: all 0.3s ease;
+  }
+
+  .logo-link:hover .logo-icon {
+    background: rgba(var(--md-sys-color-primary), 0.16);
+    transform: rotate(5deg);
+  }
+
+  .logo-text {
+    font-size: var(--md-sys-typescale-title-large);
+    font-weight: 600;
+    color: rgb(var(--md-sys-color-on-surface));
+    letter-spacing: -0.5px;
+  }
+
+  /* Navigation Menu */
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .nav li {
-    /* Horizontal arrangement like React version */
-    display: inline-block;
-    margin: 0 1rem;
-  }
-
-  .nav li a {
+  .nav-item {
     position: relative;
-    color: rgb(var(--md-sys-color-on-surface));
-    text-decoration: none;
-    font-size: 1.2rem;
-    transition:
-      color 0.2s ease-out,
-      border 0.2s ease-out,
-      opacity 0.2s ease-out;
-    width: 100%;
-    display: block;
-    padding: 0.5rem 1rem;
   }
 
-  /* Hover color change like React version */
-  .nav li a:hover {
-    color: rgb(var(--md-sys-color-primary));
-  }
-
-  /* Animated underline like React version */
-  .nav li a:after {
-    content: '';
-    display: block;
+  .nav-link {
     position: relative;
-    height: 6px;
-    background-color: rgb(var(--md-sys-color-primary));
-    width: 100%;
-    max-width: 0;
-    bottom: -1.3rem;
-    transition: max-width 0.25s ease-in-out;
-  }
-
-  .nav li a:hover:after {
-    max-width: 100%;
-  }
-
-  .nav li a:focus-visible {
-    outline: 2px solid rgb(var(--md-sys-color-primary));
-    outline-offset: 2px;
-  }
-
-  .nav li a:active::before {
-    opacity: 0.12;
-  }
-
-  /* Current page indicator */
-  .nav li a.current {
-    color: rgb(var(--md-sys-color-on-primary-container));
-    background-color: rgb(var(--md-sys-color-primary-container));
-    pointer-events: none;
-    cursor: default;
-  }
-
-  .nav li a:not(.current):hover {
-    color: rgb(var(--md-sys-color-primary));
-    background-color: rgb(var(--md-sys-color-surface-container-high));
-  }
-
-  /* Material Design 3 indicator bar */
-  .nav li a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    height: 3px;
-    width: calc(100% - 32px);
-    background-color: rgb(var(--md-sys-color-primary));
-    border-radius: var(--md-sys-shape-corner-full) var(--md-sys-shape-corner-full) 0 0;
-    transition: transform var(--md-sys-motion-duration-medium2)
-      var(--md-sys-motion-easing-emphasized);
-    transform-origin: center;
-  }
-
-  .nav li a:hover::after {
-    transform: translateX(-50%) scaleX(1);
-  }
-
-  .nav li a.current::after {
-    transform: translateX(-50%) scaleX(1);
-  }
-
-  /* Login button with Material Design 3 */
-  .login {
-    margin-left: auto;
-  }
-
-  .login a {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    height: 40px;
-    padding: 0 24px;
+    padding: 12px 20px;
     border-radius: var(--md-sys-shape-corner-full);
-    background: rgb(var(--md-sys-color-primary));
-    color: rgb(var(--md-sys-color-on-primary));
+    text-decoration: none;
     font-size: var(--md-sys-typescale-label-large);
     font-weight: 500;
-    letter-spacing: 0.1px;
-    text-decoration: none;
-    transition:
-      background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
-      color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
-      transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
-      box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
-    position: relative;
+    color: rgb(var(--md-sys-color-on-surface));
+    transition: all 0.3s var(--md-sys-motion-easing-emphasized);
     overflow: hidden;
   }
 
-  .login a::before {
+  .nav-link::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: currentColor;
-    opacity: 0;
-    transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    inset: 0;
+    background: rgba(var(--md-sys-color-primary), 0);
+    border-radius: inherit;
+    transition: background-color 0.3s ease;
   }
 
-  .login a:hover {
+  .nav-link:hover::before {
+    background: rgba(var(--md-sys-color-primary), 0.08);
+  }
+
+  .nav-link:hover {
+    color: rgb(var(--md-sys-color-primary));
+  }
+
+  /* Navigation Link Text */
+  .nav-link-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Navigation Link Indicator */
+  .nav-link-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    height: 3px;
+    width: calc(100% - 24px);
+    background: rgb(var(--md-sys-color-primary));
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: transform 0.3s var(--md-sys-motion-easing-emphasized);
+    overflow: hidden;
+  }
+
+  /* 指示器渐变动画层 */
+  .nav-link-indicator::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgb(var(--md-sys-color-tertiary)),
+      rgb(var(--md-sys-color-secondary))
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .nav-link:hover .nav-link-indicator {
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  .nav-link:hover .nav-link-indicator::before {
+    transform: translateX(0);
+  }
+
+  /* Current page state */
+  .nav-link.current {
+    color: rgb(var(--md-sys-color-on-primary-container));
+    background: rgba(var(--md-sys-color-primary-container), 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .nav-link.current::before {
+    background: rgba(var(--md-sys-color-primary), 0.12);
+  }
+
+  .nav-link.current .nav-link-indicator {
+    transform: translateX(-50%) scaleX(1);
+    background: rgb(var(--md-sys-color-primary));
+  }
+
+  .nav-link.current .nav-link-indicator::before {
+    transform: translateX(0);
+  }
+
+  /* Focus states */
+  .nav-link:focus-visible {
+    outline: 2px solid rgb(var(--md-sys-color-primary));
+    outline-offset: 2px;
+    border-radius: var(--md-sys-shape-corner-full);
+  }
+
+  /* Login Button Actions */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .login-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 20px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: rgba(var(--md-sys-color-primary), 0.9);
+    color: rgb(var(--md-sys-color-on-primary));
+    text-decoration: none;
+    font-size: var(--md-sys-typescale-label-large);
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    transition:
+      transform 0.3s var(--md-sys-motion-easing-emphasized),
+      box-shadow 0.3s var(--md-sys-motion-easing-emphasized),
+      background-color 0.3s var(--md-sys-motion-easing-emphasized);
     box-shadow:
-      0 1px 2px 0 rgba(0, 0, 0, 0.3),
-      0 1px 3px 1px rgba(0, 0, 0, 0.15);
-    transform: translateY(-1px);
+      0 4px 12px rgba(var(--md-sys-color-primary), 0.3),
+      0 2px 4px rgba(var(--md-sys-color-shadow), 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
-  .login a:hover::before {
-    opacity: 0.08;
+  /* 渐变动画层 */
+  .login-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--md-sys-color-tertiary), 0.8),
+      rgba(var(--md-sys-color-secondary), 0.6)
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: inherit;
   }
 
-  .login a:focus-visible {
+  .login-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    transition: background-color 0.3s ease;
+    border-radius: inherit;
+  }
+
+  .login-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+      0 8px 24px rgba(var(--md-sys-color-primary), 0.4),
+      0 4px 8px rgba(var(--md-sys-color-shadow), 0.15);
+    background: rgba(var(--md-sys-color-primary), 1);
+  }
+
+  .login-btn:hover::before {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .login-btn:hover::after {
+    opacity: 1;
+  }
+
+  .login-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+  }
+
+  .login-btn:hover .login-icon {
+    transform: translateX(2px);
+  }
+
+  /* Current state for login */
+  .login-btn.current {
+    background: rgba(var(--md-sys-color-tertiary), 0.9);
+    color: rgb(var(--md-sys-color-on-tertiary));
+  }
+
+  .login-btn.current::after {
+    opacity: 1;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--md-sys-color-secondary), 0.8),
+      rgba(var(--md-sys-color-primary), 0.6)
+    );
+  }
+
+  /* Focus states */
+  .login-btn:focus-visible {
     outline: 2px solid rgb(var(--md-sys-color-primary));
     outline-offset: 2px;
   }
 
-  .login a:active::before {
-    opacity: 0.12;
+  /* 关键帧动画 */
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
-  .login a.current {
-    background: rgb(var(--md-sys-color-primary-container));
-    color: rgb(var(--md-sys-color-on-primary-container));
+  @keyframes pulseGlow {
+    0%,
+    100% {
+      box-shadow:
+        0 4px 12px rgba(var(--md-sys-color-primary), 0.3),
+        0 2px 4px rgba(var(--md-sys-color-shadow), 0.1);
+    }
+    50% {
+      box-shadow:
+        0 6px 16px rgba(var(--md-sys-color-primary), 0.4),
+        0 3px 6px rgba(var(--md-sys-color-shadow), 0.15);
+    }
+  }
+
+  /* 为登录按钮添加微妙的脉冲效果 */
+  .login-btn.current {
+    animation: pulseGlow 3s ease-in-out infinite;
   }
 
   /* Responsive adjustments */
@@ -263,8 +498,8 @@ function isCurrentPage(href: string): boolean {
       left: 8px;
       right: 8px;
       top: 8px;
-      padding: 0 16px;
-      height: 56px;
+      padding: 0 1rem;
+      height: 64px;
     }
 
     .ceil_nav {
@@ -274,36 +509,135 @@ function isCurrentPage(href: string): boolean {
       top: 0;
     }
 
-    .nav li {
-      margin: 0;
+    /* Logo adjustments */
+    .logo-container {
+      gap: 8px;
     }
 
-    .nav li a {
-      padding: 0 12px;
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    .logo-text {
+      font-size: var(--md-sys-typescale-title-medium);
+    }
+
+    /* Navigation menu adjustments */
+    .nav-list {
+      gap: 4px;
+    }
+
+    .nav-link {
+      padding: 8px 12px;
       font-size: var(--md-sys-typescale-label-medium);
     }
 
-    .login a {
+    .nav-link-text {
+      display: none;
+    }
+
+    /* Show only icons on mobile - add icons to nav items */
+    .nav-link::after {
+      content: attr(data-icon);
+      font-size: 20px;
+    }
+
+    /* Login button adjustments */
+    .login-btn {
+      height: 40px;
       padding: 0 16px;
+      gap: 6px;
+    }
+
+    .login-text {
+      display: none;
+    }
+
+    .login-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  /* Extra small screens */
+  @media (max-width: 480px) {
+    .nav {
+      padding: 0 0.75rem;
+      height: 56px;
+    }
+
+    .logo-text {
+      display: none;
+    }
+
+    .nav-list {
+      gap: 2px;
+    }
+
+    .nav-link {
+      padding: 6px 8px;
+    }
+
+    .login-btn {
       height: 36px;
+      padding: 0 12px;
     }
   }
 
   /* Dark mode adjustments */
   @media (prefers-color-scheme: dark) {
     .nav {
-      background-color: rgb(var(--md-sys-color-surface-container));
+      background: rgba(var(--md-sys-color-surface-container), 0.9);
+      backdrop-filter: blur(32px) saturate(1.5);
+      -webkit-backdrop-filter: blur(32px) saturate(1.5);
+      border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.4);
       box-shadow:
-        0 1px 3px 0 rgba(0, 0, 0, 0.3),
-        0 4px 8px 0 rgba(0, 0, 0, 0.15);
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
     .ceil_nav {
-      background-color: rgb(var(--md-sys-color-surface));
+      background: rgba(var(--md-sys-color-surface), 0.95);
+      backdrop-filter: blur(40px) saturate(1.8);
+      -webkit-backdrop-filter: blur(40px) saturate(1.8);
+      border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.5);
     }
 
-    .nav:not(.ceil_nav):hover {
-      background-color: rgb(var(--md-sys-color-surface-container-high));
+    .nav:hover {
+      background: rgba(var(--md-sys-color-surface-container-high), 0.95);
+      backdrop-filter: blur(36px) saturate(2);
+      -webkit-backdrop-filter: blur(36px) saturate(2);
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    /* Enhanced glass effect for login button in dark mode */
+    .login-btn {
+      background: rgba(var(--md-sys-color-primary), 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow:
+        0 4px 16px rgba(var(--md-sys-color-primary), 0.4),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-btn::after {
+      background: linear-gradient(
+        135deg,
+        rgba(var(--md-sys-color-tertiary), 0.7),
+        rgba(var(--md-sys-color-secondary), 0.5)
+      );
+    }
+
+    .login-btn:hover {
+      background: rgba(var(--md-sys-color-primary), 0.9);
+      box-shadow:
+        0 8px 28px rgba(var(--md-sys-color-primary), 0.5),
+        0 4px 8px rgba(0, 0, 0, 0.3);
     }
   }
 </style>
