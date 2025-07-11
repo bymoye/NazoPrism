@@ -1,4 +1,4 @@
-import ThemeManager from '../utils/theme-manager';
+import { themeManager } from '../utils/theme-manager';
 import { onScroll } from './global-event-manager';
 import { onPageVisibilityChange } from './page-visibility-manager';
 
@@ -44,7 +44,6 @@ export class BackgroundCarouselManager {
   private state: CarouselState;
   private imageCache = new Map<string, ImageCacheData>(); // 合并的缓存结构
   private activeAnimations = new Map<HTMLElement | string, number>(); // 支持元素和全局动画
-  private themeManager: ThemeManager;
 
   constructor(backgrounds: string[]) {
     this.state = {
@@ -61,7 +60,6 @@ export class BackgroundCarouselManager {
       originalTitle: document.title,
       allThemeColorsExtracted: false,
     };
-    this.themeManager = ThemeManager.getInstance();
 
     // 将实例暴露到全局，以便 ThemeManager 可以访问缓存的 Blob 数据
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -269,25 +267,25 @@ export class BackgroundCarouselManager {
 
   // 从背景图片更新主题
   private async updateThemeFromBackground(imageUrl: string): Promise<void> {
-    const isDark = this.themeManager.prefersDarkMode();
+    const isDark = themeManager.prefersDarkMode();
 
     // 检查缓存
     const cachedColor = this.getCachedThemeColor(imageUrl);
     if (cachedColor !== undefined) {
-      await this.themeManager.updateThemeFromColor(cachedColor, isDark);
+      await themeManager.updateThemeFromColor(cachedColor, isDark);
       return;
     }
 
     // 提取新颜色
     try {
-      const extractedColor = await this.themeManager.updateThemeFromImage(imageUrl, isDark);
+      const extractedColor = await themeManager.updateThemeFromImage(imageUrl, isDark);
       if (extractedColor !== undefined) {
         this.setCachedThemeColor(imageUrl, extractedColor);
       }
     } catch {
       // 使用默认主题
-      const defaultTheme = this.themeManager.generateTheme(0xff6750a4, isDark);
-      this.themeManager.applyTheme(defaultTheme);
+      const defaultTheme = themeManager.generateTheme(0xff6750a4, isDark);
+      themeManager.applyTheme(defaultTheme);
     }
   }
 
@@ -356,7 +354,7 @@ export class BackgroundCarouselManager {
 
     if (allExtracted) {
       this.state.allThemeColorsExtracted = true;
-      this.themeManager.shutdownWorker();
+      themeManager.shutdown();
       console.log('🎨 所有背景图主题色提取完成，已关闭颜色提取Worker以节省资源');
     }
   }
@@ -388,7 +386,7 @@ export class BackgroundCarouselManager {
       this.state.bgLayer1.style.backgroundImage || this.state.bgLayer2.style.backgroundImage;
 
     if (hasExistingBackground) {
-      const themeInfo = this.themeManager.getPersistedThemeInfo();
+      const themeInfo = themeManager.getPersistedThemeInfo();
       if (!themeInfo.hasTheme) {
         const currentBgUrl = this.state.backgrounds[this.state.currentIndex];
         this.updateThemeFromBackground(currentBgUrl);
@@ -469,7 +467,7 @@ export class BackgroundCarouselManager {
         inactiveLayer.style.opacity = '0';
       }
 
-      const themeInfo = this.themeManager.getPersistedThemeInfo();
+      const themeInfo = themeManager.getPersistedThemeInfo();
       if (!themeInfo.hasTheme || themeInfo.imageUrl !== currentBgUrl) {
         this.updateThemeFromBackground(currentBgUrl);
       }

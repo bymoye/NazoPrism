@@ -1,66 +1,60 @@
-// 通用的滚动相关工具函数
+/**
+ * 通用的滚动相关工具函数 (专为现代浏览器优化)
+ */
 
 /**
- * 获取当前滚动位置
+ * 获取当前页面垂直滚动的距离。
+ * @returns {number} 滚动的像素值。
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollY
  */
 export function getScrollTop(): number {
-  return document.documentElement.scrollTop || document.body.scrollTop || 0;
+  return window.scrollY;
 }
 
 /**
- * 获取文档总高度
+ * 获取整个文档内容的总高度。
+ * @returns {number} 文档的总高度像素值。
  */
 export function getScrollHeight(): number {
-  return document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+  return document.documentElement.scrollHeight;
 }
 
 /**
- * 获取视口高度
+ * 获取浏览器视口（即可见区域）的高度。
+ * @returns {number} 视口的高度像素值。
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/innerHeight
  */
 export function getClientHeight(): number {
-  return document.documentElement.clientHeight || document.body.clientHeight || 0;
+  return window.innerHeight;
 }
 
 /**
- * 计算滚动百分比
+ * 计算当前滚动的百分比 (0 到 1 之间)。
+ * @returns {number} 滚动的百分比，例如 0.5 表示滚动了 50%。
  */
 export function getScrollPercent(): number {
-  const scrollTop = getScrollTop();
   const scrollHeight = getScrollHeight();
   const clientHeight = getClientHeight();
-  const maxScrollTop = scrollHeight - clientHeight;
 
-  if (maxScrollTop <= 0) return 0;
+  // 如果内容区域不足一屏，无法滚动，则百分比为 0。
+  if (scrollHeight <= clientHeight) {
+    return 0;
+  }
 
-  // 计算原始百分比
-  const rawPercent = scrollTop / maxScrollTop;
+  const scrollTop = getScrollTop();
+  const maxScrollable = scrollHeight - clientHeight;
+  const rawPercent = scrollTop / maxScrollable;
 
-  // 处理边界情况，确保精确的 0% 和 100%
-  if (rawPercent <= 0.001) return 0; // 接近顶部时返回 0
-  if (rawPercent >= 0.999) return 1; // 接近底部时返回 1
-
-  return Math.min(Math.max(rawPercent, 0), 1);
+  // 使用 Math.min 和 Math.max 进行“钳制”，确保结果总是在 [0, 1] 区间内。
+  return Math.max(0, Math.min(1, rawPercent));
 }
 
 /**
- * 平滑滚动到指定位置
+ * 平滑滚动到页面的指定垂直位置。
+ * 这是现代浏览器实现平滑滚动的最佳实践。
+ * @param {number} top - 滚动到的目标位置 (从页面顶部算起)。
+ * @param {ScrollBehavior} behavior - 滚动行为，默认为 'smooth'。
  */
 export function smoothScrollTo(top: number, behavior: ScrollBehavior = 'smooth'): void {
   window.scrollTo({ top, behavior });
-}
-
-/**
- * 检查元素是否在视口内
- */
-export function isInViewport(element: Element, threshold: number = 0): boolean {
-  const rect = element.getBoundingClientRect();
-  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-  const windowWidth = window.innerWidth || document.documentElement.clientWidth;
-
-  return (
-    rect.top <= windowHeight * (1 - threshold) &&
-    rect.bottom >= windowHeight * threshold &&
-    rect.left <= windowWidth * (1 - threshold) &&
-    rect.right >= windowWidth * threshold
-  );
 }

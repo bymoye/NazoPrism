@@ -4,7 +4,7 @@
 
 // Color Extraction Worker 消息类型
 export interface ColorExtractionWorkerMessage {
-  blob: Blob; // 直接传递图片 Blob 数据
+  arrayBuffer: ArrayBuffer;
   messageId: number;
 }
 

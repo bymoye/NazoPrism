@@ -3,78 +3,85 @@ import type { ColorExtractionWorkerMessage, ColorExtractionWorkerResponse } from
 
 declare const self: DedicatedWorkerGlobalScope;
 
+// --- Worker 内部常量 ---
+const MAX_IMAGE_SIZE = 80; // 缩放后的图片最大尺寸
+const QUANTIZATION_COLORS = 128; // 量化的目标颜色数
+const MIN_HCT_TONE = 5.0; // 过滤的最低 HCT Tone 值
+const MAX_HCT_TONE = 95.0; // 过滤的最高 HCT Tone 值
+const FALLBACK_COLOR_ERROR = 0xff6750a4; // 发生错误时的备用色 (M3 Purple)
+const DEFAULT_SEED_COLOR = 0xff78ccc0;
+/**
+ * Worker 的消息处理函数
+ */
 self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) {
-  const { blob, messageId } = e.data;
+  const { arrayBuffer, messageId } = e.data;
 
   try {
-    if (!blob) {
-      throw new Error('没有接收到有效的图片 Blob 数据');
+    if (!arrayBuffer) {
+      throw new Error('没有接收到有效的 ArrayBuffer 数据');
     }
 
-    // 在 Worker 中处理图片 Blob
-    const imageBitmap = await createImageBitmap(blob);
+    // 从接收到的 ArrayBuffer 重新创建一个 Blob 对象
+    const blob = new Blob([arrayBuffer]);
 
-    // 计算缩放尺寸以提高性能
-    const maxSize = 80;
-    const scale = Math.min(maxSize / imageBitmap.width, maxSize / imageBitmap.height, 1);
-    const width = Math.floor(imageBitmap.width * scale);
-    const height = Math.floor(imageBitmap.height * scale);
+    // [FIX] 修正：使用 Worker 内部的常量进行缩放
+    const imageBitmap = await createImageBitmap(blob, {
+      resizeWidth: MAX_IMAGE_SIZE,
+      resizeHeight: MAX_IMAGE_SIZE,
+      resizeQuality: 'low',
+    });
 
-    // 创建 OffscreenCanvas 并获取像素数据
-    const canvas = new OffscreenCanvas(width, height);
+    const canvas = new OffscreenCanvas(imageBitmap.width, imageBitmap.height);
     const ctx = canvas.getContext('2d');
-
     if (!ctx) {
       throw new Error('无法创建 OffscreenCanvas 上下文');
     }
 
-    // 绘制缩放后的图片
-    ctx.drawImage(imageBitmap, 0, 0, width, height);
+    ctx.drawImage(imageBitmap, 0, 0);
 
-    // 获取像素数据
-    const imageData = ctx.getImageData(0, 0, width, height);
+    const imageData = ctx.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+
+    imageBitmap.close(); // 及时释放 ImageBitmap 内存
     const pixelData = imageData.data;
 
-    // 这个数组只保存那些通过了过滤的、有代表性的颜色
-    const filteredPixels: number[] = [];
-
+    const opaquePixels: number[] = [];
     for (let i = 0; i < pixelData.length; i += 4) {
-      const a = pixelData[i + 3];
-      // 忽略透明或半透明像素
-      if (a < 255) {
+      if (pixelData[i + 3] < 255) {
         continue;
       }
-
-      const r = pixelData[i];
-      const g = pixelData[i + 1];
-      const b = pixelData[i + 2];
-      const argb = (a << 24) | (r << 16) | (g << 8) | b;
-
-      // 使用 HCT 颜色空间的 Tone (亮度, 0-100) 来判断
-      // 过滤掉几乎纯白 (Tone > 95) 或几乎纯黑 (Tone < 5) 的颜色
-      const hct = Hct.fromInt(argb);
-      if (hct.tone > 95.0 || hct.tone < 5.0) {
-        continue;
-      }
-
-      // 将通过所有考验的像素添加到数组中
-      filteredPixels.push(argb);
+      const argb =
+        (pixelData[i + 3] << 24) |
+        (pixelData[i] << 16) |
+        (pixelData[i + 1] << 8) |
+        pixelData[i + 2];
+      opaquePixels.push(argb);
     }
 
-    // 使用的像素数据进行量化和评分
-    const quantizationResult = QuantizerCelebi.quantize(filteredPixels, 128);
-    const ranked = Score.score(quantizationResult);
+    if (opaquePixels.length === 0) {
+      throw new Error('图片中没有不透明的像素');
+    }
 
-    // 直接取用评分最高的结果，并提供一个备用色
-    const extractedColor = ranked[0] || 0xff4285f4; // Google Blue as a fallback
-    const hexColor = hexFromArgb(extractedColor);
+    const quantizationResult = QuantizerCelebi.quantize(opaquePixels, QUANTIZATION_COLORS);
 
-    // 发送结果
+    const filteredQuantizationResult = new Map<number, number>();
+    for (const [color, count] of quantizationResult.entries()) {
+      const hct = Hct.fromInt(color);
+      if (hct.tone >= MIN_HCT_TONE && hct.tone <= MAX_HCT_TONE) {
+        filteredQuantizationResult.set(color, count);
+      }
+    }
+
+    const colorsToScore =
+      filteredQuantizationResult.size > 0 ? filteredQuantizationResult : quantizationResult;
+
+    const ranked = Score.score(colorsToScore);
+    const extractedColor = ranked[0] || DEFAULT_SEED_COLOR; // 如果评分无结果，也使用一个备用色
+
     const successResponse: ColorExtractionWorkerResponse = {
       messageId,
       success: true,
       color: extractedColor,
-      hex: hexColor,
+      hex: hexFromArgb(extractedColor),
     };
     self.postMessage(successResponse);
   } catch (error) {
@@ -82,8 +89,8 @@ self.onmessage = async function (e: MessageEvent<ColorExtractionWorkerMessage>) 
       messageId,
       success: false,
       error: error instanceof Error ? error.message : String(error),
-      color: 0xff6750a4,
-      hex: '#64B5B9FF',
+      color: FALLBACK_COLOR_ERROR,
+      hex: hexFromArgb(FALLBACK_COLOR_ERROR),
     };
     self.postMessage(errorResponse);
   }
