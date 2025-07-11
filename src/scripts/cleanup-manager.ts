@@ -15,7 +15,7 @@ class CleanupManager {
   private handlers: CleanupHandler[] = [];
   private isCleanupRegistered = false;
 
-  private constructor() { }
+  private constructor() {}
 
   static getInstance(): CleanupManager {
     if (!CleanupManager.instance) {

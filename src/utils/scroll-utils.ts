@@ -31,7 +31,15 @@ export function getScrollPercent(): number {
   const maxScrollTop = scrollHeight - clientHeight;
 
   if (maxScrollTop <= 0) return 0;
-  return Math.min(Math.max(scrollTop / maxScrollTop, 0), 1);
+
+  // 计算原始百分比
+  const rawPercent = scrollTop / maxScrollTop;
+
+  // 处理边界情况，确保精确的 0% 和 100%
+  if (rawPercent <= 0.001) return 0; // 接近顶部时返回 0
+  if (rawPercent >= 0.999) return 1; // 接近底部时返回 1
+
+  return Math.min(Math.max(rawPercent, 0), 1);
 }
 
 /**

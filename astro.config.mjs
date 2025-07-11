@@ -12,7 +12,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'material-color-utilities': ['@material/material-color-utilities'],
-          worker: ['./src/workers/color-extraction-worker.ts'],
+          worker: ['./src/utils/color-extraction-worker.ts'],
         },
       },
     },
@@ -21,11 +21,6 @@ export default defineConfig({
     css: {
       modules: {
         localsConvention: 'camelCase',
-      },
-    },
-    server: {
-      fs: {
-        strict: false,
       },
     },
     build: {

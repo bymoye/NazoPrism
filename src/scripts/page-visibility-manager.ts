@@ -15,7 +15,7 @@ class PageVisibilityManager {
   private isVisible: boolean = !document.hidden;
   private isInitialized = false;
 
-  private constructor() { }
+  private constructor() {}
 
   static getInstance(): PageVisibilityManager {
     if (!PageVisibilityManager.instance) {

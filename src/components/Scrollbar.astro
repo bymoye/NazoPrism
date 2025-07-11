@@ -22,8 +22,11 @@
     top: 0;
     left: 0;
     height: 3px;
-    transition-property: width, background;
-    transition-duration: 1s, 1s;
+    width: 0%;
+    background-color: rgb(var(--md-sys-color-primary));
+    transition:
+      width 0.3s ease-out,
+      background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
     z-index: 99999;
   }
 </style>

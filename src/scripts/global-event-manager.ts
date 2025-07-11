@@ -24,7 +24,7 @@ class GlobalEventManager {
 
   private isInitialized = false;
 
-  private constructor() { }
+  private constructor() {}
 
   static getInstance(): GlobalEventManager {
     if (!GlobalEventManager.instance) {
@@ -112,19 +112,6 @@ class GlobalEventManager {
     if (this.astroHandlers.delete(id)) removed.push('astro');
   }
 
-  // 移除自定义防抖实现，使用统一的工具函数
-
-  /**
-   * 获取当前注册的处理器统计
-   */
-  getStats(): { scroll: number; resize: number; astro: number } {
-    return {
-      scroll: this.scrollHandlers.size,
-      resize: this.resizeHandlers.size,
-      astro: this.astroHandlers.size,
-    };
-  }
-
   /**
    * 清理所有事件监听器
    */
@@ -178,11 +165,4 @@ export function offEvents(id: string): void {
  */
 export function initGlobalEventManager(): void {
   globalEventManager.init();
-}
-
-/**
- * 获取事件统计信息
- */
-export function getEventStats(): { scroll: number; resize: number; astro: number } {
-  return globalEventManager.getStats();
 }

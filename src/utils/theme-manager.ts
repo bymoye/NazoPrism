@@ -12,42 +12,42 @@ import ColorExtractionWorker from './color-extraction-worker.ts?worker';
  * 包含完整的 M3 颜色系统定义
  */
 export interface IThemeColors {
-    primary: string;
-    onPrimary: string;
-    primaryContainer: string;
-    onPrimaryContainer: string;
-    secondary: string;
-    onSecondary: string;
-    secondaryContainer: string;
-    onSecondaryContainer: string;
-    tertiary: string;
-    onTertiary: string;
-    tertiaryContainer: string;
-    onTertiaryContainer: string;
-    error: string;
-    onError: string;
-    errorContainer: string;
-    onErrorContainer: string;
-    background: string;
-    onBackground: string;
-    surface: string;
-    onSurface: string;
-    surfaceVariant: string;
-    onSurfaceVariant: string;
-    outline: string;
-    outlineVariant: string;
-    shadow: string;
-    scrim: string;
-    inverseSurface: string;
-    inverseOnSurface: string;
-    inversePrimary: string;
-    surfaceDim: string;
-    surfaceBright: string;
-    surfaceContainerLowest: string;
-    surfaceContainerLow: string;
-    surfaceContainer: string;
-    surfaceContainerHigh: string;
-    surfaceContainerHighest: string;
+  primary: string;
+  onPrimary: string;
+  primaryContainer: string;
+  onPrimaryContainer: string;
+  secondary: string;
+  onSecondary: string;
+  secondaryContainer: string;
+  onSecondaryContainer: string;
+  tertiary: string;
+  onTertiary: string;
+  tertiaryContainer: string;
+  onTertiaryContainer: string;
+  error: string;
+  onError: string;
+  errorContainer: string;
+  onErrorContainer: string;
+  background: string;
+  onBackground: string;
+  surface: string;
+  onSurface: string;
+  surfaceVariant: string;
+  onSurfaceVariant: string;
+  outline: string;
+  outlineVariant: string;
+  shadow: string;
+  scrim: string;
+  inverseSurface: string;
+  inverseOnSurface: string;
+  inversePrimary: string;
+  surfaceDim: string;
+  surfaceBright: string;
+  surfaceContainerLowest: string;
+  surfaceContainerLow: string;
+  surfaceContainer: string;
+  surfaceContainerHigh: string;
+  surfaceContainerHighest: string;
 }
 
 // SessionStorage 键名
@@ -102,9 +102,9 @@ const defaultThemeColors: IThemeColors = {
 
 // 全局主题状态 - 与背景轮播管理器一样，覆盖整个页面生命周期
 let globalThemeState: {
-    currentTheme: IThemeColors | null;
-    lastAppliedImageUrl: string | null;
-    pendingThemeUpdate: Promise<number> | null;
+  currentTheme: IThemeColors | null;
+  lastAppliedImageUrl: string | null;
+  pendingThemeUpdate: Promise<number> | null;
 } = {
   currentTheme: null,
   lastAppliedImageUrl: null,
@@ -116,21 +116,19 @@ class ThemeManager {
   private colorExtractionWorker: Worker | null = null;
   private workerMessageId = 0;
   private pendingWorkerRequests = new Map<
-        number,
-        { resolve: (color: number) => void; reject: (error: Error) => void }
-    >();
+    number,
+    { resolve: (color: number) => void; reject: (error: Error) => void }
+  >();
 
   private constructor() {
     this.initializeWorker();
   }
 
   /**
-           * 初始化 Worker 用于离屏颜色提取
-           */
+   * 初始化 Worker 用于离屏颜色提取
+   */
   private initializeWorker(): void {
     try {
-      // TODO: 重新启用 Worker 当兼容性问题解决后
-      // 使用 TypeScript Worker（Vite 会自动处理 .ts 文件）
       this.colorExtractionWorker = new ColorExtractionWorker();
 
       this.colorExtractionWorker.onmessage = (e: MessageEvent<WorkerMessageData>) => {
@@ -174,8 +172,8 @@ class ThemeManager {
   }
 
   /**
-           * Extract dominant color from image URL using Worker with blob data
-           */
+   * Extract dominant color from image URL using Worker with blob data
+   */
   async extractColorFromImage(imageUrl: string): Promise<number> {
     if (!this.colorExtractionWorker) {
       throw new Error('Color extraction worker is not available');
@@ -215,8 +213,8 @@ class ThemeManager {
   }
 
   /**
-           * 获取图片 Blob（优先从缓存）
-           */
+   * 获取图片 Blob（优先从缓存）
+   */
   private async getImageBlob(imageUrl: string): Promise<Blob> {
     // 尝试从缓存获取 Blob
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -233,8 +231,8 @@ class ThemeManager {
   }
 
   /**
-           * Generate Material Design 3 theme from source color
-           */
+   * Generate Material Design 3 theme from source color
+   */
   generateTheme(sourceColor: number, isDark: boolean = false): IThemeColors {
     // Create core palette from source color
     const palette = CorePalette.of(sourceColor);
@@ -298,8 +296,8 @@ class ThemeManager {
   }
 
   /**
-           * Convert hex color to RGB values
-           */
+   * Convert hex color to RGB values
+   */
   private hexToRgb(hex: string): string {
     // Remove # if present
     hex = hex.replace('#', '');
@@ -313,8 +311,8 @@ class ThemeManager {
   }
 
   /**
-           * 从 sessionStorage 加载主题色
-           */
+   * 从 sessionStorage 加载主题色
+   */
   private loadThemeFromSession(): IThemeColors | null {
     try {
       const storedTheme = sessionStorage.getItem(THEME_STORAGE_KEY);
@@ -328,8 +326,8 @@ class ThemeManager {
   }
 
   /**
-           * 保存主题色到 sessionStorage
-           */
+   * 保存主题色到 sessionStorage
+   */
   private saveThemeToSession(theme: IThemeColors): void {
     try {
       sessionStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
@@ -339,8 +337,8 @@ class ThemeManager {
   }
 
   /**
-           * 获取当前主题色（优先从 session，然后是内存，最后是默认）
-           */
+   * 获取当前主题色（优先从 session，然后是内存，最后是默认）
+   */
   public getCurrentTheme(): IThemeColors {
     // 1. 优先从内存中获取
     if (globalThemeState.currentTheme) {
@@ -360,8 +358,8 @@ class ThemeManager {
   }
 
   /**
-           * Apply theme to CSS variables with transition - 原子性操作，不可中断
-           */
+   * Apply theme to CSS variables with transition - 原子性操作，不可中断
+   */
   applyTheme(theme: IThemeColors): void {
     const root = document.documentElement;
 
@@ -388,8 +386,8 @@ class ThemeManager {
   }
 
   /**
-           * Update theme based on image URL - 确保主题变换不被打断
-           */
+   * Update theme based on image URL - 确保主题变换不被打断
+   */
   async updateThemeFromImage(
     imageUrl: string,
     isDark: boolean = false,
@@ -421,8 +419,8 @@ class ThemeManager {
   }
 
   /**
-           * Update theme based on extracted color - 使用缓存的颜色直接更新主题
-           */
+   * Update theme based on extracted color - 使用缓存的颜色直接更新主题
+   */
   async updateThemeFromColor(sourceColor: number, isDark: boolean = false): Promise<number> {
     try {
       const theme = this.generateTheme(sourceColor, isDark);
@@ -436,8 +434,8 @@ class ThemeManager {
   }
 
   /**
-           * 执行主题更新 - 不可中断的操作
-           */
+   * 执行主题更新 - 不可中断的操作
+   */
   private async performThemeUpdate(imageUrl: string, isDark: boolean): Promise<number> {
     try {
       const sourceColor = await this.extractColorFromImage(imageUrl);
@@ -452,15 +450,15 @@ class ThemeManager {
   }
 
   /**
-           * Check if user prefers dark mode
-           */
+   * Check if user prefers dark mode
+   */
   prefersDarkMode(): boolean {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
   /**
-           * 关闭颜色提取Worker以节省资源
-           */
+   * 关闭颜色提取Worker以节省资源
+   */
   shutdownWorker(): void {
     if (this.colorExtractionWorker) {
       this.colorExtractionWorker.terminate();
@@ -475,8 +473,8 @@ class ThemeManager {
   }
 
   /**
-           * 获取当前全局主题信息
-           */
+   * 获取当前全局主题信息
+   */
   public getPersistedThemeInfo(): { imageUrl: string | null; hasTheme: boolean } {
     return {
       imageUrl: globalThemeState.lastAppliedImageUrl,

@@ -12,6 +12,7 @@ export default {
   bracketSameLine: false,
   arrowParens: 'avoid',
   endOfLine: 'lf',
+  plugins: ['prettier-plugin-astro'],
   overrides: [
     {
       files: ['**/*.astro'],

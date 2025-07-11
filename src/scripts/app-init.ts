@@ -224,24 +224,6 @@ class AppInitializer {
 
     document.dispatchEvent(event);
   }
-
-  /**
-   * 获取应用状态
-   */
-  getStatus(): { initialized: boolean; config: AppConfig } {
-    return {
-      initialized: this.isInitialized,
-      config: this.config,
-    };
-  }
-
-  /**
-   * 更新配置
-   */
-  updateConfig(newConfig: Partial<AppConfig>): void {
-    this.config = { ...this.config, ...newConfig };
-    console.log('📋 Config updated:', this.config);
-  }
 }
 
 // 导出单例实例
@@ -252,13 +234,6 @@ export const appInitializer = AppInitializer.getInstance();
  */
 export function initApp(config?: Partial<AppConfig>): Promise<void> {
   return appInitializer.init(config);
-}
-
-/**
- * 获取应用状态
- */
-export function getAppStatus(): { initialized: boolean; config: AppConfig } {
-  return appInitializer.getStatus();
 }
 
 // 监听页面转换事件（Astro）

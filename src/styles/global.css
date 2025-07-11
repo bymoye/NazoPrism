@@ -30,33 +30,24 @@ body {
   box-sizing: border-box;
 }
 
-/* Theme transition for smooth color changes - uses CSS variable */
-body {
-  transition: color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
-}
-
-.theme-transition,
-.nav,
-.nav li a,
-.login a,
-button,
-.md-button,
-.md-card,
-.glass-surface,
-.glass-surface-strong,
-.glass-container,
-.glass-card,
-.glass-input {
+/* 全局颜色过渡动画 - 所有元素的颜色变化都有过渡效果 */
+*,
+*::before,
+*::after {
   transition:
-    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     border-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    outline-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     box-shadow var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
     fill var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
-    stroke var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
+    stroke var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    text-decoration-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    caret-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
 }
 
-/* Material Design 3 滚动条样式 */
+/* Material Design 3 滚动条样式 - 跟随主题色 */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -71,7 +62,7 @@ button,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--md-sys-color-outline-variant));
+  background: rgb(var(--md-sys-color-primary));
   border-radius: var(--md-sys-shape-corner-small);
   border: 1px solid rgb(var(--md-sys-color-surface-container-low));
   transition:
@@ -80,19 +71,19 @@ button,
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--md-sys-color-on-surface-variant));
+  background: rgb(var(--md-sys-color-primary-container));
   border-color: rgb(var(--md-sys-color-surface-container));
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: rgb(var(--md-sys-color-primary));
-  border-color: rgb(var(--md-sys-color-primary-container));
+  background: rgb(var(--md-sys-color-secondary));
+  border-color: rgb(var(--md-sys-color-secondary-container));
 }
 
-/* Firefox Material Design 3 滚动条样式 */
+/* Firefox Material Design 3 滚动条样式 - 跟随主题色 */
 html {
   scrollbar-width: thin;
-  scrollbar-color: rgb(var(--md-sys-color-outline-variant)) rgb(var(--md-sys-color-surface-container-low));
+  scrollbar-color: rgb(var(--md-sys-color-primary)) rgb(var(--md-sys-color-surface-container-low));
   transition: scrollbar-color var(--md-sys-motion-duration-theme)
     var(--md-sys-motion-easing-emphasized);
 }
