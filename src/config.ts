@@ -1,6 +1,6 @@
 // Site configuration
 export const SITE_CONFIG = {
-  title: 'Sakura_re',
+  title: 'NazoPrism',
   description: '沉淪在無盡的深淵中...',
   author: 'bymoye',
   url: 'https://nazo-prism.vercel.app',

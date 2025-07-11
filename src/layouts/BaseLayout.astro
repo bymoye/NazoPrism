@@ -6,7 +6,7 @@ export interface Props {
   description?: string;
 }
 
-const { title = 'Sakura_re', description = '沉淪在無盡的深淵中...' } = Astro.props;
+const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = Astro.props;
 ---
 
 <!doctype html>
@@ -72,11 +72,7 @@ const { title = 'Sakura_re', description = '沉淪在無盡的深淵中...' } = 
   </head>
   <body>
     <!-- 背景轮播容器 - 整个容器都被持久化，确保在页面切换时不被重新渲染 -->
-    <div
-      id="background-carousel-container"
-      transition:persist="background-carousel"
-      transition:persist-props
-    >
+    <div id="background-carousel-container" transition:persist="background-carousel">
       <div
         id="bg-layer-1"
         style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-2;opacity:0;pointer-events:none;"
