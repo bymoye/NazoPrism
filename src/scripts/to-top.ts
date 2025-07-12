@@ -1,90 +1,101 @@
+/**
+ * @file src/scripts/to-top.ts
+ * @description 返回顶部按钮管理器
+ */
+
 import { getScrollTop, smoothScrollTo } from '../utils/scroll-utils';
 import { offEvents, onScroll } from './global-event-manager';
+import { registerGlobalCleanup } from './cleanup-manager';
 
-// ToTop button manager
-export class ToTopManager {
-  private button: HTMLElement | null;
-  private isVisible: boolean = false;
-  private clickHandler: (() => void) | null = null;
-  private readonly SCROLL_THRESHOLD = 300;
-  private readonly id = 'to-top';
-  private lastScrollTop = 0;
+const EVENT_ID = 'to-top';
+const SCROLL_THRESHOLD = 300; // 显示按钮的滚动阈值
 
-  constructor() {
-    this.button = document.getElementById('to-top');
-    this.init();
+const state = {
+  button: null as HTMLElement | null,
+  isVisible: false,
+  lastScrollTop: 0,
+};
+
+let isInitialized = false;
+
+const updateVisibility = () => {
+  if (!state.button) return;
+
+  const scrollTop = getScrollTop();
+
+  // 避免微小滚动的性能优化
+  if (Math.abs(scrollTop - state.lastScrollTop) < 20) {
+    return;
+  }
+  state.lastScrollTop = scrollTop;
+
+  const shouldShow = scrollTop > SCROLL_THRESHOLD;
+
+  // 仅在状态变化时操作 DOM
+  if (shouldShow !== state.isVisible) {
+    state.isVisible = shouldShow;
+    state.button.classList.toggle('show', shouldShow);
+  }
+};
+
+// 点击事件处理器
+const scrollToTop = () => {
+  smoothScrollTo(0);
+};
+
+function initInternal(): void {
+  // 绑定滚动事件
+  onScroll(EVENT_ID, updateVisibility);
+
+  // 直接绑定点击事件
+  if (state.button) {
+    state.button.addEventListener('click', scrollToTop);
   }
 
-  private updateVisibility = (): void => {
-    const scrollTop = getScrollTop();
-
-    const scrollDifference = Math.abs(scrollTop - this.lastScrollTop);
-    if (scrollDifference < 20) return;
-
-    this.lastScrollTop = scrollTop;
-    const shouldShow = scrollTop > this.SCROLL_THRESHOLD;
-
-    if (shouldShow !== this.isVisible) {
-      this.isVisible = shouldShow;
-      if (this.button) {
-        if (this.isVisible) {
-          this.button.classList.add('show');
-        } else {
-          this.button.classList.remove('show');
-        }
-      }
-    }
-  };
-
-  private scrollToTop = (): void => {
-    smoothScrollTo(0);
-  };
-
-  private init(): void {
-    if (!this.button) return;
-
-    this.clickHandler = this.scrollToTop;
-
-    // 使用全局事件管理器添加滚动事件监听
-    onScroll(this.id, this.updateVisibility);
-
-    // 添加点击事件监听
-    this.button.addEventListener('click', this.clickHandler);
-
-    // 初始状态检查
-    this.updateVisibility();
-  }
-
-  public destroy(): void {
-    // 使用全局事件管理器移除滚动事件监听器
-    offEvents(this.id);
-
-    if (this.button && this.clickHandler) {
-      this.button.removeEventListener('click', this.clickHandler);
-    }
-  }
-
-  public reinit(): void {
-    this.destroy();
-    this.button = document.getElementById('to-top');
-    this.init();
-  }
+  // 初始化时立即更新一次可见性
+  updateVisibility();
 }
 
-// 全局实例管理
-let toTopManager: ToTopManager | null = null;
-
-export function initToTop(): void {
-  if (toTopManager) {
-    toTopManager.reinit();
-  } else {
-    toTopManager = new ToTopManager();
-  }
-}
-
+/**
+ * 销毁返回顶部按钮的所有逻辑
+ */
 export function destroyToTop(): void {
-  if (toTopManager) {
-    toTopManager.destroy();
-    toTopManager = null;
+  if (!isInitialized) return;
+
+  // 清理滚动事件监听
+  offEvents(EVENT_ID);
+
+  // 清理点击事件监听
+  if (state.button) {
+    state.button.removeEventListener('click', scrollToTop);
+  }
+
+  state.button = null;
+  isInitialized = false;
+}
+
+/**
+ * 初始化返回顶部按钮
+ */
+export function initToTop(): void {
+  state.button = document.getElementById('to-top');
+
+  if (!state.button) {
+    if (isInitialized) {
+      destroyToTop();
+    }
+    return;
+  }
+
+  if (isInitialized) {
+    // 页面切换后，只需确保按钮状态正确
+    updateVisibility();
+  } else {
+    // 首次初始化
+    initInternal();
+    isInitialized = true;
+
+    // 职责明确：自己注册自己的全局清理任务
+    registerGlobalCleanup(destroyToTop);
   }
 }

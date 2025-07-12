@@ -1,110 +1,96 @@
+const pageHandlers = new Set<() => void>();
+const globalHandlers = new Set<() => void>();
+let areListenersRegistered = false;
+
 /**
- * Global Cleanup Manager
- * 管理所有组件的清理，防止内存泄漏
+ * 执行所有页面级的清理函数。
+ * 由 astro:before-swap 事件调用。
  */
-
-import { destroyProgressBar } from './progress-bar';
-
-interface CleanupHandler {
-  name: string;
-  cleanup: () => void;
-}
-
-class CleanupManager {
-  private static instance: CleanupManager;
-  private handlers: CleanupHandler[] = [];
-  private isCleanupRegistered = false;
-
-  private constructor() {}
-
-  static getInstance(): CleanupManager {
-    if (!CleanupManager.instance) {
-      CleanupManager.instance = new CleanupManager();
+function cleanupPageScope(): void {
+  console.log('🧹 Running page-scope cleanup for', pageHandlers.size, 'tasks.');
+  pageHandlers.forEach(cleanup => {
+    try {
+      cleanup();
+    } catch (e) {
+      console.error('[CleanupManager] Error during page cleanup:', e);
     }
-    return CleanupManager.instance;
-  }
-
-  /**
-   * 注册清理处理器
-   */
-  register(name: string, cleanup: () => void): void {
-    this.handlers.push({ name, cleanup });
-
-    // 第一次注册时设置页面卸载监听器
-    if (!this.isCleanupRegistered) {
-      this.setupCleanupListeners();
-      this.isCleanupRegistered = true;
-    }
-  }
-
-  /**
-   * 移除清理处理器
-   */
-  unregister(name: string): void {
-    const index = this.handlers.findIndex(h => h.name === name);
-    if (index !== -1) {
-      this.handlers.splice(index, 1);
-    }
-  }
-
-  /**
-   * 执行所有清理
-   */
-  cleanupAll(): void {
-    this.handlers.forEach(({ cleanup }) => {
-      try {
-        cleanup();
-      } catch {
-        // 静默处理错误
-      }
-    });
-
-    this.handlers = [];
-  }
-
-  /**
-   * 设置页面卸载监听器
-   */
-  private setupCleanupListeners(): void {
-    // 页面卸载时清理
-    window.addEventListener('beforeunload', () => {
-      this.cleanupAll();
-    });
-  }
-}
-
-/**
- * 全局清理管理器实例
- */
-export const cleanupManager = CleanupManager.getInstance();
-
-/**
- * 注册组件清理
- */
-export function registerCleanup(name: string, cleanup: () => void): void {
-  cleanupManager.register(name, cleanup);
-}
-
-/**
- * 移除组件清理
- */
-export function unregisterCleanup(name: string): void {
-  cleanupManager.unregister(name);
-}
-
-/**
- * 手动执行清理
- */
-export function performCleanup(): void {
-  cleanupManager.cleanupAll();
-}
-
-/**
- * 初始化清理管理器
- */
-export function initCleanupManager(): void {
-  // 注册内置组件的清理
-  registerCleanup('progress-bar', () => {
-    destroyProgressBar();
   });
+  pageHandlers.clear(); // 清理完后清空
+}
+
+/**
+ * 执行所有全局级的清理函数。
+ * 由 beforeunload 事件调用。
+ */
+function cleanupGlobalScope(): void {
+  console.log('🌍 Running global-scope cleanup for', globalHandlers.size, 'tasks.');
+  globalHandlers.forEach(cleanup => {
+    try {
+      cleanup();
+    } catch (e) {
+      console.error('[CleanupManager] Error during global cleanup:', e);
+    }
+  });
+  globalHandlers.clear();
+}
+
+/**
+ * 确保事件监听器只被注册一次。
+ */
+function ensureListeners(): void {
+  if (areListenersRegistered) return;
+
+  // 监听 Astro 的页面交换事件，用于页面级清理
+  document.addEventListener('astro:before-swap', cleanupPageScope);
+
+  // 监听浏览器卸载事件，用于全局清理
+  window.addEventListener('beforeunload', cleanupGlobalScope);
+
+  areListenersRegistered = true;
+}
+
+/**
+ * 注册一个【页面级】的清理函数。
+ * 它会在每次 Astro 页面导航时被自动执行和清理。
+ * @param cleanup 要执行的清理函数。
+ * @returns 一个函数，调用它即可手动注销此清理任务。
+ */
+export function registerPageCleanup(cleanup: () => void): () => void {
+  ensureListeners();
+  pageHandlers.add(cleanup);
+
+  return () => {
+    pageHandlers.delete(cleanup);
+  };
+}
+
+/**
+ * 注册一个【全局级】的清理函数。
+ * 它只会在用户关闭标签页或离开网站时执行一次。
+ * @param cleanup 要执行的清理函数。
+ * @returns 一个函数，调用它即可手动注销此清理任务。
+ */
+export function registerGlobalCleanup(cleanup: () => void): () => void {
+  ensureListeners();
+  globalHandlers.add(cleanup);
+
+  return () => {
+    globalHandlers.delete(cleanup);
+  };
+}
+
+/**
+ * 手动触发所有【页面级】清理。
+ * 主要用于调试或特殊场景。
+ */
+export function performPageCleanup(): void {
+  cleanupPageScope();
+}
+
+/**
+ * 手动触发所有【全局级】清理。
+ * 主要用于调试或特殊场景。
+ */
+export function performGlobalCleanup(): void {
+  cleanupGlobalScope();
 }

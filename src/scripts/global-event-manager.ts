@@ -1,168 +1,80 @@
 /**
- * Global Event Manager
- * 统一管理所有事件监听器，防止重复注册和内存泄漏
- * 使用统一的工具函数，避免重复实现
+ * @file src/scripts/global-event-manager.ts
+ * @description 高性能全局事件管理器
  */
 
 import { debounce, createScrollProcessor } from '../utils/debounce';
 
-interface EventHandler {
-  id: string;
-  handler: () => void;
-  options?: AddEventListenerOptions;
-}
+const scrollHandlers = new Map<string, () => void>();
+const resizeHandlers = new Map<string, () => void>();
+const astroHandlers = new Map<string, () => void>();
 
-class GlobalEventManager {
-  private static instance: GlobalEventManager;
-  private scrollHandlers: Map<string, EventHandler> = new Map();
-  private resizeHandlers: Map<string, EventHandler> = new Map();
-  private astroHandlers: Map<string, EventHandler> = new Map();
+let isInitialized = false;
 
-  private scrollListener: (() => void) | null = null;
-  private resizeListener: (() => void) | null = null;
-  private astroListener: (() => void) | null = null;
-
-  private isInitialized = false;
-
-  private constructor() {}
-
-  static getInstance(): GlobalEventManager {
-    if (!GlobalEventManager.instance) {
-      GlobalEventManager.instance = new GlobalEventManager();
+// 统一的事件分发器，增加了开发模式下的错误提示
+const createDispatcher = (handlers: Map<string, () => void>, eventName: string) => () => {
+  handlers.forEach((handler, id) => {
+    try {
+      handler();
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.warn(`[EventManager] Error in '${eventName}' handler with ID '${id}':`, error);
+      }
     }
-    return GlobalEventManager.instance;
-  }
-
-  /**
-   * 初始化全局事件监听器
-   */
-  init(): void {
-    if (this.isInitialized) return;
-
-    // 创建统一的 scroll 监听器 - 使用高性能滚动防抖，带阈值检查
-    this.scrollListener = createScrollProcessor(_ => {
-      this.scrollHandlers.forEach(({ handler }) => {
-        try {
-          handler();
-        } catch {
-          // 静默处理错误
-        }
-      });
-    }, 2); // 2px 阈值
-
-    // 创建统一的 resize 监听器 - 使用传统防抖
-    this.resizeListener = debounce(() => {
-      this.resizeHandlers.forEach(({ handler }) => {
-        try {
-          handler();
-        } catch {
-          // 静默处理错误
-        }
-      });
-    }, 100);
-
-    // 创建统一的 Astro 页面加载监听器
-    this.astroListener = () => {
-      this.astroHandlers.forEach(({ handler }) => {
-        try {
-          handler();
-        } catch {
-          // 静默处理错误
-        }
-      });
-    };
-
-    // 注册全局监听器
-    window.addEventListener('scroll', this.scrollListener, { passive: true });
-    window.addEventListener('resize', this.resizeListener, { passive: true });
-    document.addEventListener('astro:page-load', this.astroListener);
-
-    this.isInitialized = true;
-  }
-
-  /**
-   * 注册 scroll 事件处理器
-   */
-  onScroll(id: string, handler: () => void, options?: AddEventListenerOptions): void {
-    this.scrollHandlers.set(id, { id, handler, options });
-  }
-
-  /**
-   * 注册 resize 事件处理器
-   */
-  onResize(id: string, handler: () => void, options?: AddEventListenerOptions): void {
-    this.resizeHandlers.set(id, { id, handler, options });
-  }
-
-  /**
-   * 注册 Astro 页面加载事件处理器
-   */
-  onAstroPageLoad(id: string, handler: () => void, options?: AddEventListenerOptions): void {
-    this.astroHandlers.set(id, { id, handler, options });
-  }
-
-  /**
-   * 移除指定的事件处理器
-   */
-  off(id: string): void {
-    const removed = [];
-
-    if (this.scrollHandlers.delete(id)) removed.push('scroll');
-    if (this.resizeHandlers.delete(id)) removed.push('resize');
-    if (this.astroHandlers.delete(id)) removed.push('astro');
-  }
-
-  /**
-   * 清理所有事件监听器
-   */
-  destroy(): void {
-    if (!this.isInitialized) return;
-
-    // 移除全局监听器
-    if (this.scrollListener) {
-      window.removeEventListener('scroll', this.scrollListener);
-    }
-    if (this.resizeListener) {
-      window.removeEventListener('resize', this.resizeListener);
-    }
-    if (this.astroListener) {
-      document.removeEventListener('astro:page-load', this.astroListener);
-    }
-
-    // 清理所有处理器
-    this.scrollHandlers.clear();
-    this.resizeHandlers.clear();
-    this.astroHandlers.clear();
-
-    this.isInitialized = false;
-  }
-}
-
-// 导出单例实例
-export const globalEventManager = GlobalEventManager.getInstance();
+  });
+};
 
 /**
- * 便捷的注册函数
- */
-export function onScroll(id: string, handler: () => void): void {
-  globalEventManager.onScroll(id, handler);
-}
-
-export function onResize(id: string, handler: () => void): void {
-  globalEventManager.onResize(id, handler);
-}
-
-export function onAstroPageLoad(id: string, handler: () => void): void {
-  globalEventManager.onAstroPageLoad(id, handler);
-}
-
-export function offEvents(id: string): void {
-  globalEventManager.off(id);
-}
-
-/**
- * 初始化全局事件管理器
+ * 初始化全局事件管理器。
+ * 绑定唯一的、经过性能优化的事件监听器到 window/document。
  */
 export function initGlobalEventManager(): void {
-  globalEventManager.init();
+  if (isInitialized) return;
+
+  const scrollDispatcher = createScrollProcessor(createDispatcher(scrollHandlers, 'scroll'), 2);
+  const resizeDispatcher = debounce(createDispatcher(resizeHandlers, 'resize'), 100);
+  const astroDispatcher = createDispatcher(astroHandlers, 'astro:page-load');
+
+  window.addEventListener('scroll', scrollDispatcher, { passive: true });
+  window.addEventListener('resize', resizeDispatcher, { passive: true });
+  document.addEventListener('astro:page-load', astroDispatcher);
+
+  isInitialized = true;
+}
+
+/**
+ * 注册 scroll 事件处理器。
+ * @param id - 唯一的处理器 ID。
+ * @param handler - 事件触发时执行的回调函数。
+ */
+export function onScroll(id: string, handler: () => void): void {
+  scrollHandlers.set(id, handler);
+}
+
+/**
+ * 注册 resize 事件处理器。
+ * @param id - 唯一的处理器 ID。
+ * @param handler - 事件触发时执行的回调函数。
+ */
+export function onResize(id: string, handler: () => void): void {
+  resizeHandlers.set(id, handler);
+}
+
+/**
+ * 注册 Astro 页面加载事件处理器。
+ * @param id - 唯一的处理器 ID。
+ * @param handler - 事件触发时执行的回调函数。
+ */
+export function onAstroPageLoad(id: string, handler: () => void): void {
+  astroHandlers.set(id, handler);
+}
+
+/**
+ * 根据 ID 移除一个或多个事件处理器。
+ * @param id - 要移除的处理器 ID。
+ */
+export function offEvents(id: string): void {
+  scrollHandlers.delete(id);
+  resizeHandlers.delete(id);
+  astroHandlers.delete(id);
 }

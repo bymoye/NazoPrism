@@ -29,24 +29,35 @@ export function getClientHeight(): number {
 }
 
 /**
- * 计算当前滚动的百分比 (0 到 1 之间)。
- * @returns {number} 滚动的百分比，例如 0.5 表示滚动了 50%。
+ * 获取当前页面的垂直滚动百分比
+ * @returns {number} 一个在 0 和 1 之间的小数，表示滚动进度。
  */
 export function getScrollPercent(): number {
-  const scrollHeight = getScrollHeight();
-  const clientHeight = getClientHeight();
+  const de = document.documentElement;
+  const scrollTop = de.scrollTop;
 
-  // 如果内容区域不足一屏，无法滚动，则百分比为 0。
-  if (scrollHeight <= clientHeight) {
+  // 总共可以滚动的距离 = 文档总高度 - 视口高度
+  const scrollableHeight = de.scrollHeight - de.clientHeight;
+
+  // 如果内容不足或恰好一屏，无法滚动
+  if (scrollableHeight <= 0) {
+    return scrollTop > 0 ? 1 : 0;
+  }
+
+  const tolerance = 1; // 1px 的容差
+
+  // 如果滚动距离离顶部在 1px 容差范围内，直接返回 0
+  if (scrollTop <= tolerance) {
     return 0;
   }
 
-  const scrollTop = getScrollTop();
-  const maxScrollable = scrollHeight - clientHeight;
-  const rawPercent = scrollTop / maxScrollable;
+  // 如果滚动距离离底部在 1px 容差范围内，直接返回 1
+  if (scrollTop >= scrollableHeight - tolerance) {
+    return 1;
+  }
 
-  // 使用 Math.min 和 Math.max 进行“钳制”，确保结果总是在 [0, 1] 区间内。
-  return Math.max(0, Math.min(1, rawPercent));
+  // 正常计算中间过程的百分比
+  return scrollTop / scrollableHeight;
 }
 
 /**

@@ -6,11 +6,13 @@ const currentPath = Astro.url.pathname;
 
 // 检查是否为当前页面
 function isCurrentPage(href: string): boolean {
-  // 处理首页的特殊情况
-  if (href === '/' && currentPath === '/') return true;
-  // 处理其他页面
-  if (href !== '/' && currentPath.startsWith(href)) return true;
-  return false;
+  const normalizedCurrentPath = currentPath.length > 1 ? currentPath.replace(/\/$/, '') : '/';
+  const normalizedHref = href.length > 1 ? href.replace(/\/$/, '') : '/';
+
+  if (normalizedHref === '/') {
+    return normalizedCurrentPath === '/';
+  }
+  return normalizedCurrentPath.startsWith(normalizedHref);
 }
 ---
 
@@ -68,7 +70,7 @@ function isCurrentPage(href: string): boolean {
   <div class="nav-actions">
     <a
       href="/login"
-      class:list={['login-btn', { current: currentPath === '/login' }]}
+      class:list={['login-btn', { current: isCurrentPage('/login') }]}
       aria-label="登录"
     >
       <span class="login-text">Login</span>
@@ -107,13 +109,7 @@ function isCurrentPage(href: string): boolean {
 <script>
   import { initNavigation } from '../scripts/navigation';
 
-  // 页面加载时初始化
-  initNavigation();
-
-  // 监听 Astro 页面切换事件
-  document.addEventListener('astro:page-load', () => {
-    initNavigation();
-  });
+  document.addEventListener('astro:page-load', initNavigation);
 </script>
 
 <style>

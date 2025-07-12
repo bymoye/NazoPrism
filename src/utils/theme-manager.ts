@@ -129,9 +129,7 @@ class ThemeManagerImpl {
     });
 
     try {
-      const response = await fetch(imageUrl, {
-        referrerPolicy: 'no-referrer',
-      });
+      const response = await fetch(imageUrl);
       if (!response.ok) throw new Error(`图片加载失败: ${response.status}`);
       const blob = await response.blob();
 

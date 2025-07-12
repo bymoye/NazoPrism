@@ -1,6 +1,5 @@
 import { initArticleAnimations } from './article-animations';
 import { initBackgroundCarousel } from './background-carousel';
-import { initCleanupManager } from './cleanup-manager';
 import { initGlobalEventManager } from './global-event-manager';
 import { initNavigation } from './navigation';
 import { initPageVisibilityManager } from './page-visibility-manager';
@@ -55,7 +54,6 @@ let config: AppConfig = {
 function initializeCoreModules(): void {
   const coreComponents = [
     { name: 'Global Event Manager', init: initGlobalEventManager, critical: true },
-    { name: 'Cleanup Manager', init: initCleanupManager, critical: true },
     { name: 'Page Visibility Manager', init: initPageVisibilityManager, critical: false },
     { name: 'Theme System', init: initTheme, critical: false },
     {
@@ -66,8 +64,6 @@ function initializeCoreModules(): void {
     { name: 'Navigation', init: initNavigation, critical: false },
     { name: 'Progress Bar', init: initProgressBar, critical: false },
     { name: 'To Top Button', init: initToTop, critical: false },
-    // 文章动画可能需要在页面切换后重新初始化，因此从核心初始化中移除
-    // { name: 'Article Animations', init: initArticleAnimations, critical: false },
   ];
 
   for (const component of coreComponents) {
@@ -178,9 +174,6 @@ export async function initApp(customConfig?: Partial<AppConfig>): Promise<void> 
   }
 }
 
-// --- Astro 生命周期钩子：页面加载后 ---
-// 此处只应放置那些必须在每次页面切换后重新执行的、针对新页面内容的脚本
 document.addEventListener('astro:page-load', () => {
-  // 例如：文章页面的入场动画，每次进入新的文章页都需要重新触发
   initArticleAnimations();
 });
