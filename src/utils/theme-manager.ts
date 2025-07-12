@@ -50,7 +50,7 @@ export interface IThemeColors {
 
 // --- 模块内常量 ---
 const THEME_STORAGE_KEY = 'nazo-prism-theme-colors';
-const DYNAMIC_STYLE_TAG_ID = 'dynamic-material-theme-styles';
+const DYNAMIC_STYLE_TAG_ID = '#dynamic-material-theme-styles';
 const DEFAULT_SEED_COLOR = 0xff78ccc0; // 默认种子色
 const WORKER_TIMEOUT = 10000; // 10秒
 
@@ -58,7 +58,7 @@ const WORKER_TIMEOUT = 10000; // 10秒
  * 查找或创建一个用于动态注入样式的 <style> 元素
  */
 function getOrCreateStyleElement(id: string): HTMLStyleElement {
-  let styleEl = document.getElementById(id) as HTMLStyleElement | null;
+  let styleEl = document.querySelector(id) as HTMLStyleElement | null;
   if (!styleEl) {
     styleEl = document.createElement('style');
     styleEl.id = id;

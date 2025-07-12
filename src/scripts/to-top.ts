@@ -6,7 +6,7 @@
 import { getScrollTop, smoothScrollTo } from '../utils/scroll-utils';
 import { offEvents, onScroll } from './global-event-manager';
 import { registerGlobalCleanup } from './cleanup-manager';
-
+import styles from '../styles/components/to-top.module.css';
 const EVENT_ID = 'to-top';
 const SCROLL_THRESHOLD = 300; // 显示按钮的滚动阈值
 
@@ -34,7 +34,7 @@ const updateVisibility = () => {
   // 仅在状态变化时操作 DOM
   if (shouldShow !== state.isVisible) {
     state.isVisible = shouldShow;
-    state.button.classList.toggle('show', shouldShow);
+    state.button.classList.toggle(styles.show, shouldShow);
   }
 };
 
@@ -78,7 +78,7 @@ export function destroyToTop(): void {
  * 初始化返回顶部按钮
  */
 export function initToTop(): void {
-  state.button = document.getElementById('to-top');
+  state.button = document.querySelector('#to-top');
 
   if (!state.button) {
     if (isInitialized) {

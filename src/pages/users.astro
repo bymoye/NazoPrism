@@ -1,31 +1,11 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '../layouts/layout.astro';
+import styles from '../styles/pages/login.module.css';
 ---
 
 <Layout title="用户 - NazoPrism" description="用户相关页面">
-  <div class="page-content">
+  <div class={styles.pageContent}>
     <h1>用户</h1>
     <p>这里是用户页面的内容。</p>
   </div>
 </Layout>
-
-<style>
-  .page-content {
-    max-width: 800px;
-    margin: 100px auto;
-    padding: 2rem;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  h1 {
-    color: #333;
-    margin-bottom: 1rem;
-  }
-
-  p {
-    color: #666;
-    line-height: 1.6;
-  }
-</style>

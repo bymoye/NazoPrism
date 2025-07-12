@@ -62,7 +62,7 @@ export function destroyProgressBar(): void {
 }
 
 export function initProgressBar(): void {
-  state.progressBar = document.getElementById('scrollbar');
+  state.progressBar = document.querySelector('#scrollbar');
 
   if (!state.progressBar) {
     if (isInitialized) {

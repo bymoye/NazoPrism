@@ -1,5 +1,5 @@
 ---
-import styles from './Navigation.module.css';
+import styles from '../styles/components/navigation.module.css';
 import { SITE_CONFIG } from '../config';
 
 // 获取当前页面路径
@@ -54,7 +54,7 @@ function isCurrentPage(href: string): boolean {
             <li class={styles.navItem}>
               <a
                 href={item.href}
-                class:list={[styles.navLink, { current: isCurrent }]}
+                class:list={[styles.navLink, [isCurrent ? styles.current : null]]}
                 aria-current={isCurrent ? 'page' : undefined}
               >
                 <span class={styles.navLinkText}>{item.name}</span>
@@ -71,7 +71,7 @@ function isCurrentPage(href: string): boolean {
   <div class={styles.navActions}>
     <a
       href="/login"
-      class:list={[styles.loginBtn, { current: isCurrentPage('/login') }]}
+      class:list={[styles.loginBtn, [isCurrentPage('/login') ? styles.current : null]]}
       aria-label="登录"
     >
       <span class={styles.loginText}>Login</span>

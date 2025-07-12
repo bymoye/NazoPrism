@@ -6,7 +6,7 @@
 import { registerGlobalCleanup } from './cleanup-manager';
 import { offEvents, onScroll } from './global-event-manager';
 import { getScrollTop } from '../utils/scroll-utils';
-
+import styles from '../styles/components/navigation.module.css';
 const EVENT_ID: string = 'navigation';
 
 const state = {
@@ -35,7 +35,7 @@ const updateNavigation = () => {
   // 仅在状态变化时操作 DOM
   if (shouldBeSticky !== state.isNavSticky) {
     state.isNavSticky = shouldBeSticky;
-    state.nav.classList.toggle('ceil_nav', state.isNavSticky);
+    state.nav.classList.toggle(styles.ceilNav, state.isNavSticky);
   }
 };
 
@@ -64,8 +64,7 @@ export function destroyNavigation() {
  * 在 Astro 页面过渡中可被安全地重复调用。
  */
 export function initNavigation() {
-  // 优化点：将 DOM 查询提升到函数顶部，避免重复
-  state.nav = document.getElementById('navigation');
+  state.nav = document.querySelector('#navigation');
 
   // 统一处理导航栏不存在于当前页面的情况
   if (!state.nav) {

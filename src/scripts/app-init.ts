@@ -106,7 +106,6 @@ function initializeLazyLoading(): void {
     },
     { rootMargin: '50px 0px', threshold: 0.01 },
   );
-
   // 观察初始页面上的所有 [data-src] 图片
   document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
 

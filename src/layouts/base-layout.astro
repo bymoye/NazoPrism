@@ -1,5 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import styles from '../styles/layouts/base-layout.module.css';
+
 export interface Props {
   title?: string;
   description?: string;
@@ -21,16 +23,8 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
   <body>
     <!-- 背景轮播容器 - 整个容器都被持久化，确保在页面切换时不被重新渲染 -->
     <div id="background-carousel-container" transition:persist="background-carousel">
-      <div
-        id="bg-layer-1"
-        style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-2;opacity:0;pointer-events:none;will-change:opacity;transform:none !important;"
-      >
-      </div>
-      <div
-        id="bg-layer-2"
-        style="position:fixed;width:108%;height:108%;top:-5%;left:-5%;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:-2;opacity:0;pointer-events:none;will-change:opacity;transform:none !important;"
-      >
-      </div>
+      <div id="bg-layer-1" class={styles.bgLayer}></div>
+      <div id="bg-layer-2" class={styles.bgLayer}></div>
     </div>
     <slot />
     <!-- 初始化脚本移到持久化容器外部，避免重复执行 -->

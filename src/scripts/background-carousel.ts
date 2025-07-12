@@ -242,8 +242,8 @@ function setupEventListeners() {
 async function runInitialSetup(backgrounds: string[]) {
   state.backgrounds = backgrounds;
   state.originalTitle = document.title;
-  state.bgLayer1 = document.getElementById('bg-layer-1');
-  state.bgLayer2 = document.getElementById('bg-layer-2');
+  state.bgLayer1 = document.querySelector('#bg-layer-1');
+  state.bgLayer2 = document.querySelector('#bg-layer-2');
   if (!state.bgLayer1 || !state.bgLayer2) return;
 
   if (state.backgrounds.length > 0) {
@@ -270,8 +270,8 @@ async function runInitialSetup(backgrounds: string[]) {
 }
 
 function runReinitialization() {
-  state.bgLayer1 = document.getElementById('bg-layer-1');
-  state.bgLayer2 = document.getElementById('bg-layer-2');
+  state.bgLayer1 = document.querySelector('#bg-layer-1');
+  state.bgLayer2 = document.querySelector('#bg-layer-2');
   if (!state.bgLayer1 || !state.bgLayer2) return;
 
   const currentBgUrl = state.backgrounds[state.currentIndex];

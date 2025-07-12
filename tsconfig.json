@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "verbatimModuleSyntax": true, 
+    "verbatimModuleSyntax": true,
 
     "target": "ESNext",
     "module": "ESNext",
