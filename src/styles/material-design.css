@@ -2,52 +2,51 @@
 
 :root {
   /* Material Design 3 Color System - will be dynamically updated */
-  /* Using RGB values for smooth transitions */
-  --md-sys-color-primary: 103, 80, 164;
+  /* 主题色将由 JavaScript 动态更新，这里提供默认值避免闪烁 */
+  --md-sys-color-primary: 120, 204, 192;
   --md-sys-color-on-primary: 255, 255, 255;
-  --md-sys-color-primary-container: 234, 221, 255;
-  --md-sys-color-on-primary-container: 33, 0, 93;
+  --md-sys-color-primary-container: 168, 230, 220;
+  --md-sys-color-on-primary-container: 0, 74, 66;
 
-  --md-sys-color-secondary: 98, 91, 113;
+  --md-sys-color-secondary: 107, 155, 150;
   --md-sys-color-on-secondary: 255, 255, 255;
-  --md-sys-color-secondary-container: 232, 222, 248;
-  --md-sys-color-on-secondary-container: 29, 25, 43;
+  --md-sys-color-secondary-container: 193, 240, 234;
+  --md-sys-color-on-secondary-container: 31, 74, 70;
 
-  --md-sys-color-tertiary: 125, 82, 96;
+  --md-sys-color-tertiary: 122, 139, 154;
   --md-sys-color-on-tertiary: 255, 255, 255;
-  --md-sys-color-tertiary-container: 255, 216, 228;
-  --md-sys-color-on-tertiary-container: 49, 17, 29;
+  --md-sys-color-tertiary-container: 184, 201, 216;
+  --md-sys-color-on-tertiary-container: 42, 58, 73;
 
   --md-sys-color-error: 179, 38, 30;
   --md-sys-color-on-error: 255, 255, 255;
   --md-sys-color-error-container: 249, 222, 220;
   --md-sys-color-on-error-container: 65, 14, 11;
 
-  --md-sys-color-background: 254, 247, 255;
-  --md-sys-color-on-background: 29, 27, 32;
-  --md-sys-color-surface: 254, 247, 255;
-  --md-sys-color-surface-rgb: 254, 247, 255;
-  --md-sys-color-on-surface: 29, 27, 32;
+  --md-sys-color-background: 240, 248, 246;
+  --md-sys-color-on-background: 26, 28, 27;
+  --md-sys-color-surface: 240, 248, 246;
+  --md-sys-color-on-surface: 26, 28, 27;
 
-  --md-sys-color-surface-variant: 231, 224, 236;
-  --md-sys-color-on-surface-variant: 73, 69, 79;
-  --md-sys-color-outline: 121, 116, 126;
-  --md-sys-color-outline-variant: 202, 196, 208;
+  --md-sys-color-surface-variant: 218, 229, 226;
+  --md-sys-color-on-surface-variant: 63, 73, 70;
+  --md-sys-color-outline: 111, 121, 117;
+  --md-sys-color-outline-variant: 191, 201, 197;
 
   --md-sys-color-shadow: 0, 0, 0;
   --md-sys-color-scrim: 0, 0, 0;
-  --md-sys-color-inverse-surface: 49, 48, 51;
-  --md-sys-color-inverse-on-surface: 244, 239, 244;
-  --md-sys-color-inverse-primary: 208, 188, 255;
+  --md-sys-color-inverse-surface: 47, 49, 48;
+  --md-sys-color-inverse-on-surface: 240, 241, 240;
+  --md-sys-color-inverse-primary: 140, 212, 200;
 
   /* Surface elevation colors */
-  --md-sys-color-surface-dim: 222, 216, 225;
-  --md-sys-color-surface-bright: 254, 247, 255;
+  --md-sys-color-surface-dim: 208, 216, 213;
+  --md-sys-color-surface-bright: 240, 248, 246;
   --md-sys-color-surface-container-lowest: 255, 255, 255;
-  --md-sys-color-surface-container-low: 247, 242, 250;
-  --md-sys-color-surface-container: 243, 237, 247;
-  --md-sys-color-surface-container-high: 236, 230, 240;
-  --md-sys-color-surface-container-highest: 230, 224, 233;
+  --md-sys-color-surface-container-low: 234, 242, 239;
+  --md-sys-color-surface-container: 228, 236, 233;
+  --md-sys-color-surface-container-high: 222, 230, 227;
+  --md-sys-color-surface-container-highest: 216, 224, 221;
 
   /* Material Design 3 Typography */
   --md-sys-typescale-display-large: 57px;
@@ -78,8 +77,6 @@
   --md-sys-shape-corner-large: 16px;
   --md-sys-shape-corner-extra-large: 28px;
   --md-sys-shape-corner-full: 9999px;
-
-
 
   /* Animation Durations */
   --md-sys-motion-duration-short1: 50ms;
@@ -118,6 +115,67 @@
   --md-sys-elevation-level3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
   --md-sys-elevation-level4: 0 6px 10px 4px rgba(0, 0, 0, 0.15), 0 2px 3px 0 rgba(0, 0, 0, 0.3);
   --md-sys-elevation-level5: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+
+  /* 主题色过渡变量 - 用于平滑的颜色过渡动画 */
+  --theme-transition-duration: var(--md-sys-motion-duration-theme);
+  --theme-transition-easing: var(--md-sys-motion-easing-emphasized);
+
+  /* 全局颜色过渡 */
+  --global-color-transition:
+    color var(--theme-transition-duration) var(--theme-transition-easing),
+    background-color var(--theme-transition-duration) var(--theme-transition-easing),
+    border-color var(--theme-transition-duration) var(--theme-transition-easing),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-easing);
+}
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme colors - will be dynamically updated */
+    --md-sys-color-primary: 208, 188, 255;
+    --md-sys-color-on-primary: 56, 30, 114;
+    --md-sys-color-primary-container: 79, 55, 139;
+    --md-sys-color-on-primary-container: 234, 221, 255;
+
+    --md-sys-color-secondary: 204, 194, 220;
+    --md-sys-color-on-secondary: 51, 45, 65;
+    --md-sys-color-secondary-container: 74, 68, 88;
+    --md-sys-color-on-secondary-container: 232, 222, 248;
+
+    --md-sys-color-tertiary: 239, 184, 200;
+    --md-sys-color-on-tertiary: 73, 37, 50;
+    --md-sys-color-tertiary-container: 99, 59, 72;
+    --md-sys-color-on-tertiary-container: 255, 216, 228;
+
+    --md-sys-color-error: 242, 184, 181;
+    --md-sys-color-on-error: 96, 20, 16;
+    --md-sys-color-error-container: 140, 29, 24;
+    --md-sys-color-on-error-container: 249, 222, 220;
+
+    --md-sys-color-background: 28, 27, 31;
+    --md-sys-color-on-background: 230, 225, 229;
+    --md-sys-color-surface: 28, 27, 31;
+    --md-sys-color-on-surface: 230, 225, 229;
+
+    --md-sys-color-surface-variant: 73, 69, 79;
+    --md-sys-color-on-surface-variant: 202, 196, 208;
+    --md-sys-color-outline: 147, 143, 153;
+    --md-sys-color-outline-variant: 73, 69, 79;
+
+    --md-sys-color-shadow: 0, 0, 0;
+    --md-sys-color-scrim: 0, 0, 0;
+    --md-sys-color-inverse-surface: 230, 225, 229;
+    --md-sys-color-inverse-on-surface: 49, 48, 51;
+    --md-sys-color-inverse-primary: 103, 80, 164;
+
+    /* Dark surface elevation colors */
+    --md-sys-color-surface-dim: 28, 27, 31;
+    --md-sys-color-surface-bright: 59, 56, 62;
+    --md-sys-color-surface-container-lowest: 15, 13, 19;
+    --md-sys-color-surface-container-low: 29, 27, 32;
+    --md-sys-color-surface-container: 33, 31, 38;
+    --md-sys-color-surface-container-high: 43, 41, 48;
+    --md-sys-color-surface-container-highest: 54, 52, 59;
+  }
 }
 
 /* Pure Material Design 3 Surface */

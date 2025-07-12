@@ -1,8 +1,8 @@
 let intersectionObs: IntersectionObserver | null = null;
 let mutationObs: MutationObserver | null = null;
 
-const ANIMATION_CLASS = 'post_list_show';
-const TARGET_SELECTOR = '.post_list_thumb';
+// 使用data属性选择器来找到文章元素
+const TARGET_SELECTOR = '[data-thumb-class]';
 
 /**
  * 创建并返回一个 IntersectionObserver 实例
@@ -12,7 +12,11 @@ function createIntersectionObserver(): IntersectionObserver {
     (entries, observer) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          entry.target.classList.add(ANIMATION_CLASS);
+          // 从data属性获取CSS Modules生成的动画类名
+          const showClass = (entry.target as HTMLElement).dataset.showClass;
+          if (showClass) {
+            entry.target.classList.add(showClass);
+          }
           // 动画触发后，停止观察该元素，以提升性能
           observer.unobserve(entry.target);
         }
@@ -33,8 +37,11 @@ function observeChildren(root: Element): void {
   if (!intersectionObs) return;
   const targets = root.querySelectorAll(TARGET_SELECTOR);
   targets.forEach(target => {
-    // 重置状态，以防因页面切换导致样式残留
-    target.classList.remove(ANIMATION_CLASS);
+    // 从data属性获取CSS Modules生成的动画类名并重置状态
+    const showClass = (target as HTMLElement).dataset.showClass;
+    if (showClass) {
+      target.classList.remove(showClass);
+    }
     intersectionObs!.observe(target);
   });
 }

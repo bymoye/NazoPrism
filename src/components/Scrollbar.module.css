@@ -1,0 +1,18 @@
+.scrollbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background-color: rgb(var(--md-sys-color-primary));
+  z-index: 99999;
+
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+
+  will-change: transform;
+
+  transition:
+    transform 0.3s linear,
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
+}

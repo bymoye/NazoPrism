@@ -1,0 +1,523 @@
+/* M3 + Morphic Glass Navigation */
+.nav {
+  position: fixed;
+  height: 80px;
+  display: flex;
+  width: 95%;
+  left: 2.5%;
+  top: 2.5%;
+  padding: 0 2rem;
+  transition:
+    top 1s ease,
+    left 1s ease,
+    right 1s ease,
+    width 1s ease,
+    border-radius 1s ease,
+    background-color 1s ease,
+    backdrop-filter 1s ease,
+    box-shadow 1s ease,
+    transform 0.3s ease;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  z-index: 9999;
+
+  /* M3 + Morphic Glass Effect */
+  background: rgba(var(--md-sys-color-surface-container), 0.85);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.3);
+  box-shadow:
+    0 8px 32px rgba(var(--md-sys-color-shadow), 0.12),
+    0 2px 8px rgba(var(--md-sys-color-shadow), 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Sticky navigation state */
+.ceil_nav {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  border-radius: 0;
+  background: rgba(var(--md-sys-color-surface), 0.9);
+  backdrop-filter: blur(32px) saturate(2);
+  -webkit-backdrop-filter: blur(32px) saturate(2);
+  border: none;
+  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.4);
+  box-shadow:
+    0 4px 24px rgba(var(--md-sys-color-shadow), 0.15),
+    0 1px 4px rgba(var(--md-sys-color-shadow), 0.1);
+}
+
+/* Enhanced hover state */
+.nav:hover {
+  background: rgba(var(--md-sys-color-surface-container-high), 0.9);
+  backdrop-filter: blur(28px) saturate(2);
+  -webkit-backdrop-filter: blur(28px) saturate(2);
+  box-shadow:
+    0 12px 40px rgba(var(--md-sys-color-shadow), 0.16),
+    0 4px 12px rgba(var(--md-sys-color-shadow), 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Logo Section */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.02);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: rgba(var(--md-sys-color-primary), 0.12);
+  color: rgb(var(--md-sys-color-primary));
+  transition: all 0.3s ease;
+}
+
+.logo-link:hover .logo-icon {
+  background: rgba(var(--md-sys-color-primary), 0.16);
+  transform: rotate(5deg);
+}
+
+.logo-text {
+  font-size: var(--md-sys-typescale-title-large);
+  font-weight: 600;
+  color: rgb(var(--md-sys-color-on-surface));
+  letter-spacing: -0.5px;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: var(--md-sys-shape-corner-full);
+  text-decoration: none;
+  font-size: var(--md-sys-typescale-label-large);
+  font-weight: 500;
+  color: rgb(var(--md-sys-color-on-surface));
+  transition: all 0.3s var(--md-sys-motion-easing-emphasized);
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--md-sys-color-primary), 0);
+  border-radius: inherit;
+  transition: background-color 0.3s ease;
+}
+
+.nav-link:hover::before {
+  background: rgba(var(--md-sys-color-primary), 0.08);
+}
+
+.nav-link:hover {
+  color: rgb(var(--md-sys-color-primary));
+}
+
+/* Navigation Link Text */
+.nav-link-text {
+  position: relative;
+  z-index: 1;
+}
+
+/* Navigation Link Indicator */
+.nav-link-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  height: 3px;
+  width: calc(100% - 24px);
+  background: rgb(var(--md-sys-color-primary));
+  border-radius: var(--md-sys-shape-corner-full);
+  transition: transform 0.3s var(--md-sys-motion-easing-emphasized);
+  overflow: hidden;
+}
+
+/* 指示器渐变动画层 */
+.nav-link-indicator::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--md-sys-color-tertiary)),
+    rgb(var(--md-sys-color-secondary))
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.nav-link:hover .nav-link-indicator {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-link:hover .nav-link-indicator::before {
+  transform: translateX(0);
+}
+
+/* Current page state */
+.nav-link.current {
+  color: rgb(var(--md-sys-color-on-primary-container));
+  background: rgba(var(--md-sys-color-primary-container), 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nav-link.current::before {
+  background: rgba(var(--md-sys-color-primary), 0.12);
+}
+
+.nav-link.current .nav-link-indicator {
+  transform: translateX(-50%) scaleX(1);
+  background: rgb(var(--md-sys-color-primary));
+}
+
+.nav-link.current .nav-link-indicator::before {
+  transform: translateX(0);
+}
+
+/* Focus states */
+.nav-link:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-full);
+}
+
+/* Login Button Actions */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.login-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: rgba(var(--md-sys-color-primary), 0.9);
+  color: rgb(var(--md-sys-color-on-primary));
+  text-decoration: none;
+  font-size: var(--md-sys-typescale-label-large);
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  transition:
+    transform 0.3s var(--md-sys-motion-easing-emphasized),
+    box-shadow 0.3s var(--md-sys-motion-easing-emphasized),
+    background-color 0.3s var(--md-sys-motion-easing-emphasized);
+  box-shadow:
+    0 4px 12px rgba(var(--md-sys-color-primary), 0.3),
+    0 2px 4px rgba(var(--md-sys-color-shadow), 0.1);
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 渐变动画层 */
+.login-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--md-sys-color-tertiary), 0.8),
+    rgba(var(--md-sys-color-secondary), 0.6)
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: inherit;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background-color 0.3s ease;
+  border-radius: inherit;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 8px 24px rgba(var(--md-sys-color-primary), 0.4),
+    0 4px 8px rgba(var(--md-sys-color-shadow), 0.15);
+  background: rgba(var(--md-sys-color-primary), 1);
+}
+
+.login-btn:hover::before {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.login-btn:hover::after {
+  opacity: 1;
+}
+
+.login-text {
+  position: relative;
+  z-index: 1;
+}
+
+.login-icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.login-btn:hover .login-icon {
+  transform: translateX(2px);
+}
+
+/* Current state for login */
+.login-btn.current {
+  background: rgba(var(--md-sys-color-tertiary), 0.9);
+  color: rgb(var(--md-sys-color-on-tertiary));
+}
+
+.login-btn.current::after {
+  opacity: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--md-sys-color-secondary), 0.8),
+    rgba(var(--md-sys-color-primary), 0.6)
+  );
+}
+
+/* Focus states */
+.login-btn:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
+}
+
+/* 关键帧动画 */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 4px 12px rgba(var(--md-sys-color-primary), 0.3),
+      0 2px 4px rgba(var(--md-sys-color-shadow), 0.1);
+  }
+  50% {
+    box-shadow:
+      0 6px 16px rgba(var(--md-sys-color-primary), 0.4),
+      0 3px 6px rgba(var(--md-sys-color-shadow), 0.15);
+  }
+}
+
+/* 为登录按钮添加微妙的脉冲效果 */
+.login-btn.current {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nav {
+    width: calc(100% - 16px);
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    padding: 0 1rem;
+    height: 64px;
+  }
+
+  .ceil_nav {
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
+
+  /* Logo adjustments */
+  .logo-container {
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logo-text {
+    font-size: var(--md-sys-typescale-title-medium);
+  }
+
+  /* Navigation menu adjustments */
+  .nav-list {
+    gap: 4px;
+  }
+
+  .nav-link {
+    padding: 8px 12px;
+    font-size: var(--md-sys-typescale-label-medium);
+  }
+
+  .nav-link-text {
+    display: none;
+  }
+
+  /* Show only icons on mobile - add icons to nav items */
+  .nav-link::after {
+    content: attr(data-icon);
+    font-size: 20px;
+  }
+
+  /* Login button adjustments */
+  .login-btn {
+    height: 40px;
+    padding: 0 16px;
+    gap: 6px;
+  }
+
+  .login-text {
+    display: none;
+  }
+
+  .login-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .nav {
+    padding: 0 0.75rem;
+    height: 56px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .nav-list {
+    gap: 2px;
+  }
+
+  .nav-link {
+    padding: 6px 8px;
+  }
+
+  .login-btn {
+    height: 36px;
+    padding: 0 12px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .nav {
+    background: rgba(var(--md-sys-color-surface-container), 0.9);
+    backdrop-filter: blur(32px) saturate(1.5);
+    -webkit-backdrop-filter: blur(32px) saturate(1.5);
+    border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.4);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .ceil_nav {
+    background: rgba(var(--md-sys-color-surface), 0.95);
+    backdrop-filter: blur(40px) saturate(1.8);
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+    border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.5);
+  }
+
+  .nav:hover {
+    background: rgba(var(--md-sys-color-surface-container-high), 0.95);
+    backdrop-filter: blur(36px) saturate(2);
+    -webkit-backdrop-filter: blur(36px) saturate(2);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* Enhanced glass effect for login button in dark mode */
+  .login-btn {
+    background: rgba(var(--md-sys-color-primary), 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+      0 4px 16px rgba(var(--md-sys-color-primary), 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .login-btn::after {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--md-sys-color-tertiary), 0.7),
+      rgba(var(--md-sys-color-secondary), 0.5)
+    );
+  }
+
+  .login-btn:hover {
+    background: rgba(var(--md-sys-color-primary), 0.9);
+    box-shadow:
+      0 8px 28px rgba(var(--md-sys-color-primary), 0.5),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
