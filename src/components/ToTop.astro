@@ -12,13 +12,8 @@
 <script>
   import { initToTop } from '../scripts/to-top';
 
-  // 初始化
-  initToTop();
-
   // 监听 Astro 页面加载事件，以支持客户端导航
-  document.addEventListener('astro:page-load', () => {
-    initToTop();
-  });
+  document.addEventListener('astro:page-load', initToTop);
 </script>
 
 <style>

@@ -30,13 +30,8 @@ const { title, time, content, category, url, cover, id } = Astro.props;
 <script>
   import { initArticleAnimations } from '../scripts/article-animations';
 
-  // 初始化
-  initArticleAnimations();
-
   // 监听 Astro 页面加载事件
-  document.addEventListener('astro:page-load', () => {
-    initArticleAnimations();
-  });
+  document.addEventListener('astro:page-load', initArticleAnimations);
 </script>
 
 <style>
