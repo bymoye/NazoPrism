@@ -7,12 +7,10 @@ import { offEvents, onScroll } from './global-event-manager';
  * 轮播组件的状态接口
  */
 interface CarouselState {
-  /** 背景容器元素 */
-  backgroundContainer: HTMLElement | null;
-  /** 第一个图片元素 */
-  img1: HTMLImageElement | null;
-  /** 第二个图片元素 */
-  img2: HTMLImageElement | null;
+  /** SVG元素 */
+  svgElement: SVGSVGElement | null;
+  /** 当前显示的图片元素 */
+  currentImg: SVGImageElement | null;
   /** 当前显示的背景图片索引 */
   currentIndex: number;
   /** 背景图片URL数组 */
@@ -25,6 +23,10 @@ interface CarouselState {
   originalTitle: string;
   /** 是否已提取完所有主题色 */
   allThemeColorsExtracted: boolean;
+  /** 高斯模糊元素 */
+  gaussianBlur: SVGFEGaussianBlurElement | null;
+  /** 是否正在切换中（防止并发切换） */
+  isSwitching: boolean;
 }
 
 /**
@@ -43,12 +45,12 @@ interface ImageCacheData {
 const CONFIG = {
   /** 滚动阈值，超过此值时应用模糊效果 */
   SCROLL_THRESHOLD: 200,
-  /** 最大模糊值 */
-  MAX_BLUR: '5px',
-  /** 最小模糊值（无模糊） */
-  MIN_BLUR: 'none',
+  /** 模糊强度 */
+  BLUR_STRENGTH: '5',
   /** 自动切换间隔时间（毫秒） */
   SWITCH_INTERVAL: 10000,
+  /** 动画持续时间 */
+  ANIMATION_DURATION: '1500ms',
 };
 
 /**
@@ -58,12 +60,13 @@ const state: CarouselState = {
   currentIndex: 0,
   backgrounds: [],
   timerRef: null,
-  img1: null,
-  img2: null,
+  currentImg: null,
   isPaused: false,
   originalTitle: '',
   allThemeColorsExtracted: false,
-  backgroundContainer: null,
+  svgElement: null,
+  gaussianBlur: null,
+  isSwitching: false,
 };
 
 /** 图片缓存映射，存储图片数据和主题色 */
@@ -73,15 +76,121 @@ let isInitialized = false;
 
 // --- 核心逻辑函数 ---
 
+/** SVG命名空间 */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
 /**
- * 处理页面滚动事件，根据滚动位置应用模糊效果
+ * 创建SVG动画元素
+ * @returns SVG animate元素
+ */
+function createOpacityAnimation(): SVGAnimateElement {
+  const animate = document.createElementNS(SVG_NS, 'animate');
+  animate.setAttribute('attributeName', 'opacity');
+  animate.setAttribute('from', '1');
+  animate.setAttribute('to', '0');
+  animate.setAttribute('begin', 'null');
+  animate.setAttribute('dur', CONFIG.ANIMATION_DURATION);
+  animate.setAttribute('repeatCount', '1');
+  animate.setAttribute('fill', 'freeze');
+  return animate;
+}
+
+/**
+ * 创建SVG图片元素
+ * @param href - 图片链接
+ * @returns SVG image元素
+ */
+function createImageElement(href: string): SVGImageElement {
+  const image = document.createElementNS(SVG_NS, 'image');
+  image.setAttribute('href', href);
+  image.setAttribute('x', '-5');
+  image.setAttribute('y', '-5');
+  image.setAttribute('height', '102%');
+  image.setAttribute('width', '102%');
+  image.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  image.style.filter = 'url(#bg-carousel-blur-filter)';
+  return image;
+}
+
+/**
+ * 模糊效果控制状态
+ */
+const blurState = {
+  /** 是否正在进行模糊动画 */
+  isAnimating: false,
+  /** 当前模糊值 */
+  currentBlurValue: 0,
+  /** 目标模糊值 */
+  targetBlurValue: 0,
+  /** 动画步长 */
+  step: 0.1,
+};
+
+/**
+ * 检查模糊动画是否应该停止
+ * @param scrollTop - 当前滚动位置
+ * @returns 是否应该停止动画
+ */
+function shouldStopBlurAnimation(scrollTop: number): boolean {
+  return (
+    (scrollTop > CONFIG.SCROLL_THRESHOLD && blurState.currentBlurValue === 5) ||
+    (scrollTop <= CONFIG.SCROLL_THRESHOLD && blurState.currentBlurValue === 0)
+  );
+}
+
+/**
+ * 执行模糊动画的单步
+ */
+function performBlurStep() {
+  if (!state.gaussianBlur) return;
+
+  // 根据目标值调整当前模糊值
+  if (blurState.targetBlurValue > blurState.currentBlurValue) {
+    blurState.currentBlurValue = parseFloat(
+      (blurState.currentBlurValue + blurState.step).toFixed(1),
+    );
+  } else if (blurState.targetBlurValue < blurState.currentBlurValue) {
+    blurState.currentBlurValue = parseFloat(
+      (blurState.currentBlurValue - blurState.step).toFixed(1),
+    );
+  }
+
+  // 限制模糊值范围
+  blurState.currentBlurValue = Math.max(0, Math.min(5, blurState.currentBlurValue));
+
+  // 更新DOM元素
+  state.gaussianBlur.setAttribute('stdDeviation', blurState.currentBlurValue.toString());
+
+  // 检查是否需要继续动画
+  if (Math.abs(blurState.currentBlurValue - blurState.targetBlurValue) > 0.05) {
+    requestAnimationFrame(performBlurStep);
+  } else {
+    // 动画完成，设置精确的目标值
+    blurState.currentBlurValue = blurState.targetBlurValue;
+    state.gaussianBlur.setAttribute('stdDeviation', blurState.currentBlurValue.toString());
+    blurState.isAnimating = false;
+  }
+}
+
+/**
+ * 启动模糊动画
+ * @param scrollTop - 当前滚动位置
+ */
+function startBlurAnimation(scrollTop: number) {
+  if (!blurState.isAnimating && !shouldStopBlurAnimation(scrollTop)) {
+    blurState.isAnimating = true;
+    blurState.targetBlurValue = scrollTop > CONFIG.SCROLL_THRESHOLD ? 5 : 0;
+    requestAnimationFrame(performBlurStep);
+  }
+}
+
+/**
+ * 处理页面滚动事件，根据滚动位置调整模糊效果
  */
 const handleScroll = () => {
   const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-  if (state.backgroundContainer) {
-    // 当滚动超过阈值时应用模糊效果，否则移除模糊
-    state.backgroundContainer.style.filter =
-      scrollTop > CONFIG.SCROLL_THRESHOLD ? `blur(${CONFIG.MAX_BLUR})` : CONFIG.MIN_BLUR;
+  if (state.gaussianBlur) {
+    startBlurAnimation(scrollTop);
   }
 };
 
@@ -115,6 +224,34 @@ async function updateThemeFromBackground(imageUrl: string) {
 }
 
 /**
+ * 确保SVG中的图片元素数量在合理范围内
+ * @param maxImages - 允许的最大图片数量（默认2个，正常1个+过渡时1个）
+ */
+function ensureImageCount(maxImages: number = 2) {
+  if (!state.svgElement) return;
+
+  const images = state.svgElement.querySelectorAll('image');
+
+  // 如果图片数量超过限制，移除多余的图片
+  if (images.length > maxImages) {
+    console.warn(`[Carousel] 发现${images.length}个图片元素，超过限制${maxImages}个，正在清理...`);
+
+    // 保留最新的图片，移除旧的图片
+    const imagesToRemove = Array.from(images).slice(0, images.length - maxImages);
+    imagesToRemove.forEach(img => {
+      img.remove();
+      console.log('[Carousel] 移除多余的图片元素');
+    });
+
+    // 更新当前图片状态到最新的图片
+    const remainingImages = state.svgElement.querySelectorAll('image');
+    if (remainingImages.length > 0) {
+      state.currentImg = remainingImages[remainingImages.length - 1] as SVGImageElement;
+    }
+  }
+}
+
+/**
  * 检查是否所有背景图的主题色都已提取完成，如果是则关闭Worker以节省资源
  */
 function checkAndShutdownWorker() {
@@ -134,28 +271,71 @@ function checkAndShutdownWorker() {
 
 /**
  * 切换背景图片
- * 实现两个img元素之间的切换显示
+ * 使用SVG动画实现平滑过渡
  */
 function switchBackground() {
-  // 检查切换条件：图片数量、暂停状态、元素存在性
-  if (state.backgrounds.length <= 1 || state.isPaused || !state.img1 || !state.img2) return;
-  const nextIndex = (state.currentIndex + 1) % state.backgrounds.length;
-  // 确定当前显示的图片和下一个要显示的图片
-  const currentImg = state.img1.hidden ? state.img2 : state.img1;
-  const nextImg = currentImg === state.img1 ? state.img2 : state.img1;
+  // 检查切换条件：图片数量、暂停状态、当前图片存在性、是否正在切换
+  if (
+    state.backgrounds.length <= 1 ||
+    state.isPaused ||
+    !state.currentImg ||
+    !state.svgElement ||
+    state.isSwitching
+  ) {
+    return;
+  }
 
-  // 设置下一张图片的URL
-  nextImg.src = state.backgrounds[nextIndex];
+  // 设置切换状态，防止并发切换
+  state.isSwitching = true;
+
+  // 安全检查：确保当前SVG中没有过多的图片元素
+  ensureImageCount(1);
+
+  const nextIndex = (state.currentIndex + 1) % state.backgrounds.length;
+  const currentImg = state.currentImg;
+
+  // 创建新的图片元素
+  const nextImg = createImageElement(state.backgrounds[nextIndex]);
 
   // 更新主题色
   updateThemeFromBackground(state.backgrounds[nextIndex]);
 
-  // 切换显示/隐藏状态
-  currentImg.hidden = true;
-  nextImg.hidden = false;
+  // 创建淡出动画
+  const fadeOutAnimation = createOpacityAnimation();
 
-  // 更新当前索引
-  state.currentIndex = nextIndex;
+  // 将新图片插入到当前图片之前（显示在下层）
+  currentImg.before(nextImg);
+
+  // 为当前图片添加淡出动画
+  currentImg.appendChild(fadeOutAnimation);
+
+  // 开始动画
+  fadeOutAnimation.beginElement();
+
+  // 定义动画结束处理函数
+  const handleAnimationEnd = () => {
+    // 清理动画元素
+    fadeOutAnimation.remove();
+
+    // 移除旧图片
+    currentImg.remove();
+
+    // 更新状态
+    state.currentImg = nextImg;
+    state.currentIndex = nextIndex;
+
+    // 重置切换状态
+    state.isSwitching = false;
+
+    // 最终安全检查：确保只有一个图片元素
+    ensureImageCount(1);
+
+    // 移除事件监听器避免内存泄漏
+    fadeOutAnimation.removeEventListener('endEvent', handleAnimationEnd);
+  };
+
+  // 监听动画结束事件
+  fadeOutAnimation.addEventListener('endEvent', handleAnimationEnd);
 }
 
 /**
@@ -214,31 +394,42 @@ function setupEventListeners() {
 }
 
 /**
- * 创建图片元素并添加到容器中
+ * 初始化SVG元素和创建第一张图片
  */
 function createImageElements() {
-  if (!state.backgroundContainer) return;
+  // 从DOM获取硬编码的SVG元素
+  state.svgElement = document.querySelector('#bg-carousel-svg');
+  if (!state.svgElement) {
+    console.error('[Carousel] SVG element #bg-carousel-svg not found');
+    return;
+  }
 
-  // 创建两个img元素用于轮播切换
-  state.img1 = document.createElement('img');
-  state.img2 = document.createElement('img');
+  // 清理可能存在的旧图片元素
+  const existingImages = state.svgElement.querySelectorAll('image');
+  existingImages.forEach(img => img.remove());
 
-  // 设置初始图片源
+  // 从DOM获取硬编码的高斯模糊元素
+  state.gaussianBlur = state.svgElement.querySelector('#bg-carousel-blur-filter feGaussianBlur');
+  if (!state.gaussianBlur) {
+    console.error('[Carousel] Blur filter not found');
+    return;
+  }
+
+  // 初始化模糊状态
+  blurState.currentBlurValue = parseFloat(state.gaussianBlur.getAttribute('stdDeviation') || '0');
+  blurState.targetBlurValue = blurState.currentBlurValue;
+
+  // 创建初始图片
   if (state.backgrounds.length > 0) {
-    state.img1.src = state.backgrounds[0];
+    state.currentImg = createImageElement(state.backgrounds[0]);
+    state.svgElement.appendChild(state.currentImg);
+
+    // 确保只有一个图片元素
+    ensureImageCount(1);
+
     // 异步更新第一张图片的主题色
     updateThemeFromBackground(state.backgrounds[0]);
   }
-  if (state.backgrounds.length > 1) {
-    state.img2.src = state.backgrounds[1];
-  }
-
-  // 初始状态：显示第一张，隐藏第二张
-  state.img2.hidden = true;
-
-  // 将图片元素添加到容器中
-  state.backgroundContainer.appendChild(state.img1);
-  state.backgroundContainer.appendChild(state.img2);
 }
 
 /**
@@ -250,27 +441,15 @@ async function runInitialSetup(backgrounds: string[]) {
   state.backgrounds = backgrounds;
   state.originalTitle = document.title;
 
-  // 查找背景容器元素
-  state.backgroundContainer = document.querySelector('#bg-carousel-container');
-
-  if (!state.backgroundContainer) {
-    console.error('[Carousel] Background container #bg-carousel-container not found');
-    return;
-  }
-
-  // 创建图片元素并设置事件监听器
   createImageElements();
   setupEventListeners();
   handleScroll();
 
-  // 预加载主题色：为所有背景图初始化缓存并开始主题色提取
   if (backgrounds.length > 0) {
-    backgrounds.forEach(url => {
-      if (!imageCache.has(url)) {
-        imageCache.set(url, { isLoaded: false });
-        updateThemeFromBackground(url);
-      }
-    });
+    const firstUrl = backgrounds[0];
+    if (!imageCache.has(firstUrl)) {
+      imageCache.set(firstUrl, { isLoaded: false });
+    }
   }
 }
 
@@ -279,12 +458,15 @@ async function runInitialSetup(backgrounds: string[]) {
  * 用于页面重新加载或组件重新挂载时
  */
 function runReinitialization() {
-  // 重新获取背景容器元素
-  state.backgroundContainer = document.querySelector('#bg-carousel-container');
-  if (!state.backgroundContainer) return;
+  // 获取现有的SVG元素并清理图片
+  const existingSvg = document.querySelector('#bg-carousel-svg');
+  if (existingSvg) {
+    // 只清理image元素
+    const images = existingSvg.querySelectorAll('image');
+    images.forEach(img => img.remove());
+  }
 
-  // 清空容器内容并重新创建图片元素
-  state.backgroundContainer.innerHTML = '';
+  // 重新初始化组件
   createImageElements();
 
   // 重新设置事件监听器
@@ -341,9 +523,9 @@ export function destroyCarousel(): void {
   offEvents('background-carousel-scroll');
   offPageVisibilityChange('background-carousel');
 
-  // 清理DOM元素
-  if (state.backgroundContainer) {
-    state.backgroundContainer.innerHTML = '';
+  if (state.svgElement) {
+    const images = state.svgElement.querySelectorAll('image');
+    images.forEach(img => img.remove());
   }
 
   // 清理缓存数据
@@ -354,12 +536,21 @@ export function destroyCarousel(): void {
     currentIndex: 0,
     backgrounds: [],
     timerRef: null,
-    img1: null,
-    img2: null,
+    currentImg: null,
     isPaused: false,
     originalTitle: '',
     allThemeColorsExtracted: false,
-    backgroundContainer: null,
+    svgElement: null,
+    gaussianBlur: null,
+    isSwitching: false,
+  });
+
+  // 重置模糊状态
+  Object.assign(blurState, {
+    isAnimating: false,
+    currentBlurValue: 0,
+    targetBlurValue: 0,
+    step: 0.1,
   });
 
   // 标记为未初始化状态

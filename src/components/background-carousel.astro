@@ -1,32 +1,11 @@
-<div id="bg-carousel-container"></div>
-
-<style>
-  #bg-carousel-container {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    scale: 1.05;
-    transition: filter 1000ms;
-    position: fixed;
-    z-index: -999;
-
-    img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 1000ms allow-discrete;
-      opacity: 1;
-
-      @starting-style {
-        opacity: 0;
-      }
-    }
-
-    img[hidden] {
-      opacity: 0;
-    }
-  }
-</style>
+<svg
+  id="bg-carousel-svg"
+  style="position: fixed; width: 100%; height: 100%; z-index: -999;top: 0; left: 0;"
+>
+  <defs>
+    <filter id="bg-carousel-blur-filter">
+      <feGaussianBlur stdDeviation="0" color-interpolation-filters="sRGB" edgeMode="none"
+      ></feGaussianBlur>
+    </filter>
+  </defs>
+</svg>
