@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import styles from '../styles/layouts/base-layout.module.css';
+import Scrollbar from '@/components/scrollbar.astro';
 
 export interface Props {
   title?: string;
@@ -21,6 +22,7 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
     <ClientRouter />
   </head>
   <body>
+    <Scrollbar />
     <!-- 背景轮播容器 - 整个容器都被持久化，确保在页面切换时不被重新渲染 -->
     <div id="background-carousel-container" transition:persist="background-carousel">
       <div id="bg-layer-1" class={styles.bgLayer}></div>

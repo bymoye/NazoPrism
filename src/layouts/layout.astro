@@ -3,7 +3,6 @@ import BaseLayout from './base-layout.astro';
 import Navigation from '../components/navigation.astro';
 import Footer from '../components/footer.astro';
 import ToTop from '../components/to-top.astro';
-import Scrollbar from '../components/scrollbar.astro';
 import styles from '../styles/layouts/layout.module.css';
 
 export interface Props {
@@ -16,7 +15,6 @@ const { title, description } = Astro.props;
 
 <BaseLayout title={title} description={description}>
   <div class={styles.container}>
-    <Scrollbar />
     <Navigation />
     <main>
       <slot />

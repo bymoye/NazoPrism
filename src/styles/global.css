@@ -19,13 +19,16 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  overflow-x: hidden;
+
   color: rgb(var(--md-sys-color-on-background));
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  overflow-x: hidden;
+}
 * {
   box-sizing: border-box;
 }

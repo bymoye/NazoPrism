@@ -3,7 +3,6 @@ import { initBackgroundCarousel } from './background-carousel';
 import { initGlobalEventManager } from './global-event-manager';
 import { initNavigation } from './navigation';
 import { initPageVisibilityManager } from './page-visibility-manager';
-import { initProgressBar } from './progress-bar';
 import { initTheme } from './theme-init';
 import { initToTop } from './to-top';
 
@@ -62,7 +61,6 @@ function initializeCoreModules(): void {
       critical: false,
     },
     { name: 'Navigation', init: initNavigation, critical: false },
-    { name: 'Progress Bar', init: initProgressBar, critical: false },
     { name: 'To Top Button', init: initToTop, critical: false },
   ];
 
