@@ -18,6 +18,13 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <script is:inline type="module">
+      if (!CSS.supports('animation-timeline: scroll()')) {
+        import('https://static.nazo.run/scroll-timeline/scroll-timeline.js').catch(err =>
+          console.error('加载 scroll-timeline Polyfill 失败：', err),
+        );
+      }
+    </script>
     <title>{title}</title>
     <ClientRouter />
   </head>
