@@ -50,28 +50,6 @@ body {
     caret-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
 }
 
-#bg-layer-1,
-#bg-layer-2 {
-  /* 完全禁用所有可能的动画和过渡 */
-  transition: none !important;
-  transform: none !important;
-  animation: none !important;
-
-  /* 固定背景属性，避免重新计算 */
-  background-attachment: scroll !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
-
-  /* 确保容器尺寸稳定 */
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-
-  /* 避免任何可能的布局变化 */
-  position: fixed !important;
-  display: block !important;
-}
-
 /* Material Design 3 滚动条样式 - 跟随主题色 */
 ::-webkit-scrollbar {
   width: 12px;

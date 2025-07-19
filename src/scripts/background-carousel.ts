@@ -1,212 +1,130 @@
 import { themeManager } from '../utils/theme-manager';
-import { offEvents, onScroll } from './global-event-manager';
 import { offPageVisibilityChange, onPageVisibilityChange } from './page-visibility-manager';
 import { registerGlobalCleanup } from './cleanup-manager';
+import { offEvents, onScroll } from './global-event-manager';
 
+/**
+ * 轮播组件的状态接口
+ */
 interface CarouselState {
+  /** 背景容器元素 */
+  backgroundContainer: HTMLElement | null;
+  /** 第一个图片元素 */
+  img1: HTMLImageElement | null;
+  /** 第二个图片元素 */
+  img2: HTMLImageElement | null;
+  /** 当前显示的背景图片索引 */
   currentIndex: number;
-  isTransitioning: boolean;
+  /** 背景图片URL数组 */
   backgrounds: string[];
-  currentBlur: number;
-  blurTarget: number;
+  /** 定时器引用，用于控制自动切换 */
   timerRef: number | null;
-  activeLayer: 1 | 2;
-  bgLayer1: HTMLElement | null;
-  bgLayer2: HTMLElement | null;
-  animationFrameId: number | null;
+  /** 是否暂停轮播 */
   isPaused: boolean;
+  /** 原始页面标题 */
   originalTitle: string;
+  /** 是否已提取完所有主题色 */
   allThemeColorsExtracted: boolean;
-  isRenderLoopActive: boolean;
 }
 
+/**
+ * 图片缓存数据接口
+ */
 interface ImageCacheData {
+  /** 是否已加载 */
   isLoaded: boolean;
-  blob?: Blob;
-  blobUrl?: string;
+  /** 提取的主题色 */
   themeColor?: number;
 }
 
+/**
+ * 轮播配置常量
+ */
 const CONFIG = {
-  SCROLL_THRESHOLD: 100,
-  MAX_BLUR: 8,
-  MIN_BLUR: 0,
+  /** 滚动阈值，超过此值时应用模糊效果 */
+  SCROLL_THRESHOLD: 200,
+  /** 最大模糊值 */
+  MAX_BLUR: '5px',
+  /** 最小模糊值（无模糊） */
+  MIN_BLUR: 'none',
+  /** 自动切换间隔时间（毫秒） */
   SWITCH_INTERVAL: 10000,
-  TRANSITION_DURATION: 1500,
 };
 
+/**
+ * 轮播组件的全局状态
+ */
 const state: CarouselState = {
   currentIndex: 0,
-  isTransitioning: false,
   backgrounds: [],
-  currentBlur: 0,
-  blurTarget: 0,
   timerRef: null,
-  activeLayer: 1,
-  bgLayer1: null,
-  bgLayer2: null,
-  animationFrameId: null,
+  img1: null,
+  img2: null,
   isPaused: false,
   originalTitle: '',
   allThemeColorsExtracted: false,
-  isRenderLoopActive: false,
+  backgroundContainer: null,
 };
 
+/** 图片缓存映射，存储图片数据和主题色 */
 const imageCache = new Map<string, ImageCacheData>();
-const activeAnimations = new Map<HTMLElement | string, number>();
+/** 模块是否已初始化 */
 let isInitialized = false;
 
-// --- 2. 内部核心逻辑 ---
+// --- 核心逻辑函数 ---
 
-function easeInOut(t: number): number {
-  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-}
-
-async function preloadImage(url: string): Promise<void> {
-  if (imageCache.has(url)) return;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const img = new Image();
-    img.src = blobUrl;
-    await img.decode();
-    imageCache.set(url, { isLoaded: true, blob, blobUrl });
-  } catch (error) {
-    console.error(`[Carousel] Failed to preload image ${url}:`, error);
-  }
-}
-
-function setBackgroundImage(element: HTMLElement, url: string): void {
-  const finalUrl = imageCache.get(url)?.blobUrl || url;
-  Object.assign(element.style, {
-    backgroundImage: `url(${finalUrl})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    filter: `blur(${state.currentBlur}px)`,
-  });
-}
-
-const updateBlurEffect = () => {
-  const blurVal = `blur(${state.currentBlur.toFixed(2)}px)`;
-  if (state.bgLayer1) state.bgLayer1.style.filter = blurVal;
-  if (state.bgLayer2) state.bgLayer2.style.filter = blurVal;
-};
-
-const renderLoop = () => {
-  const blurDiff = state.blurTarget - state.currentBlur;
-  if (Math.abs(blurDiff) < 0.01) {
-    if (state.currentBlur !== state.blurTarget) {
-      state.currentBlur = state.blurTarget;
-      updateBlurEffect();
-    }
-    state.isRenderLoopActive = false;
-    return;
-  }
-  state.currentBlur += blurDiff * 0.1;
-  updateBlurEffect();
-  state.animationFrameId = requestAnimationFrame(renderLoop);
-};
-
+/**
+ * 处理页面滚动事件，根据滚动位置应用模糊效果
+ */
 const handleScroll = () => {
-  const scrollTop = document.documentElement.scrollTop;
-  const newBlurTarget = scrollTop > CONFIG.SCROLL_THRESHOLD ? CONFIG.MAX_BLUR : CONFIG.MIN_BLUR;
-  if (state.blurTarget === newBlurTarget) return;
-  state.blurTarget = newBlurTarget;
-  if (!state.isRenderLoopActive) {
-    state.isRenderLoopActive = true;
-    state.animationFrameId = requestAnimationFrame(renderLoop);
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  if (state.backgroundContainer) {
+    // 当滚动超过阈值时应用模糊效果，否则移除模糊
+    state.backgroundContainer.style.filter =
+      scrollTop > CONFIG.SCROLL_THRESHOLD ? `blur(${CONFIG.MAX_BLUR})` : CONFIG.MIN_BLUR;
   }
 };
 
-function animate(
-  target: HTMLElement,
-  start: number,
-  end: number,
-  duration: number,
-  onUpdate: (v: number) => void,
-  onComplete?: () => void,
-) {
-  const prevAnim = activeAnimations.get(target);
-  if (prevAnim) cancelAnimationFrame(prevAnim);
-  const startTime = performance.now();
-  const frame = (time: number) => {
-    const progress = Math.min((time - startTime) / duration, 1);
-    onUpdate(start + (end - start) * easeInOut(progress));
-    if (progress < 1) {
-      activeAnimations.set(target, requestAnimationFrame(frame));
-    } else {
-      activeAnimations.delete(target);
-      onComplete?.();
-    }
-  };
-  activeAnimations.set(target, requestAnimationFrame(frame));
-}
-
-async function switchBackground() {
-  if (state.isTransitioning || state.backgrounds.length <= 1 || state.isPaused) return;
-
-  state.isTransitioning = true;
-  try {
-    const nextIndex = (state.currentIndex + 1) % state.backgrounds.length;
-    const currentLayer = state.activeLayer === 1 ? state.bgLayer1 : state.bgLayer2;
-    const nextLayer = state.activeLayer === 1 ? state.bgLayer2 : state.bgLayer1;
-    if (!currentLayer || !nextLayer) throw new Error('Layers not found');
-
-    await preloadImage(state.backgrounds[nextIndex]);
-    setBackgroundImage(nextLayer, state.backgrounds[nextIndex]);
-    updateThemeFromBackground(state.backgrounds[nextIndex]);
-
-    animate(
-      nextLayer,
-      0,
-      1,
-      CONFIG.TRANSITION_DURATION,
-      value => (nextLayer.style.opacity = String(value)),
-    );
-    animate(
-      currentLayer,
-      1,
-      0,
-      CONFIG.TRANSITION_DURATION,
-      value => (currentLayer.style.opacity = String(value)),
-      () => {
-        state.currentIndex = nextIndex;
-        state.activeLayer = state.activeLayer === 1 ? 2 : 1;
-        state.isTransitioning = false;
-      },
-    );
-  } catch (e) {
-    console.error('[Carousel] Failed to switch background:', e);
-    state.isTransitioning = false;
-  }
-}
-
+/**
+ * 从背景图片更新主题色
+ * @param imageUrl - 图片URL
+ */
 async function updateThemeFromBackground(imageUrl: string) {
   const isDark = themeManager.prefersDarkMode();
   const cachedColor = imageCache.get(imageUrl)?.themeColor;
+
+  // 如果缓存中已有主题色，直接使用
   if (cachedColor !== undefined) {
     await themeManager.updateThemeFromColor(cachedColor, isDark);
     return;
   }
+
   try {
+    // 从图片提取主题色
     const color = await themeManager.updateThemeFromImage(imageUrl, isDark);
     if (color !== undefined) {
+      // 将提取的主题色存入缓存
       const existing = imageCache.get(imageUrl) || { isLoaded: false };
       imageCache.set(imageUrl, { ...existing, themeColor: color });
       checkAndShutdownWorker();
     }
   } catch {
+    // 提取失败时使用默认主题色
     themeManager.applyTheme(themeManager.generateTheme(0xff6750a4, isDark));
   }
 }
 
+/**
+ * 检查是否所有背景图的主题色都已提取完成，如果是则关闭Worker以节省资源
+ */
 function checkAndShutdownWorker() {
   if (state.allThemeColorsExtracted) return;
+
+  // 检查是否所有背景图都已提取主题色
   const allExtracted = state.backgrounds.every(
     url => imageCache.get(url)?.themeColor !== undefined,
   );
+
   if (allExtracted) {
     state.allThemeColorsExtracted = true;
     themeManager.shutdown();
@@ -214,118 +132,236 @@ function checkAndShutdownWorker() {
   }
 }
 
+/**
+ * 切换背景图片
+ * 实现两个img元素之间的切换显示
+ */
+function switchBackground() {
+  // 检查切换条件：图片数量、暂停状态、元素存在性
+  if (state.backgrounds.length <= 1 || state.isPaused || !state.img1 || !state.img2) return;
+  const nextIndex = (state.currentIndex + 1) % state.backgrounds.length;
+  // 确定当前显示的图片和下一个要显示的图片
+  const currentImg = state.img1.hidden ? state.img2 : state.img1;
+  const nextImg = currentImg === state.img1 ? state.img2 : state.img1;
+
+  // 设置下一张图片的URL
+  nextImg.src = state.backgrounds[nextIndex];
+
+  // 更新主题色
+  updateThemeFromBackground(state.backgrounds[nextIndex]);
+
+  // 切换显示/隐藏状态
+  currentImg.hidden = true;
+  nextImg.hidden = false;
+
+  // 更新当前索引
+  state.currentIndex = nextIndex;
+}
+
+/**
+ * 启动自动切换定时器
+ */
 const startTimer = () => {
+  // 清除现有定时器
   if (state.timerRef) clearInterval(state.timerRef);
-  if (!state.isPaused)
+
+  // 如果未暂停则启动新的定时器
+  if (!state.isPaused) {
     state.timerRef = window.setInterval(switchBackground, CONFIG.SWITCH_INTERVAL);
+  }
 };
+
+/**
+ * 暂停轮播
+ * 在页面不可见时调用
+ */
 const pauseCarousel = () => {
   state.isPaused = true;
   if (state.timerRef) clearInterval(state.timerRef);
   state.timerRef = null;
+  // 更新页面标题提示用户
   document.title = '等你回来~ | ' + state.originalTitle;
 };
+
+/**
+ * 恢复轮播
+ * 在页面重新可见时调用
+ */
 const resumeCarousel = () => {
   state.isPaused = false;
+  // 恢复原始页面标题
   document.title = state.originalTitle;
   startTimer();
 };
 
+/**
+ * 设置事件监听器
+ * 包括滚动监听和页面可见性监听
+ */
 function setupEventListeners() {
-  offEvents('background-carousel');
+  // 清除之前的页面可见性监听器
   offPageVisibilityChange('background-carousel');
-  onScroll('background-carousel', handleScroll);
+
+  // 设置滚动监听器
+  // window.addEventListener('scroll', handleScroll);
+  onScroll('background-carousel-scroll', handleScroll);
+
+  // 设置页面可见性监听器，用于暂停/恢复轮播
   onPageVisibilityChange('background-carousel', pauseCarousel, resumeCarousel);
+
+  // 启动定时器
   startTimer();
 }
 
-async function runInitialSetup(backgrounds: string[]) {
-  state.backgrounds = backgrounds;
-  state.originalTitle = document.title;
-  state.bgLayer1 = document.querySelector('#bg-layer-1');
-  state.bgLayer2 = document.querySelector('#bg-layer-2');
-  if (!state.bgLayer1 || !state.bgLayer2) return;
+/**
+ * 创建图片元素并添加到容器中
+ */
+function createImageElements() {
+  if (!state.backgroundContainer) return;
 
+  // 创建两个img元素用于轮播切换
+  state.img1 = document.createElement('img');
+  state.img2 = document.createElement('img');
+
+  // 设置初始图片源
   if (state.backgrounds.length > 0) {
-    await preloadImage(state.backgrounds[0]);
-    if (state.backgrounds.length > 1) await preloadImage(state.backgrounds[1]);
-
-    const activeLayer = state.activeLayer === 1 ? state.bgLayer1 : state.bgLayer2;
-    setBackgroundImage(activeLayer, state.backgrounds[0]);
-    await updateThemeFromBackground(state.backgrounds[0]);
-    activeLayer.style.opacity = '1';
+    state.img1.src = state.backgrounds[0];
+    // 异步更新第一张图片的主题色
+    updateThemeFromBackground(state.backgrounds[0]);
+  }
+  if (state.backgrounds.length > 1) {
+    state.img2.src = state.backgrounds[1];
   }
 
-  setupEventListeners();
-  handleScroll();
-  if (state.backgrounds.length > 2) {
-    // 浏览器主线程空闲时，才去预加载剩余的图片
-    requestIdleCallback(
-      () => {
-        state.backgrounds.slice(2).forEach(preloadImage);
-      },
-      { timeout: 2000 },
-    );
-  }
-}
+  // 初始状态：显示第一张，隐藏第二张
+  state.img2.hidden = true;
 
-function runReinitialization() {
-  state.bgLayer1 = document.querySelector('#bg-layer-1');
-  state.bgLayer2 = document.querySelector('#bg-layer-2');
-  if (!state.bgLayer1 || !state.bgLayer2) return;
-
-  const currentBgUrl = state.backgrounds[state.currentIndex];
-  const activeLayer = state.activeLayer === 1 ? state.bgLayer1 : state.bgLayer2;
-  const inactiveLayer = state.activeLayer === 1 ? state.bgLayer2 : state.bgLayer1;
-  if (activeLayer && currentBgUrl) {
-    setBackgroundImage(activeLayer, currentBgUrl);
-    activeLayer.style.opacity = '1';
-  }
-  if (inactiveLayer) inactiveLayer.style.opacity = '0';
-
-  setupEventListeners();
-  handleScroll();
-}
-
-export function getCachedImageBlob(url: string): Blob | undefined {
-  return imageCache.get(url)?.blob;
+  // 将图片元素添加到容器中
+  state.backgroundContainer.appendChild(state.img1);
+  state.backgroundContainer.appendChild(state.img2);
 }
 
 /**
- * 初始化背景轮播。这是此模块的唯一入口。
- * @param backgrounds 要轮播的背景图片 URL 数组。
+ * 执行初始化设置
+ * @param backgrounds - 背景图片URL数组
+ */
+async function runInitialSetup(backgrounds: string[]) {
+  // 保存背景图片列表和原始标题
+  state.backgrounds = backgrounds;
+  state.originalTitle = document.title;
+
+  // 查找背景容器元素
+  state.backgroundContainer = document.querySelector('#bg-carousel-container');
+
+  if (!state.backgroundContainer) {
+    console.error('[Carousel] Background container #bg-carousel-container not found');
+    return;
+  }
+
+  // 创建图片元素并设置事件监听器
+  createImageElements();
+  setupEventListeners();
+  handleScroll();
+
+  // 预加载主题色：为所有背景图初始化缓存并开始主题色提取
+  if (backgrounds.length > 0) {
+    backgrounds.forEach(url => {
+      if (!imageCache.has(url)) {
+        imageCache.set(url, { isLoaded: false });
+        updateThemeFromBackground(url);
+      }
+    });
+  }
+}
+
+/**
+ * 执行重新初始化
+ * 用于页面重新加载或组件重新挂载时
+ */
+function runReinitialization() {
+  // 重新获取背景容器元素
+  state.backgroundContainer = document.querySelector('#bg-carousel-container');
+  if (!state.backgroundContainer) return;
+
+  // 清空容器内容并重新创建图片元素
+  state.backgroundContainer.innerHTML = '';
+  createImageElements();
+
+  // 重新设置事件监听器
+  setupEventListeners();
+  handleScroll();
+}
+
+/**
+ * 初始化背景轮播组件
+ *
+ * 这是此模块的唯一公共入口函数。首次调用时进行完整初始化，
+ * 后续调用时进行重新初始化以适应DOM变化。
+ *
+ * @param backgrounds - 要轮播的背景图片URL数组
+ *
+ * @example
+ * ```typescript
+ * initBackgroundCarousel([
+ *   'https://example.com/image1.jpg',
+ *   'https://example.com/image2.jpg',
+ *   'https://example.com/image3.jpg'
+ * ]);
+ * ```
  */
 export function initBackgroundCarousel(backgrounds: string[]): void {
+  console.log('[Carousel] 初始化背景轮播组件');
   if (!isInitialized) {
+    // 首次初始化
     isInitialized = true;
     runInitialSetup(backgrounds);
-    // 职责明确：自己注册自己的全局清理任务
+    // 注册全局清理任务，确保页面卸载时正确清理资源
     registerGlobalCleanup(destroyCarousel);
   } else {
+    // 重新初始化
     runReinitialization();
   }
 }
 
 /**
- * 完整的销毁函数，用于全局清理。
+ * 完整销毁轮播组件
+ *
+ * 清理所有相关资源，包括定时器、事件监听器、DOM元素等。
+ * 确保没有内存泄漏，适用于页面卸载或组件销毁时调用。
+ *
+ * @public
  */
 export function destroyCarousel(): void {
   if (!isInitialized) return;
 
-  // 清理所有定时器和动画帧
+  // 清理定时器，停止自动切换
   if (state.timerRef) clearInterval(state.timerRef);
-  if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
 
-  // 清理所有事件监听器
-  offEvents('background-carousel');
+  // 移除事件监听器
+  offEvents('background-carousel-scroll');
   offPageVisibilityChange('background-carousel');
 
-  // 清理 Blob URL 释放内存
-  imageCache.forEach(cache => {
-    if (cache.blobUrl) URL.revokeObjectURL(cache.blobUrl);
-  });
+  // 清理DOM元素
+  if (state.backgroundContainer) {
+    state.backgroundContainer.innerHTML = '';
+  }
+
+  // 清理缓存数据
   imageCache.clear();
 
-  // 重置状态
+  // 重置所有状态到初始值
+  Object.assign(state, {
+    currentIndex: 0,
+    backgrounds: [],
+    timerRef: null,
+    img1: null,
+    img2: null,
+    isPaused: false,
+    originalTitle: '',
+    allThemeColorsExtracted: false,
+    backgroundContainer: null,
+  });
+
+  // 标记为未初始化状态
   isInitialized = false;
 }
