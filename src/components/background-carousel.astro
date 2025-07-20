@@ -1,11 +1,4 @@
-<svg
-  id="bg-carousel-svg"
-  style="position: fixed; width: 100%; height: 100%; z-index: -999;top: 0; left: 0;"
->
-  <defs>
-    <filter id="bg-carousel-blur-filter">
-      <feGaussianBlur stdDeviation="0" color-interpolation-filters="sRGB" edgeMode="none"
-      ></feGaussianBlur>
-    </filter>
-  </defs>
-</svg>
+<canvas
+  id="bg-carousel-canvas"
+  style="position: fixed; width: 100%; height: 100%; z-index: -999; top: 0; left: 0;"
+  transition:persist="bg-carousel"></canvas>

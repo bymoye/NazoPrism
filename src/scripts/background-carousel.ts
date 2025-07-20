@@ -7,10 +7,14 @@ import { offEvents, onScroll } from './global-event-manager';
  * 轮播组件的状态接口
  */
 interface CarouselState {
-  /** SVG元素 */
-  svgElement: SVGSVGElement | null;
-  /** 当前显示的图片元素 */
-  currentImg: SVGImageElement | null;
+  /** Canvas元素 */
+  canvas: HTMLCanvasElement | null;
+  /** Canvas渲染上下文 */
+  ctx: CanvasRenderingContext2D | null;
+  /** 当前显示的图片 */
+  currentImg: HTMLImageElement | null;
+  /** 下一张图片（用于过渡） */
+  nextImg: HTMLImageElement | null;
   /** 当前显示的背景图片索引 */
   currentIndex: number;
   /** 背景图片URL数组 */
@@ -23,10 +27,14 @@ interface CarouselState {
   originalTitle: string;
   /** 是否已提取完所有主题色 */
   allThemeColorsExtracted: boolean;
-  /** 高斯模糊元素 */
-  gaussianBlur: SVGFEGaussianBlurElement | null;
+  /** 当前模糊强度 */
+  blurAmount: number;
   /** 是否正在切换中（防止并发切换） */
   isSwitching: boolean;
+  /** 过渡动画的透明度 */
+  transitionOpacity: number;
+  /** 过渡动画ID */
+  transitionAnimationId: number | null;
 }
 
 /**
@@ -57,16 +65,20 @@ const CONFIG = {
  * 轮播组件的全局状态
  */
 const state: CarouselState = {
+  canvas: null,
+  ctx: null,
   currentIndex: 0,
   backgrounds: [],
   timerRef: null,
   currentImg: null,
+  nextImg: null,
   isPaused: false,
   originalTitle: '',
   allThemeColorsExtracted: false,
-  svgElement: null,
-  gaussianBlur: null,
+  blurAmount: 0,
   isSwitching: false,
+  transitionOpacity: 0,
+  transitionAnimationId: null,
 };
 
 /** 图片缓存映射，存储图片数据和主题色 */
@@ -76,40 +88,97 @@ let isInitialized = false;
 
 // --- 核心逻辑函数 ---
 
-/** SVG命名空间 */
-const SVG_NS = 'http://www.w3.org/2000/svg';
-
 /**
- * 创建SVG动画元素
- * @returns SVG animate元素
+ * 创建并加载图片元素
+ * @param src - 图片链接
+ * @returns Promise<HTMLImageElement>
  */
-function createOpacityAnimation(): SVGAnimateElement {
-  const animate = document.createElementNS(SVG_NS, 'animate');
-  animate.setAttribute('attributeName', 'opacity');
-  animate.setAttribute('from', '1');
-  animate.setAttribute('to', '0');
-  animate.setAttribute('begin', 'null');
-  animate.setAttribute('dur', CONFIG.ANIMATION_DURATION);
-  animate.setAttribute('repeatCount', '1');
-  animate.setAttribute('fill', 'freeze');
-  return animate;
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
 }
 
 /**
- * 创建SVG图片元素
- * @param href - 图片链接
- * @returns SVG image元素
+ * 调整Canvas尺寸以匹配窗口
  */
-function createImageElement(href: string): SVGImageElement {
-  const image = document.createElementNS(SVG_NS, 'image');
-  image.setAttribute('href', href);
-  image.setAttribute('x', '-5');
-  image.setAttribute('y', '-5');
-  image.setAttribute('height', '102%');
-  image.setAttribute('width', '102%');
-  image.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-  image.style.filter = 'url(#bg-carousel-blur-filter)';
-  return image;
+function resizeCanvas() {
+  if (!state.canvas || !state.ctx) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const rect = state.canvas.getBoundingClientRect();
+
+  state.canvas.width = rect.width * dpr;
+  state.canvas.height = rect.height * dpr;
+
+  state.ctx.scale(dpr, dpr);
+  state.canvas.style.width = rect.width + 'px';
+  state.canvas.style.height = rect.height + 'px';
+}
+
+/**
+ * 在Canvas上绘制图片，保持宽高比并填充整个画布
+ * @param img - 要绘制的图片
+ * @param opacity - 透明度 (0-1)
+ */
+function drawImageCover(img: HTMLImageElement, opacity: number = 1) {
+  if (!state.canvas || !state.ctx) return;
+
+  const canvasWidth = state.canvas.width / (window.devicePixelRatio || 1);
+  const canvasHeight = state.canvas.height / (window.devicePixelRatio || 1);
+
+  // 计算缩放比例以填充整个画布
+  const scale = Math.max(canvasWidth / img.width, canvasHeight / img.height);
+  const scaledWidth = img.width * scale;
+  const scaledHeight = img.height * scale;
+
+  // 居中绘制
+  const x = (canvasWidth - scaledWidth) / 2;
+  const y = (canvasHeight - scaledHeight) / 2;
+
+  state.ctx.globalAlpha = opacity;
+  state.ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+  state.ctx.globalAlpha = 1;
+}
+
+/**
+ * 应用模糊效果到Canvas
+ * @param blurAmount - 模糊强度
+ */
+function applyBlur(blurAmount: number) {
+  if (!state.ctx || blurAmount <= 0) return;
+
+  state.ctx.filter = `blur(${blurAmount}px)`;
+}
+
+/**
+ * 渲染当前帧
+ */
+function render() {
+  if (!state.canvas || !state.ctx) return;
+
+  // 清空画布
+  state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
+
+  // 应用模糊效果
+  applyBlur(state.blurAmount);
+
+  // 绘制当前图片
+  if (state.currentImg) {
+    drawImageCover(state.currentImg, 1);
+  }
+
+  // 如果正在过渡，绘制下一张图片
+  if (state.nextImg && state.transitionOpacity > 0) {
+    drawImageCover(state.nextImg, state.transitionOpacity);
+  }
+
+  // 重置滤镜
+  state.ctx.filter = 'none';
 }
 
 /**
@@ -118,56 +187,38 @@ function createImageElement(href: string): SVGImageElement {
 const blurState = {
   /** 是否正在进行模糊动画 */
   isAnimating: false,
-  /** 当前模糊值 */
-  currentBlurValue: 0,
   /** 目标模糊值 */
   targetBlurValue: 0,
   /** 动画步长 */
   step: 0.1,
+  /** 上次滚动位置，用于判断滚动方向 */
+  lastScrollTop: 0,
 };
-
-/**
- * 检查模糊动画是否应该停止
- * @param scrollTop - 当前滚动位置
- * @returns 是否应该停止动画
- */
-function shouldStopBlurAnimation(scrollTop: number): boolean {
-  return (
-    (scrollTop > CONFIG.SCROLL_THRESHOLD && blurState.currentBlurValue === 5) ||
-    (scrollTop <= CONFIG.SCROLL_THRESHOLD && blurState.currentBlurValue === 0)
-  );
-}
 
 /**
  * 执行模糊动画的单步
  */
 function performBlurStep() {
-  if (!state.gaussianBlur) return;
-
   // 根据目标值调整当前模糊值
-  if (blurState.targetBlurValue > blurState.currentBlurValue) {
-    blurState.currentBlurValue = parseFloat(
-      (blurState.currentBlurValue + blurState.step).toFixed(1),
-    );
-  } else if (blurState.targetBlurValue < blurState.currentBlurValue) {
-    blurState.currentBlurValue = parseFloat(
-      (blurState.currentBlurValue - blurState.step).toFixed(1),
-    );
+  if (blurState.targetBlurValue > state.blurAmount) {
+    state.blurAmount = parseFloat((state.blurAmount + blurState.step).toFixed(1));
+  } else if (blurState.targetBlurValue < state.blurAmount) {
+    state.blurAmount = parseFloat((state.blurAmount - blurState.step).toFixed(1));
   }
 
   // 限制模糊值范围
-  blurState.currentBlurValue = Math.max(0, Math.min(5, blurState.currentBlurValue));
+  state.blurAmount = Math.max(0, Math.min(5, state.blurAmount));
 
-  // 更新DOM元素
-  state.gaussianBlur.setAttribute('stdDeviation', blurState.currentBlurValue.toString());
+  // 重新渲染
+  render();
 
   // 检查是否需要继续动画
-  if (Math.abs(blurState.currentBlurValue - blurState.targetBlurValue) > 0.05) {
+  if (Math.abs(state.blurAmount - blurState.targetBlurValue) > 0.05) {
     requestAnimationFrame(performBlurStep);
   } else {
     // 动画完成，设置精确的目标值
-    blurState.currentBlurValue = blurState.targetBlurValue;
-    state.gaussianBlur.setAttribute('stdDeviation', blurState.currentBlurValue.toString());
+    state.blurAmount = blurState.targetBlurValue;
+    render();
     blurState.isAnimating = false;
   }
 }
@@ -177,11 +228,31 @@ function performBlurStep() {
  * @param scrollTop - 当前滚动位置
  */
 function startBlurAnimation(scrollTop: number) {
-  if (!blurState.isAnimating && !shouldStopBlurAnimation(scrollTop)) {
-    blurState.isAnimating = true;
-    blurState.targetBlurValue = scrollTop > CONFIG.SCROLL_THRESHOLD ? 5 : 0;
-    requestAnimationFrame(performBlurStep);
+  // 计算新的目标模糊值
+  const newTargetBlurValue = scrollTop > CONFIG.SCROLL_THRESHOLD ? 5 : 0;
+
+  // 如果目标值发生变化，或者当前没有动画在进行
+  if (newTargetBlurValue !== blurState.targetBlurValue || !blurState.isAnimating) {
+    // 更新目标值
+    blurState.targetBlurValue = newTargetBlurValue;
+
+    // 如果当前模糊值已经等于目标值，不需要动画
+    if (Math.abs(state.blurAmount - blurState.targetBlurValue) <= 0.05) {
+      state.blurAmount = blurState.targetBlurValue;
+      render();
+      blurState.isAnimating = false;
+      return;
+    }
+
+    // 开始新的动画（如果还没有在进行）
+    if (!blurState.isAnimating) {
+      blurState.isAnimating = true;
+      requestAnimationFrame(performBlurStep);
+    }
   }
+
+  // 更新上次滚动位置
+  blurState.lastScrollTop = scrollTop;
 }
 
 /**
@@ -189,9 +260,7 @@ function startBlurAnimation(scrollTop: number) {
  */
 const handleScroll = () => {
   const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-  if (state.gaussianBlur) {
-    startBlurAnimation(scrollTop);
-  }
+  startBlurAnimation(scrollTop);
 };
 
 /**
@@ -224,31 +293,11 @@ async function updateThemeFromBackground(imageUrl: string) {
 }
 
 /**
- * 确保SVG中的图片元素数量在合理范围内
- * @param maxImages - 允许的最大图片数量（默认2个，正常1个+过渡时1个）
+ * 处理窗口大小变化
  */
-function ensureImageCount(maxImages: number = 2) {
-  if (!state.svgElement) return;
-
-  const images = state.svgElement.querySelectorAll('image');
-
-  // 如果图片数量超过限制，移除多余的图片
-  if (images.length > maxImages) {
-    console.warn(`[Carousel] 发现${images.length}个图片元素，超过限制${maxImages}个，正在清理...`);
-
-    // 保留最新的图片，移除旧的图片
-    const imagesToRemove = Array.from(images).slice(0, images.length - maxImages);
-    imagesToRemove.forEach(img => {
-      img.remove();
-      console.log('[Carousel] 移除多余的图片元素');
-    });
-
-    // 更新当前图片状态到最新的图片
-    const remainingImages = state.svgElement.querySelectorAll('image');
-    if (remainingImages.length > 0) {
-      state.currentImg = remainingImages[remainingImages.length - 1] as SVGImageElement;
-    }
-  }
+function handleResize() {
+  resizeCanvas();
+  render();
 }
 
 /**
@@ -270,16 +319,41 @@ function checkAndShutdownWorker() {
 }
 
 /**
- * 切换背景图片
- * 使用SVG动画实现平滑过渡
+ * 执行过渡动画
  */
-function switchBackground() {
+function performTransition() {
+  if (!state.nextImg || state.transitionOpacity >= 1) {
+    // 动画完成
+    if (state.nextImg) {
+      state.currentImg = state.nextImg;
+      state.nextImg = null;
+    }
+    state.transitionOpacity = 0;
+    state.isSwitching = false;
+    state.transitionAnimationId = null;
+    render();
+    return;
+  }
+
+  // 增加透明度
+  state.transitionOpacity += 0.02; // 约50帧完成过渡
+  if (state.transitionOpacity > 1) state.transitionOpacity = 1;
+
+  render();
+  state.transitionAnimationId = requestAnimationFrame(performTransition);
+}
+
+/**
+ * 切换背景图片
+ * 使用Canvas渐变过渡实现平滑切换
+ */
+async function switchBackground() {
   // 检查切换条件：图片数量、暂停状态、当前图片存在性、是否正在切换
   if (
     state.backgrounds.length <= 1 ||
     state.isPaused ||
     !state.currentImg ||
-    !state.svgElement ||
+    !state.canvas ||
     state.isSwitching
   ) {
     return;
@@ -288,54 +362,28 @@ function switchBackground() {
   // 设置切换状态，防止并发切换
   state.isSwitching = true;
 
-  // 安全检查：确保当前SVG中没有过多的图片元素
-  ensureImageCount(1);
-
   const nextIndex = (state.currentIndex + 1) % state.backgrounds.length;
-  const currentImg = state.currentImg;
 
-  // 创建新的图片元素
-  const nextImg = createImageElement(state.backgrounds[nextIndex]);
+  try {
+    // 加载下一张图片
+    state.nextImg = await loadImage(state.backgrounds[nextIndex]);
 
-  // 更新主题色
-  updateThemeFromBackground(state.backgrounds[nextIndex]);
+    // 更新主题色
+    updateThemeFromBackground(state.backgrounds[nextIndex]);
 
-  // 创建淡出动画
-  const fadeOutAnimation = createOpacityAnimation();
-
-  // 将新图片插入到当前图片之前（显示在下层）
-  currentImg.before(nextImg);
-
-  // 为当前图片添加淡出动画
-  currentImg.appendChild(fadeOutAnimation);
-
-  // 开始动画
-  fadeOutAnimation.beginElement();
-
-  // 定义动画结束处理函数
-  const handleAnimationEnd = () => {
-    // 清理动画元素
-    fadeOutAnimation.remove();
-
-    // 移除旧图片
-    currentImg.remove();
-
-    // 更新状态
-    state.currentImg = nextImg;
+    // 更新索引
     state.currentIndex = nextIndex;
 
-    // 重置切换状态
+    // 开始过渡动画
+    state.transitionOpacity = 0;
+    if (state.transitionAnimationId) {
+      cancelAnimationFrame(state.transitionAnimationId);
+    }
+    state.transitionAnimationId = requestAnimationFrame(performTransition);
+  } catch (error) {
+    console.error('[Carousel] 加载图片失败:', error);
     state.isSwitching = false;
-
-    // 最终安全检查：确保只有一个图片元素
-    ensureImageCount(1);
-
-    // 移除事件监听器避免内存泄漏
-    fadeOutAnimation.removeEventListener('endEvent', handleAnimationEnd);
-  };
-
-  // 监听动画结束事件
-  fadeOutAnimation.addEventListener('endEvent', handleAnimationEnd);
+  }
 }
 
 /**
@@ -376,15 +424,17 @@ const resumeCarousel = () => {
 
 /**
  * 设置事件监听器
- * 包括滚动监听和页面可见性监听
+ * 包括滚动监听、窗口大小变化监听和页面可见性监听
  */
 function setupEventListeners() {
   // 清除之前的页面可见性监听器
   offPageVisibilityChange('background-carousel');
 
   // 设置滚动监听器
-  // window.addEventListener('scroll', handleScroll);
   onScroll('background-carousel-scroll', handleScroll);
+
+  // 设置窗口大小变化监听器
+  window.addEventListener('resize', handleResize);
 
   // 设置页面可见性监听器，用于暂停/恢复轮播
   onPageVisibilityChange('background-carousel', pauseCarousel, resumeCarousel);
@@ -394,41 +444,42 @@ function setupEventListeners() {
 }
 
 /**
- * 初始化SVG元素和创建第一张图片
+ * 初始化Canvas元素和加载第一张图片
  */
-function createImageElements() {
-  // 从DOM获取硬编码的SVG元素
-  state.svgElement = document.querySelector('#bg-carousel-svg');
-  if (!state.svgElement) {
-    console.error('[Carousel] SVG element #bg-carousel-svg not found');
+async function initializeCanvas() {
+  // 从DOM获取Canvas元素
+  state.canvas = document.querySelector('#bg-carousel-canvas');
+  if (!state.canvas) {
+    console.error('[Carousel] Canvas element #bg-carousel-canvas not found');
     return;
   }
 
-  // 清理可能存在的旧图片元素
-  const existingImages = state.svgElement.querySelectorAll('image');
-  existingImages.forEach(img => img.remove());
-
-  // 从DOM获取硬编码的高斯模糊元素
-  state.gaussianBlur = state.svgElement.querySelector('#bg-carousel-blur-filter feGaussianBlur');
-  if (!state.gaussianBlur) {
-    console.error('[Carousel] Blur filter not found');
+  // 获取渲染上下文
+  state.ctx = state.canvas.getContext('2d');
+  if (!state.ctx) {
+    console.error('[Carousel] 无法获取Canvas 2D上下文');
     return;
   }
+
+  // 调整Canvas尺寸
+  resizeCanvas();
 
   // 初始化模糊状态
-  blurState.currentBlurValue = parseFloat(state.gaussianBlur.getAttribute('stdDeviation') || '0');
-  blurState.targetBlurValue = blurState.currentBlurValue;
+  state.blurAmount = 0;
+  blurState.targetBlurValue = 0;
+  blurState.lastScrollTop = 0;
 
-  // 创建初始图片
+  // 加载并显示第一张图片
   if (state.backgrounds.length > 0) {
-    state.currentImg = createImageElement(state.backgrounds[0]);
-    state.svgElement.appendChild(state.currentImg);
+    try {
+      state.currentImg = await loadImage(state.backgrounds[0]);
+      render();
 
-    // 确保只有一个图片元素
-    ensureImageCount(1);
-
-    // 异步更新第一张图片的主题色
-    updateThemeFromBackground(state.backgrounds[0]);
+      // 异步更新第一张图片的主题色
+      updateThemeFromBackground(state.backgrounds[0]);
+    } catch (error) {
+      console.error('[Carousel] 加载第一张图片失败:', error);
+    }
   }
 }
 
@@ -441,7 +492,7 @@ async function runInitialSetup(backgrounds: string[]) {
   state.backgrounds = backgrounds;
   state.originalTitle = document.title;
 
-  createImageElements();
+  await initializeCanvas();
   setupEventListeners();
   handleScroll();
 
@@ -457,17 +508,9 @@ async function runInitialSetup(backgrounds: string[]) {
  * 执行重新初始化
  * 用于页面重新加载或组件重新挂载时
  */
-function runReinitialization() {
-  // 获取现有的SVG元素并清理图片
-  const existingSvg = document.querySelector('#bg-carousel-svg');
-  if (existingSvg) {
-    // 只清理image元素
-    const images = existingSvg.querySelectorAll('image');
-    images.forEach(img => img.remove());
-  }
-
-  // 重新初始化组件
-  createImageElements();
+async function runReinitialization() {
+  // 重新初始化Canvas
+  await initializeCanvas();
 
   // 重新设置事件监听器
   setupEventListeners();
@@ -491,24 +534,24 @@ function runReinitialization() {
  * ]);
  * ```
  */
-export function initBackgroundCarousel(backgrounds: string[]): void {
+export async function initBackgroundCarousel(backgrounds: string[]): Promise<void> {
   console.log('[Carousel] 初始化背景轮播组件');
   if (!isInitialized) {
     // 首次初始化
     isInitialized = true;
-    runInitialSetup(backgrounds);
+    await runInitialSetup(backgrounds);
     // 注册全局清理任务，确保页面卸载时正确清理资源
     registerGlobalCleanup(destroyCarousel);
   } else {
     // 重新初始化
-    runReinitialization();
+    await runReinitialization();
   }
 }
 
 /**
  * 完整销毁轮播组件
  *
- * 清理所有相关资源，包括定时器、事件监听器、DOM元素等。
+ * 清理所有相关资源，包括定时器、事件监听器、动画等。
  * 确保没有内存泄漏，适用于页面卸载或组件销毁时调用。
  *
  * @public
@@ -519,13 +562,19 @@ export function destroyCarousel(): void {
   // 清理定时器，停止自动切换
   if (state.timerRef) clearInterval(state.timerRef);
 
+  // 清理过渡动画
+  if (state.transitionAnimationId) {
+    cancelAnimationFrame(state.transitionAnimationId);
+  }
+
   // 移除事件监听器
   offEvents('background-carousel-scroll');
   offPageVisibilityChange('background-carousel');
+  window.removeEventListener('resize', handleResize);
 
-  if (state.svgElement) {
-    const images = state.svgElement.querySelectorAll('image');
-    images.forEach(img => img.remove());
+  // 清理Canvas
+  if (state.canvas && state.ctx) {
+    state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
   }
 
   // 清理缓存数据
@@ -533,24 +582,28 @@ export function destroyCarousel(): void {
 
   // 重置所有状态到初始值
   Object.assign(state, {
+    canvas: null,
+    ctx: null,
     currentIndex: 0,
     backgrounds: [],
     timerRef: null,
     currentImg: null,
+    nextImg: null,
     isPaused: false,
     originalTitle: '',
     allThemeColorsExtracted: false,
-    svgElement: null,
-    gaussianBlur: null,
+    blurAmount: 0,
     isSwitching: false,
+    transitionOpacity: 0,
+    transitionAnimationId: null,
   });
 
   // 重置模糊状态
   Object.assign(blurState, {
     isAnimating: false,
-    currentBlurValue: 0,
     targetBlurValue: 0,
     step: 0.1,
+    lastScrollTop: 0,
   });
 
   // 标记为未初始化状态
