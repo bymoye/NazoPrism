@@ -5,6 +5,8 @@ import { initNavigation } from './navigation';
 import { initPageVisibilityManager } from './page-visibility-manager';
 import { initTheme } from './theme-init';
 import { initToTop } from './to-top';
+import { intersectionObserverManager } from './intersection-observer-manager';
+import { registerGlobalCleanup } from './cleanup-manager';
 
 import { SITE_CONFIG } from '../config';
 
@@ -78,6 +80,11 @@ function initializeCoreModules(): void {
       }
     }
   }
+
+  // 注册 IntersectionObserver 管理器的全局清理
+  registerGlobalCleanup(() => {
+    intersectionObserverManager.destroy();
+  });
 }
 
 /**

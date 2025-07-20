@@ -29,9 +29,13 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
     <ClientRouter />
   </head>
   <body>
+    <div id="sentinel" transition:persist></div>
     <Scrollbar />
-    <BackgroundCarousel transition:persist="background-carousel" />
-    <slot />
+    <BackgroundCarousel />
+    <main>
+      <slot />
+    </main>
+
     <!-- 初始化脚本移到持久化容器外部，避免重复执行 -->
     <script>
       import { initApp } from '../scripts/app-init';
@@ -58,4 +62,17 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
 
 <style is:global>
   @import '../styles/global.css';
+
+  #sentinel {
+    position: absolute;
+    top: 0;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+    pointer-events: none;
+
+    z-index: -99999;
+  }
 </style>

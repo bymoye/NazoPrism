@@ -1,33 +1,7 @@
 import { themeManager } from '../utils/theme-manager';
 import { offPageVisibilityChange, onPageVisibilityChange } from './page-visibility-manager';
 import { registerGlobalCleanup } from './cleanup-manager';
-import { offEvents, onScroll } from './global-event-manager';
-
-/**
- * 轮播组件的状态接口
- */
-interface CarouselState {
-  /** SVG元素 */
-  svgElement: SVGSVGElement | null;
-  /** 当前显示的图片元素 */
-  currentImg: SVGImageElement | null;
-  /** 当前显示的背景图片索引 */
-  currentIndex: number;
-  /** 背景图片URL数组 */
-  backgrounds: string[];
-  /** 定时器引用，用于控制自动切换 */
-  timerRef: number | null;
-  /** 是否暂停轮播 */
-  isPaused: boolean;
-  /** 原始页面标题 */
-  originalTitle: string;
-  /** 是否已提取完所有主题色 */
-  allThemeColorsExtracted: boolean;
-  /** 高斯模糊元素 */
-  gaussianBlur: SVGFEGaussianBlurElement | null;
-  /** 是否正在切换中（防止并发切换） */
-  isSwitching: boolean;
-}
+import { scrollObserverManager } from './scroll-observer-manager';
 
 /**
  * 图片缓存数据接口
@@ -39,520 +13,502 @@ interface ImageCacheData {
   themeColor?: number;
 }
 
+interface IBlurAnimator {
+  animation: Animation | null;
+  animationFrameId: number | null;
+  maxBlur: number;
+  lastTargetState: number;
+  isInitialized: boolean;
+
+  init(): boolean;
+  updateBlur(shouldBlur: boolean): void;
+  destroy(): void;
+  _tick(): void;
+}
+
+interface ICarouselManager {
+  svgElement: SVGSVGElement | null;
+  currentImg: SVGImageElement | null;
+  currentIndex: number;
+  backgrounds: string[];
+  timerRef: number | null;
+  isPaused: boolean;
+  originalTitle: string;
+  init(backgrounds: string[]): void;
+  reinit(): void;
+  switchBackground(): void;
+  startTimer(): void;
+  pauseCarousel(): void;
+  resumeCarousel(): void;
+  destroy(): void;
+  _ensureImageCount(maxImages?: number): void;
+  _createImageElement(href: string): SVGImageElement;
+  _precacheImages(urls: string[]): void;
+}
+
 /**
  * 轮播配置常量
  */
 const CONFIG = {
-  /** 滚动阈值，超过此值时应用模糊效果 */
-  SCROLL_THRESHOLD: 200,
   /** 模糊强度 */
-  BLUR_STRENGTH: '5',
+  MAX_BLUR: 5,
   /** 自动切换间隔时间（毫秒） */
   SWITCH_INTERVAL: 10000,
-  /** 动画持续时间 */
-  ANIMATION_DURATION: '1500ms',
-};
+  /** 切换动画持续时间（毫秒） */
+  SWITCH_DURATION: 1500,
+  /** 模糊动画持续时间（毫秒） */
+  BLUR_DURATION: 400,
+  /** 滚动触发阈值 */
+  SCROLL_MARGIN: '300px 0px 0px 0px',
+} as const;
 
-/**
- * 轮播组件的全局状态
- */
-const state: CarouselState = {
-  currentIndex: 0,
-  backgrounds: [],
-  timerRef: null,
-  currentImg: null,
-  isPaused: false,
-  originalTitle: '',
-  allThemeColorsExtracted: false,
-  svgElement: null,
-  gaussianBlur: null,
-  isSwitching: false,
-};
+// --- 模块级共享变量 ---
+const OBSERVER_ID = 'background-carousel';
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+// DOM 选择器常量
+const SELECTORS = {
+  SVG_ELEMENT: '#bg-carousel-svg',
+  BLUR_FILTER: '#bg-carousel-blur-filter feGaussianBlur',
+  IMAGE_ELEMENTS: 'image',
+} as const;
 
 /** 图片缓存映射，存储图片数据和主题色 */
 const imageCache = new Map<string, ImageCacheData>();
+/** 高斯模糊元素引用 */
+let gaussianBlurElement: SVGFEGaussianBlurElement | null = null;
+/** 是否已提取完所有主题色 */
+let allThemeColorsExtracted = false;
 /** 模块是否已初始化 */
 let isInitialized = false;
 
-// --- 核心逻辑函数 ---
+let activeAnimation: Animation | null = null;
 
-/** SVG命名空间 */
-const SVG_NS = 'http://www.w3.org/2000/svg';
+// 模糊动画器实现
+const blurAnimator: IBlurAnimator = {
+  animation: null,
+  animationFrameId: null,
+  maxBlur: CONFIG.MAX_BLUR,
+  lastTargetState: -1,
+  isInitialized: false,
 
-/**
- * 创建SVG动画元素
- * @returns SVG animate元素
- */
-function createOpacityAnimation(): SVGAnimateElement {
-  const animate = document.createElementNS(SVG_NS, 'animate');
-  animate.setAttribute('attributeName', 'opacity');
-  animate.setAttribute('from', '1');
-  animate.setAttribute('to', '0');
-  animate.setAttribute('begin', 'null');
-  animate.setAttribute('dur', CONFIG.ANIMATION_DURATION);
-  animate.setAttribute('repeatCount', '1');
-  animate.setAttribute('fill', 'freeze');
-  return animate;
-}
+  init(): boolean {
+    if (!gaussianBlurElement) {
+      console.error('[blurAnimator] 初始化失败：gaussianBlurElement 未设置');
+      return false;
+    }
 
-/**
- * 创建SVG图片元素
- * @param href - 图片链接
- * @returns SVG image元素
- */
-function createImageElement(href: string): SVGImageElement {
-  const image = document.createElementNS(SVG_NS, 'image');
-  image.setAttribute('href', href);
-  image.setAttribute('x', '-5');
-  image.setAttribute('y', '-5');
-  image.setAttribute('height', '102%');
-  image.setAttribute('width', '102%');
-  image.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-  image.style.filter = 'url(#bg-carousel-blur-filter)';
-  return image;
-}
+    if (this.isInitialized) {
+      console.warn('[blurAnimator] 已经初始化，跳过重复初始化');
+      return true;
+    }
 
-/**
- * 模糊效果控制状态
- */
-const blurState = {
-  /** 是否正在进行模糊动画 */
-  isAnimating: false,
-  /** 当前模糊值 */
-  currentBlurValue: 0,
-  /** 目标模糊值 */
-  targetBlurValue: 0,
-  /** 动画步长 */
-  step: 0.1,
+    try {
+      const keyframeEffect = new KeyframeEffect(null, [{ offset: 0 }, { offset: 1 }], {
+        duration: CONFIG.BLUR_DURATION,
+        fill: 'forwards',
+        easing: 'ease-in-out',
+      });
+
+      this.animation = new Animation(keyframeEffect, document.timeline);
+      this.animation.pause();
+      this._tick();
+      this.isInitialized = true;
+
+      console.log('[blurAnimator] 初始化成功');
+      return true;
+    } catch (error) {
+      console.error('[blurAnimator] 初始化失败:', error);
+      return false;
+    }
+  },
+
+  _tick() {
+    if (this.animation && gaussianBlurElement) {
+      const progress = this.animation.effect?.getComputedTiming().progress;
+      if (typeof progress === 'number') {
+        const currentBlur = this.maxBlur * progress;
+        gaussianBlurElement.setAttribute('stdDeviation', currentBlur.toString());
+      }
+    }
+    this.animationFrameId = requestAnimationFrame(() => this._tick());
+  },
+
+  updateBlur(shouldBlur: boolean): void {
+    if (!this.isInitialized || !this.animation) return;
+
+    const currentTargetState = shouldBlur ? 1 : 0;
+    if (currentTargetState === this.lastTargetState) return;
+
+    try {
+      if (currentTargetState === 1) {
+        this.animation.playbackRate = 1;
+        this.animation.play();
+      } else {
+        this.animation.reverse();
+      }
+      this.lastTargetState = currentTargetState;
+    } catch (error) {
+      console.error('[blurAnimator] 更新模糊状态失败:', error);
+    }
+  },
+
+  destroy(): void {
+    if (!this.isInitialized) return;
+
+    try {
+      if (this.animation) {
+        this.animation.cancel();
+      }
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+      }
+    } catch (error) {
+      console.error('[blurAnimator] 销毁过程中出现错误:', error);
+    }
+    this.animation = null;
+    this.animationFrameId = null;
+    this.lastTargetState = -1;
+    this.isInitialized = false;
+
+    console.log('[blurAnimator] 已销毁');
+  },
 };
 
-/**
- * 检查模糊动画是否应该停止
- * @param scrollTop - 当前滚动位置
- * @returns 是否应该停止动画
- */
-function shouldStopBlurAnimation(scrollTop: number): boolean {
-  return (
-    (scrollTop > CONFIG.SCROLL_THRESHOLD && blurState.currentBlurValue === 5) ||
-    (scrollTop <= CONFIG.SCROLL_THRESHOLD && blurState.currentBlurValue === 0)
-  );
-}
+// 轮播管理器实现
+const carouselManager: ICarouselManager = {
+  svgElement: null,
+  currentImg: null,
+  currentIndex: 0,
+  backgrounds: [],
+  timerRef: null,
+  isPaused: false,
+  originalTitle: '',
+  // isSwitching: false,
+
+  init(backgrounds: string[]) {
+    this.backgrounds = backgrounds;
+    this.originalTitle = document.title;
+    this.currentIndex = 0;
+    this.isPaused = false;
+
+    // 获取SVG元素
+    this.svgElement = document.querySelector(SELECTORS.SVG_ELEMENT);
+    if (!this.svgElement) {
+      console.error('[CarouselManager] SVG element not found:', SELECTORS.SVG_ELEMENT);
+      return;
+    }
+
+    // 清理旧图片
+    const existingImages = this.svgElement.querySelectorAll(SELECTORS.IMAGE_ELEMENTS);
+    existingImages.forEach(img => img.remove());
+
+    // 获取模糊元素并初始化模糊动画器
+    gaussianBlurElement = this.svgElement.querySelector(SELECTORS.BLUR_FILTER);
+    if (gaussianBlurElement) {
+      if (!blurAnimator.init()) {
+        console.error('[CarouselManager] 模糊动画器初始化失败');
+      }
+    } else {
+      console.error('[CarouselManager] Blur filter not found:', SELECTORS.BLUR_FILTER);
+    }
+
+    // 创建初始图片
+    if (backgrounds.length > 0) {
+      this.currentImg = this._createImageElement(backgrounds[0]);
+      this.svgElement.appendChild(this.currentImg);
+      this._ensureImageCount(1);
+
+      // 异步更新主题色
+      updateThemeFromBackground(backgrounds[0]);
+
+      // 预缓存所有背景图片
+      this._precacheImages(backgrounds);
+    }
+
+    console.log('[CarouselManager] 初始化完成');
+  },
+
+  reinit() {
+    // 获取现有SVG元素并清理图片
+    const existingSvg = document.querySelector(SELECTORS.SVG_ELEMENT);
+    if (existingSvg) {
+      const images = existingSvg.querySelectorAll(SELECTORS.IMAGE_ELEMENTS);
+      images.forEach(img => img.remove());
+    }
+
+    // 重新获取SVG元素
+    this.svgElement = existingSvg as SVGSVGElement;
+
+    // 重新创建图片
+    if (this.backgrounds.length > 0) {
+      this.currentImg = this._createImageElement(this.backgrounds[this.currentIndex]);
+      this.svgElement?.appendChild(this.currentImg);
+      this._ensureImageCount(1);
+    }
+
+    console.log('[CarouselManager] 重新初始化完成');
+  },
+
+  switchBackground() {
+    if (
+      this.backgrounds.length <= 1 ||
+      this.isPaused ||
+      !this.currentImg ||
+      !this.svgElement ||
+      activeAnimation
+    ) {
+      return;
+    }
+
+    const nextIndex = (this.currentIndex + 1) % this.backgrounds.length;
+    const currentImg = this.currentImg;
+    const nextImg = this._createImageElement(this.backgrounds[nextIndex]);
+
+    updateThemeFromBackground(this.backgrounds[nextIndex]);
+    currentImg.before(nextImg);
+
+    // 捕获动画实例
+    activeAnimation = currentImg.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: CONFIG.SWITCH_DURATION,
+    });
+
+    // 监听动画的完成或取消
+    activeAnimation.finished
+      .then(() => {
+        // 动画正常完成
+        currentImg.remove();
+        this.currentImg = nextImg;
+        this.currentIndex = nextIndex;
+      })
+      .catch(error => {
+        // 如果动画被手动 .cancel()，会触发 catch
+        if (error.name !== 'AbortError') {
+          console.error('[CarouselManager] 动画发生意外:', error);
+        }
+      })
+      .finally(() => {
+        // 无论成功还是失败，最终都要释放控制器，允许下一次切换
+        activeAnimation = null;
+        this.startTimer();
+      });
+  },
+
+  startTimer() {
+    if (this.timerRef) clearTimeout(this.timerRef); // 使用 clearTimeout
+    if (this.isPaused) return;
+
+    this.timerRef = window.setTimeout(() => {
+      this.switchBackground();
+    }, CONFIG.SWITCH_INTERVAL);
+  },
+
+  pauseCarousel() {
+    this.isPaused = true;
+    if (this.timerRef) clearTimeout(this.timerRef); // 使用 clearTimeout
+    this.timerRef = null;
+    document.title = '等你回来~ | ' + this.originalTitle;
+  },
+
+  resumeCarousel() {
+    this.isPaused = false;
+    document.title = this.originalTitle;
+    this.startTimer();
+  },
+
+  _createImageElement(href: string): SVGImageElement {
+    const image = document.createElementNS(SVG_NS, 'image');
+    image.setAttribute('href', href);
+    image.setAttribute('x', '-5');
+    image.setAttribute('y', '-5');
+    image.setAttribute('height', '102%');
+    image.setAttribute('width', '102%');
+    image.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    image.style.filter = 'url(#bg-carousel-blur-filter)';
+    return image;
+  },
+
+  _ensureImageCount(maxImages: number = 2) {
+    if (!this.svgElement) return;
+
+    const images = this.svgElement.querySelectorAll(SELECTORS.IMAGE_ELEMENTS);
+    if (images.length > maxImages) {
+      console.warn(
+        `[CarouselManager] 发现${images.length}个图片元素，超过限制${maxImages}个，正在清理...`,
+      );
+
+      const imagesToRemove = Array.from(images).slice(0, images.length - maxImages);
+      imagesToRemove.forEach(img => img.remove());
+
+      const remainingImages = this.svgElement!.querySelectorAll(SELECTORS.IMAGE_ELEMENTS);
+      if (remainingImages.length > 0) {
+        this.currentImg = remainingImages[remainingImages.length - 1] as SVGImageElement;
+      }
+    }
+  },
+
+  destroy() {
+    if (this.timerRef) clearTimeout(this.timerRef);
+    if (this.svgElement) {
+      const images = this.svgElement.querySelectorAll(SELECTORS.IMAGE_ELEMENTS);
+      images.forEach(img => img.remove());
+    }
+
+    if (activeAnimation) {
+      activeAnimation.cancel();
+      activeAnimation = null;
+    }
+    this.svgElement = null;
+    this.currentImg = null;
+    this.currentIndex = 0;
+    this.backgrounds = [];
+    this.timerRef = null;
+    this.isPaused = false;
+    this.originalTitle = '';
+    console.log('[CarouselManager] 已销毁');
+  },
+
+  _precacheImages(urls: string[]): void {
+    urls.forEach(url => {
+      if (!imageCache.has(url)) {
+        imageCache.set(url, { isLoaded: false });
+      }
+    });
+    console.log(`[CarouselManager] 预缓存 ${urls.length} 张图片`);
+  },
+};
+
+// --- 工具函数 ---
 
 /**
- * 执行模糊动画的单步
+ * 滚动状态变化回调函数
  */
-function performBlurStep() {
-  if (!state.gaussianBlur) return;
-
-  // 根据目标值调整当前模糊值
-  if (blurState.targetBlurValue > blurState.currentBlurValue) {
-    blurState.currentBlurValue = parseFloat(
-      (blurState.currentBlurValue + blurState.step).toFixed(1),
-    );
-  } else if (blurState.targetBlurValue < blurState.currentBlurValue) {
-    blurState.currentBlurValue = parseFloat(
-      (blurState.currentBlurValue - blurState.step).toFixed(1),
-    );
-  }
-
-  // 限制模糊值范围
-  blurState.currentBlurValue = Math.max(0, Math.min(5, blurState.currentBlurValue));
-
-  // 更新DOM元素
-  state.gaussianBlur.setAttribute('stdDeviation', blurState.currentBlurValue.toString());
-
-  // 检查是否需要继续动画
-  if (Math.abs(blurState.currentBlurValue - blurState.targetBlurValue) > 0.05) {
-    requestAnimationFrame(performBlurStep);
-  } else {
-    // 动画完成，设置精确的目标值
-    blurState.currentBlurValue = blurState.targetBlurValue;
-    state.gaussianBlur.setAttribute('stdDeviation', blurState.currentBlurValue.toString());
-    blurState.isAnimating = false;
-  }
-}
-
-/**
- * 启动模糊动画
- * @param scrollTop - 当前滚动位置
- */
-function startBlurAnimation(scrollTop: number) {
-  if (!blurState.isAnimating && !shouldStopBlurAnimation(scrollTop)) {
-    blurState.isAnimating = true;
-    blurState.targetBlurValue = scrollTop > CONFIG.SCROLL_THRESHOLD ? 5 : 0;
-    requestAnimationFrame(performBlurStep);
-  }
-}
-
-/**
- * 处理页面滚动事件，根据滚动位置调整模糊效果
- */
-const handleScroll = () => {
-  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-  if (state.gaussianBlur) {
-    startBlurAnimation(scrollTop);
-  }
+const handleScrollChange = (isScrolled: boolean) => {
+  blurAnimator.updateBlur(isScrolled);
 };
 
 /**
  * 从背景图片更新主题色
- * @param imageUrl - 图片URL
  */
-async function updateThemeFromBackground(imageUrl: string) {
-  const isDark = themeManager.prefersDarkMode();
-  const cachedColor = imageCache.get(imageUrl)?.themeColor;
-
-  // 如果缓存中已有主题色，直接使用
-  if (cachedColor !== undefined) {
-    await themeManager.updateThemeFromColor(cachedColor, isDark);
+async function updateThemeFromBackground(imageUrl: string): Promise<void> {
+  if (!imageUrl) {
+    console.warn('[updateThemeFromBackground] 图片URL为空');
     return;
   }
 
+  const isDark = themeManager.prefersDarkMode();
+  const cachedData = imageCache.get(imageUrl);
+
+  // 使用缓存的主题色
+  if (cachedData?.themeColor !== undefined) {
+    try {
+      await themeManager.updateThemeFromColor(cachedData.themeColor, isDark);
+      return;
+    } catch (error) {
+      console.error('[updateThemeFromBackground] 应用缓存主题色失败:', error);
+    }
+  }
+
+  // 提取新的主题色
   try {
-    // 从图片提取主题色
     const color = await themeManager.updateThemeFromImage(imageUrl, isDark);
     if (color !== undefined) {
-      // 将提取的主题色存入缓存
+      // 更新缓存
       const existing = imageCache.get(imageUrl) || { isLoaded: false };
       imageCache.set(imageUrl, { ...existing, themeColor: color });
       checkAndShutdownWorker();
     }
-  } catch {
-    // 提取失败时使用默认主题色
-    themeManager.applyTheme(themeManager.generateTheme(0xff6750a4, isDark));
+  } catch (error) {
+    console.error('[updateThemeFromBackground] 提取主题色失败:', error);
+    // 使用默认主题色
+    const defaultTheme = themeManager.generateTheme(0xff6750a4, isDark);
+    themeManager.applyTheme(defaultTheme);
   }
 }
 
 /**
- * 确保SVG中的图片元素数量在合理范围内
- * @param maxImages - 允许的最大图片数量（默认2个，正常1个+过渡时1个）
- */
-function ensureImageCount(maxImages: number = 2) {
-  if (!state.svgElement) return;
-
-  const images = state.svgElement.querySelectorAll('image');
-
-  // 如果图片数量超过限制，移除多余的图片
-  if (images.length > maxImages) {
-    console.warn(`[Carousel] 发现${images.length}个图片元素，超过限制${maxImages}个，正在清理...`);
-
-    // 保留最新的图片，移除旧的图片
-    const imagesToRemove = Array.from(images).slice(0, images.length - maxImages);
-    imagesToRemove.forEach(img => {
-      img.remove();
-      console.log('[Carousel] 移除多余的图片元素');
-    });
-
-    // 更新当前图片状态到最新的图片
-    const remainingImages = state.svgElement.querySelectorAll('image');
-    if (remainingImages.length > 0) {
-      state.currentImg = remainingImages[remainingImages.length - 1] as SVGImageElement;
-    }
-  }
-}
-
-/**
- * 检查是否所有背景图的主题色都已提取完成，如果是则关闭Worker以节省资源
+ * 检查是否所有背景图的主题色都已提取完成
  */
 function checkAndShutdownWorker() {
-  if (state.allThemeColorsExtracted) return;
+  if (allThemeColorsExtracted) return;
 
-  // 检查是否所有背景图都已提取主题色
-  const allExtracted = state.backgrounds.every(
+  const allExtracted = carouselManager.backgrounds.every(
     url => imageCache.get(url)?.themeColor !== undefined,
   );
 
   if (allExtracted) {
-    state.allThemeColorsExtracted = true;
+    allThemeColorsExtracted = true;
     themeManager.shutdown();
     console.log('🎨 所有背景图主题色提取完成，已关闭颜色提取Worker以节省资源');
   }
 }
 
 /**
- * 切换背景图片
- * 使用SVG动画实现平滑过渡
- */
-function switchBackground() {
-  // 检查切换条件：图片数量、暂停状态、当前图片存在性、是否正在切换
-  if (
-    state.backgrounds.length <= 1 ||
-    state.isPaused ||
-    !state.currentImg ||
-    !state.svgElement ||
-    state.isSwitching
-  ) {
-    return;
-  }
-
-  // 设置切换状态，防止并发切换
-  state.isSwitching = true;
-
-  // 安全检查：确保当前SVG中没有过多的图片元素
-  ensureImageCount(1);
-
-  const nextIndex = (state.currentIndex + 1) % state.backgrounds.length;
-  const currentImg = state.currentImg;
-
-  // 创建新的图片元素
-  const nextImg = createImageElement(state.backgrounds[nextIndex]);
-
-  // 更新主题色
-  updateThemeFromBackground(state.backgrounds[nextIndex]);
-
-  // 创建淡出动画
-  const fadeOutAnimation = createOpacityAnimation();
-
-  // 将新图片插入到当前图片之前（显示在下层）
-  currentImg.before(nextImg);
-
-  // 为当前图片添加淡出动画
-  currentImg.appendChild(fadeOutAnimation);
-
-  // 开始动画
-  fadeOutAnimation.beginElement();
-
-  // 定义动画结束处理函数
-  const handleAnimationEnd = () => {
-    // 清理动画元素
-    fadeOutAnimation.remove();
-
-    // 移除旧图片
-    currentImg.remove();
-
-    // 更新状态
-    state.currentImg = nextImg;
-    state.currentIndex = nextIndex;
-
-    // 重置切换状态
-    state.isSwitching = false;
-
-    // 最终安全检查：确保只有一个图片元素
-    ensureImageCount(1);
-
-    // 移除事件监听器避免内存泄漏
-    fadeOutAnimation.removeEventListener('endEvent', handleAnimationEnd);
-  };
-
-  // 监听动画结束事件
-  fadeOutAnimation.addEventListener('endEvent', handleAnimationEnd);
-}
-
-/**
- * 启动自动切换定时器
- */
-const startTimer = () => {
-  // 清除现有定时器
-  if (state.timerRef) clearInterval(state.timerRef);
-
-  // 如果未暂停则启动新的定时器
-  if (!state.isPaused) {
-    state.timerRef = window.setInterval(switchBackground, CONFIG.SWITCH_INTERVAL);
-  }
-};
-
-/**
- * 暂停轮播
- * 在页面不可见时调用
- */
-const pauseCarousel = () => {
-  state.isPaused = true;
-  if (state.timerRef) clearInterval(state.timerRef);
-  state.timerRef = null;
-  // 更新页面标题提示用户
-  document.title = '等你回来~ | ' + state.originalTitle;
-};
-
-/**
- * 恢复轮播
- * 在页面重新可见时调用
- */
-const resumeCarousel = () => {
-  state.isPaused = false;
-  // 恢复原始页面标题
-  document.title = state.originalTitle;
-  startTimer();
-};
-
-/**
  * 设置事件监听器
- * 包括滚动监听和页面可见性监听
  */
 function setupEventListeners() {
-  // 清除之前的页面可见性监听器
+  // 清除之前的监听器
   offPageVisibilityChange('background-carousel');
+  scrollObserverManager.unregister(OBSERVER_ID);
 
-  // 设置滚动监听器
-  // window.addEventListener('scroll', handleScroll);
-  onScroll('background-carousel-scroll', handleScroll);
+  // 注册滚动状态观察器
+  scrollObserverManager.register({
+    id: OBSERVER_ID,
+    callback: handleScrollChange,
+    rootMargin: CONFIG.SCROLL_MARGIN,
+    threshold: 0,
+  });
 
-  // 设置页面可见性监听器，用于暂停/恢复轮播
-  onPageVisibilityChange('background-carousel', pauseCarousel, resumeCarousel);
+  // 设置页面可见性监听器
+  onPageVisibilityChange(
+    'background-carousel',
+    () => carouselManager.pauseCarousel(),
+    () => carouselManager.resumeCarousel(),
+  );
 
   // 启动定时器
-  startTimer();
+  carouselManager.startTimer();
 }
 
-/**
- * 初始化SVG元素和创建第一张图片
- */
-function createImageElements() {
-  // 从DOM获取硬编码的SVG元素
-  state.svgElement = document.querySelector('#bg-carousel-svg');
-  if (!state.svgElement) {
-    console.error('[Carousel] SVG element #bg-carousel-svg not found');
-    return;
-  }
-
-  // 清理可能存在的旧图片元素
-  const existingImages = state.svgElement.querySelectorAll('image');
-  existingImages.forEach(img => img.remove());
-
-  // 从DOM获取硬编码的高斯模糊元素
-  state.gaussianBlur = state.svgElement.querySelector('#bg-carousel-blur-filter feGaussianBlur');
-  if (!state.gaussianBlur) {
-    console.error('[Carousel] Blur filter not found');
-    return;
-  }
-
-  // 初始化模糊状态
-  blurState.currentBlurValue = parseFloat(state.gaussianBlur.getAttribute('stdDeviation') || '0');
-  blurState.targetBlurValue = blurState.currentBlurValue;
-
-  // 创建初始图片
-  if (state.backgrounds.length > 0) {
-    state.currentImg = createImageElement(state.backgrounds[0]);
-    state.svgElement.appendChild(state.currentImg);
-
-    // 确保只有一个图片元素
-    ensureImageCount(1);
-
-    // 异步更新第一张图片的主题色
-    updateThemeFromBackground(state.backgrounds[0]);
-  }
-}
-
-/**
- * 执行初始化设置
- * @param backgrounds - 背景图片URL数组
- */
-async function runInitialSetup(backgrounds: string[]) {
-  // 保存背景图片列表和原始标题
-  state.backgrounds = backgrounds;
-  state.originalTitle = document.title;
-
-  createImageElements();
-  setupEventListeners();
-  handleScroll();
-
-  if (backgrounds.length > 0) {
-    const firstUrl = backgrounds[0];
-    if (!imageCache.has(firstUrl)) {
-      imageCache.set(firstUrl, { isLoaded: false });
-    }
-  }
-}
-
-/**
- * 执行重新初始化
- * 用于页面重新加载或组件重新挂载时
- */
-function runReinitialization() {
-  // 获取现有的SVG元素并清理图片
-  const existingSvg = document.querySelector('#bg-carousel-svg');
-  if (existingSvg) {
-    // 只清理image元素
-    const images = existingSvg.querySelectorAll('image');
-    images.forEach(img => img.remove());
-  }
-
-  // 重新初始化组件
-  createImageElements();
-
-  // 重新设置事件监听器
-  setupEventListeners();
-  handleScroll();
-}
+// --- 公共接口 ---
 
 /**
  * 初始化背景轮播组件
- *
- * 这是此模块的唯一公共入口函数。首次调用时进行完整初始化，
- * 后续调用时进行重新初始化以适应DOM变化。
- *
- * @param backgrounds - 要轮播的背景图片URL数组
- *
- * @example
- * ```typescript
- * initBackgroundCarousel([
- *   'https://example.com/image1.jpg',
- *   'https://example.com/image2.jpg',
- *   'https://example.com/image3.jpg'
- * ]);
- * ```
  */
 export function initBackgroundCarousel(backgrounds: string[]): void {
   console.log('[Carousel] 初始化背景轮播组件');
+
   if (!isInitialized) {
     // 首次初始化
     isInitialized = true;
-    runInitialSetup(backgrounds);
-    // 注册全局清理任务，确保页面卸载时正确清理资源
+    carouselManager.init(backgrounds);
+    setupEventListeners();
     registerGlobalCleanup(destroyCarousel);
   } else {
     // 重新初始化
-    runReinitialization();
+    carouselManager.reinit();
+    setupEventListeners();
   }
 }
 
 /**
- * 完整销毁轮播组件
- *
- * 清理所有相关资源，包括定时器、事件监听器、DOM元素等。
- * 确保没有内存泄漏，适用于页面卸载或组件销毁时调用。
- *
- * @public
+ * 销毁轮播组件
  */
 export function destroyCarousel(): void {
   if (!isInitialized) return;
 
-  // 清理定时器，停止自动切换
-  if (state.timerRef) clearInterval(state.timerRef);
-
   // 移除事件监听器
-  offEvents('background-carousel-scroll');
+  scrollObserverManager.unregister(OBSERVER_ID);
   offPageVisibilityChange('background-carousel');
 
-  if (state.svgElement) {
-    const images = state.svgElement.querySelectorAll('image');
-    images.forEach(img => img.remove());
-  }
-
-  // 清理缓存数据
+  // 销毁管理器
+  carouselManager.destroy();
+  blurAnimator.destroy();
+  // 清理缓存和模块状态
   imageCache.clear();
-
-  // 重置所有状态到初始值
-  Object.assign(state, {
-    currentIndex: 0,
-    backgrounds: [],
-    timerRef: null,
-    currentImg: null,
-    isPaused: false,
-    originalTitle: '',
-    allThemeColorsExtracted: false,
-    svgElement: null,
-    gaussianBlur: null,
-    isSwitching: false,
-  });
-
-  // 重置模糊状态
-  Object.assign(blurState, {
-    isAnimating: false,
-    currentBlurValue: 0,
-    targetBlurValue: 0,
-    step: 0.1,
-  });
-
-  // 标记为未初始化状态
+  gaussianBlurElement = null;
+  allThemeColorsExtracted = false;
   isInitialized = false;
+
+  console.log('[Carousel] 组件已完全销毁');
 }

@@ -24,10 +24,12 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
 }
 
 body {
   overflow-x: hidden;
+  -ms-overflow-style: auto;
 }
 * {
   box-sizing: border-box;
@@ -89,11 +91,6 @@ html {
   scrollbar-color: rgb(var(--md-sys-color-primary)) rgb(var(--md-sys-color-surface-container-low));
   transition: scrollbar-color var(--md-sys-motion-duration-theme)
     var(--md-sys-motion-easing-emphasized);
-}
-
-/* 移除 IE 和 Edge 的滚动条隐藏 */
-body {
-  -ms-overflow-style: auto;
 }
 
 main {

@@ -3,38 +3,31 @@
  * @description 返回顶部按钮管理器
  */
 
-import { getScrollTop, smoothScrollTo } from '../utils/scroll-utils';
-import { offEvents, onScroll } from './global-event-manager';
+import { smoothScrollTo } from '../utils/scroll-utils';
+import { scrollObserverManager } from './scroll-observer-manager';
 import { registerGlobalCleanup } from './cleanup-manager';
 import styles from '../styles/components/to-top.module.css';
-const EVENT_ID = 'to-top';
-const SCROLL_THRESHOLD = 300; // 显示按钮的滚动阈值
+
+const OBSERVER_ID = 'to-top';
 
 const state = {
   button: null as HTMLElement | null,
   isVisible: false,
-  lastScrollTop: 0,
 };
 
 let isInitialized = false;
 
-const updateVisibility = () => {
+/**
+ * 滚动状态变化回调函数
+ * 当页面滚动状态改变时触发
+ */
+const handleScrollChange = (isScrolled: boolean) => {
   if (!state.button) return;
 
-  const scrollTop = getScrollTop();
-
-  // 避免微小滚动的性能优化
-  if (Math.abs(scrollTop - state.lastScrollTop) < 20) {
-    return;
-  }
-  state.lastScrollTop = scrollTop;
-
-  const shouldShow = scrollTop > SCROLL_THRESHOLD;
-
   // 仅在状态变化时操作 DOM
-  if (shouldShow !== state.isVisible) {
-    state.isVisible = shouldShow;
-    state.button.classList.toggle(styles.show, shouldShow);
+  if (isScrolled !== state.isVisible) {
+    state.isVisible = isScrolled;
+    state.button.classList.toggle(styles.show, isScrolled);
   }
 };
 
@@ -44,16 +37,16 @@ const scrollToTop = () => {
 };
 
 function initInternal(): void {
-  // 绑定滚动事件
-  onScroll(EVENT_ID, updateVisibility);
+  // 注册滚动状态观察器
+  scrollObserverManager.register({
+    id: OBSERVER_ID,
+    callback: handleScrollChange,
+    rootMargin: '300px 0px 0px 0px', // 当哨兵元素距离视口顶部300px时触发
+    threshold: 0,
+  });
 
   // 直接绑定点击事件
-  if (state.button) {
-    state.button.addEventListener('click', scrollToTop);
-  }
-
-  // 初始化时立即更新一次可见性
-  updateVisibility();
+  state.button?.addEventListener('click', scrollToTop);
 }
 
 /**
@@ -62,13 +55,11 @@ function initInternal(): void {
 export function destroyToTop(): void {
   if (!isInitialized) return;
 
-  // 清理滚动事件监听
-  offEvents(EVENT_ID);
+  // 清理滚动观察器
+  scrollObserverManager.unregister(OBSERVER_ID);
 
   // 清理点击事件监听
-  if (state.button) {
-    state.button.removeEventListener('click', scrollToTop);
-  }
+  state.button?.removeEventListener('click', scrollToTop);
 
   state.button = null;
   isInitialized = false;
@@ -88,8 +79,9 @@ export function initToTop(): void {
   }
 
   if (isInitialized) {
-    // 页面切换后，只需确保按钮状态正确
-    updateVisibility();
+    // 页面切换后，先清理旧的观察器，再重新初始化
+    scrollObserverManager.unregister(OBSERVER_ID);
+    initInternal();
   } else {
     // 首次初始化
     initInternal();
