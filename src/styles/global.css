@@ -1,13 +1,13 @@
 /* Import Material Design 3 styles */
 @import './material-design.css';
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap'); */
 
 /* Global Reset and Base Styles */
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family:
+  /* font-family:
     'Roboto',
     -apple-system,
     BlinkMacSystemFont,
@@ -18,7 +18,7 @@ body {
     'Fira Sans',
     'Droid Sans',
     'Helvetica Neue',
-    sans-serif;
+    sans-serif; */
 
   color: rgb(var(--md-sys-color-on-background));
   line-height: 1.5;

@@ -52,20 +52,16 @@ let config: AppConfig = {
 /**
  * 初始化所有核心功能模块
  */
-function initializeCoreModules(): void {
+async function initializeCoreModules(): Promise<void> {
   const coreComponents = [
     { name: 'Global Event Manager', init: initGlobalEventManager, critical: true },
     { name: 'Page Visibility Manager', init: initPageVisibilityManager, critical: false },
     { name: 'Theme System', init: initTheme, critical: false },
-    {
-      name: 'Background Carousel',
-      init: () => initBackgroundCarousel(SITE_CONFIG.backgroundApi.fallbackImages),
-      critical: false,
-    },
     { name: 'Navigation', init: initNavigation, critical: false },
     { name: 'To Top Button', init: initToTop, critical: false },
   ];
 
+  // 同步初始化其他组件
   for (const component of coreComponents) {
     try {
       component.init();
@@ -78,6 +74,15 @@ function initializeCoreModules(): void {
           console.warn(`非关键组件初始化失败: ${component.name}`, error);
         }
       }
+    }
+  }
+
+  // 异步初始化背景轮播组件
+  try {
+    await initBackgroundCarousel(SITE_CONFIG.backgroundApi.fallbackImages);
+  } catch (error) {
+    if (config.debug) {
+      console.warn('背景轮播组件初始化失败:', error);
     }
   }
 
@@ -163,7 +168,7 @@ export async function initApp(customConfig?: Partial<AppConfig>): Promise<void> 
   try {
     if (config.debug) console.log('🚀 应用开始初始化...');
 
-    initializeCoreModules();
+    await initializeCoreModules();
     initializeOptimizations();
     // initializeEnhancements(); // 如果有的话
 
