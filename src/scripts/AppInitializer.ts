@@ -5,7 +5,7 @@
 
 import { initArticleAnimations } from './ArticleAnimationManager';
 import { initBackgroundCarousel } from './BackgroundCarouselManager';
-import { initGlobalEventManager } from './GlobalEventManager';
+import { initGlobalEventManager, globalEventManager } from './GlobalEventManager';
 import { initNavigationManager } from './NavigationManager';
 import { initPageVisibilityManager } from './PageVisibilityManager';
 import { initTheme } from './theme-init';
@@ -69,8 +69,8 @@ class AppInitializer {
    * 设置 Astro 生命周期钩子
    */
   #setupAstroLifecycleHooks(): void {
-    // Astro 生命周期钩子：页面切换前的主题持久化
-    document.addEventListener('astro:before-swap', event => {
+    // 使用 GlobalEventManager 统一管理 Astro 生命周期事件
+    globalEventManager.onAstroBeforeSwap('app-initializer-theme', (event) => {
       const themeJson = sessionStorage.getItem('nazo-prism-theme-colors');
       if (!themeJson) return;
 
@@ -88,17 +88,21 @@ class AppInitializer {
           .join('\n');
 
         style.textContent = `:root { ${cssVars} }`;
-        event.newDocument.head.appendChild(style);
+        // 类型断言以访问 Astro 特定的事件属性
+        (event as any)?.newDocument?.head?.appendChild(style);
       } catch (e) {
         console.error('主题应用失败 (astro:before-swap):', e);
       }
     });
 
-    // Astro 页面加载后重新初始化组件
-    document.addEventListener('astro:page-load', () => {
+    // 注册页面切换时的组件重新初始化
+    // 这些组件需要在每次页面切换时重新初始化以适应新的DOM结构
+    globalEventManager.onAstroPageLoad('app-initializer-components', () => {
+      // 只重新初始化需要适应DOM变化的组件
+      // 其他组件已在 #initializeCoreModules 中初始化，无需重复
       initArticleAnimations();
-      initToTopManager(); // 重新初始化 ToTop 按钮
-      initNavigationManager(); // 重新初始化导航
+      initToTopManager();
+      initNavigationManager();
     });
   }
 
@@ -106,6 +110,8 @@ class AppInitializer {
    * 初始化所有核心功能模块
    */
   async #initializeCoreModules(): Promise<void> {
+    // 只初始化全局性的、不依赖特定DOM结构的核心组件
+    // DOM相关的组件在astro:page-load事件中初始化
     const coreComponents: ComponentConfig[] = [
       {
         name: 'Global Event Manager',
@@ -122,42 +128,57 @@ class AppInitializer {
         init: initTheme,
         critical: false,
       },
-      {
-        name: 'Navigation',
-        init: initNavigationManager,
-        critical: false,
-      },
-      {
-        name: 'To Top Button',
-        init: initToTopManager,
-        critical: false,
-      },
     ];
 
-    // 同步初始化其他组件
+    // 首次初始化时也需要初始化DOM相关组件
+    const domComponents: ComponentConfig[] = [
+      {
+        name: 'Article Animations',
+        init: initArticleAnimations,
+        critical: false,
+      },
+      {
+          name: 'Navigation',
+          init: initNavigationManager,
+          critical: false,
+        },
+        {
+          name: 'To Top Button',
+          init: initToTopManager,
+          critical: false,
+        },
+      ];
+
+    // 初始化核心组件（全局性组件）
     for (const component of coreComponents) {
       try {
         await component.init();
       } catch (error) {
         if (component.critical) {
           throw new Error(`关键组件初始化失败: ${component.name}`);
-        } else {
-          // 对于非关键组件，在开发模式下打印警告
-          if (this.#config.debug) {
-            console.warn(`非关键组件初始化失败: ${component.name}`, error);
-          }
+        } else if (this.#config.debug) {
+          console.warn(`组件初始化失败: ${component.name}`, error);
         }
       }
     }
 
-    // 异步初始化背景轮播组件
+    // 初始化DOM相关组件（首次加载时）
+    for (const component of domComponents) {
+      try {
+        await component.init();
+      } catch (error) {
+        if (this.#config.debug) {
+          console.warn(`DOM组件初始化失败: ${component.name}`, error);
+        }
+      }
+    }
+
+    // 初始化背景轮播组件
     if (this.#config.enableBackgroundCarousel) {
       try {
         await initBackgroundCarousel(SITE_CONFIG.backgroundApi.fallbackImages);
       } catch (error) {
-        if (this.#config.debug) {
-          console.warn('背景轮播组件初始化失败:', error);
-        }
+        if (this.#config.debug) console.warn('背景轮播组件初始化失败:', error);
       }
     }
 
@@ -168,13 +189,10 @@ class AppInitializer {
   }
 
   /**
-   * 初始化懒加载
-   * 优先使用原生 loading="lazy"，此脚本作为补充和兼容
+   * 初始化懒加载（作为原生 loading="lazy" 的补充）
    */
   #initializeLazyLoading(): void {
-    if (!this.#config.enableLazyLoading || !('IntersectionObserver' in window)) {
-      return;
-    }
+    if (!this.#config.enableLazyLoading || !('IntersectionObserver' in window)) return;
 
     const imageObserver = new IntersectionObserver(
       (entries, observer) => {
@@ -186,7 +204,6 @@ class AppInitializer {
               img.src = src;
               img.removeAttribute('data-src');
             }
-            // 加载后停止观察
             observer.unobserve(img);
           }
         });
@@ -194,12 +211,12 @@ class AppInitializer {
       { rootMargin: '50px 0px', threshold: 0.01 },
     );
 
-    // 观察初始页面上的所有 [data-src] 图片
+    // 观察现有图片
     document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
 
-    // 使用 MutationObserver 来观察后续动态添加到 DOM 的图片
+    // 观察动态添加的图片
     const mutationObserver = new MutationObserver(mutations => {
-      for (const mutation of mutations) {
+      mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
           mutation.addedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
@@ -209,7 +226,7 @@ class AppInitializer {
             }
           });
         }
-      }
+      });
     });
 
     mutationObserver.observe(document.body, { childList: true, subtree: true });

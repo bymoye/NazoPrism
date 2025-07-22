@@ -14,8 +14,6 @@ import { scrollObserverManager } from './ScrollObserverManager';
 interface ImageCacheData {
   /** 是否已加载 */
   isLoaded: boolean;
-  /** 是否已预载 */
-  isPreloaded: boolean;
   /** 提取的主题色 */
   themeColor?: number;
 }
@@ -181,6 +179,7 @@ class CarouselController {
   #originalTitle: string = '';
   #activeAnimation: Animation | null = null;
   #config: CarouselConfig;
+  #onBackgroundChanged?: (imageUrl: string) => void;
 
   constructor(config: CarouselConfig) {
     this.#config = config;
@@ -205,6 +204,13 @@ class CarouselController {
    */
   get currentIndex(): number {
     return this.#currentIndex;
+  }
+
+  /**
+   * 设置背景变化回调
+   */
+  setBackgroundChangeCallback(callback: (imageUrl: string) => void): void {
+    this.#onBackgroundChanged = callback;
   }
 
   /**
@@ -269,6 +275,9 @@ class CarouselController {
         currentImg.remove();
         this.#currentImg = nextImg;
         this.#currentIndex = nextIndex;
+        
+        // 通知背景管理器更新主题色（这会触发预载下一张图片）
+        this.#onBackgroundChanged?.(this.#backgrounds[nextIndex]);
       })
       .catch(error => {
         // 如果动画被手动 .cancel()，会触发 catch
@@ -392,7 +401,6 @@ class BackgroundCarouselManager {
 
   #imageCache = new Map<string, ImageCacheData>();
   #allThemeColorsExtracted = false;
-  #allImagesPreloaded = false;
   #isInitialized = false;
   #observerId = 'background-carousel';
 
@@ -428,6 +436,35 @@ class BackgroundCarouselManager {
   };
 
   /**
+   * 提前提取下一张图片的主题色（利用浏览器缓存实现图片预加载）
+   */
+  #preExtractNextThemeColor(): void {
+    if (!this.#carouselController.backgrounds.length) return;
+    
+    const nextIndex = (this.#carouselController.currentIndex + 1) % this.#carouselController.backgrounds.length;
+    const nextBackground = this.#carouselController.backgrounds[nextIndex];
+    
+    // 如果下一张图片的主题色已经提取过，则跳过
+    if (this.#imageCache.has(nextBackground) && this.#imageCache.get(nextBackground)?.themeColor) {
+      return;
+    }
+    
+    // 异步提取下一张图片的主题色（仅提取，不应用主题）
+    themeManager.extractColorFromImageOnly(nextBackground)
+      .then((sourceColor) => {
+        const cacheData = this.#imageCache.get(nextBackground) || { isLoaded: false, themeColor: undefined };
+        cacheData.themeColor = sourceColor;
+        this.#imageCache.set(nextBackground, cacheData);
+        console.log("提前提取下一张图片的主题色成功 ", sourceColor, nextBackground);
+        // 在主题色提取完成后检查是否可以关闭Worker
+        this.#checkAndShutdownWorker();
+      })
+      .catch((error) => {
+        console.warn('[BackgroundCarousel] 提前提取下一张图片主题色失败:', error);
+      });
+  }
+
+  /**
    * 从背景图片更新主题色
    */
   async #updateThemeFromBackground(imageUrl: string): Promise<void> {
@@ -443,6 +480,8 @@ class BackgroundCarouselManager {
     if (cachedData?.themeColor !== undefined) {
       try {
         await themeManager.updateThemeFromColor(cachedData.themeColor, isDark);
+        // 提前提取下一张图片的主题色（实现智能预缓存）
+        this.#preExtractNextThemeColor();
         return;
       } catch (error) {
         console.error('[updateThemeFromBackground] 应用缓存主题色失败:', error);
@@ -454,15 +493,18 @@ class BackgroundCarouselManager {
       const color = await themeManager.updateThemeFromImage(imageUrl, isDark);
       if (color !== undefined) {
         // 更新缓存
-        const existing = this.#imageCache.get(imageUrl) || { isLoaded: false, isPreloaded: false };
+        const existing = this.#imageCache.get(imageUrl) || { isLoaded: false };
         this.#imageCache.set(imageUrl, { ...existing, themeColor: color });
-        this.#checkAndShutdownWorker();
+        // 提前提取下一张图片的主题色（实现智能预缓存）
+        this.#preExtractNextThemeColor();
       }
     } catch (error) {
       console.error('[updateThemeFromBackground] 提取主题色失败:', error);
       // 使用默认主题色
       const defaultTheme = themeManager.generateTheme(0xff6750a4, isDark);
       themeManager.applyTheme(defaultTheme);
+      // 即使主题色提取失败，也要提前提取下一张图片的主题色
+      this.#preExtractNextThemeColor();
     }
   }
 
@@ -550,7 +592,6 @@ class BackgroundCarouselManager {
     // 清理缓存和模块状态
     this.#imageCache.clear();
     this.#allThemeColorsExtracted = false;
-    this.#allImagesPreloaded = false;
     this.#isInitialized = false;
 
     console.log('[BackgroundCarousel] 组件已完全销毁');
@@ -590,6 +631,12 @@ class BackgroundCarouselManager {
       }
 
       this.#carouselController.init(backgrounds);
+      
+      // 设置背景变化回调
+      this.#carouselController.setBackgroundChangeCallback((imageUrl: string) => {
+        this.#updateThemeFromBackground(imageUrl);
+      });
+      
       this.#setupEventListeners();
 
       // 注册全局清理
@@ -616,7 +663,6 @@ class BackgroundCarouselManager {
       currentIndex: this.#carouselController.currentIndex,
       imageCacheSize: this.#imageCache.size,
       allThemeColorsExtracted: this.#allThemeColorsExtracted,
-      allImagesPreloaded: this.#allImagesPreloaded,
       config: this.#config,
     };
   }

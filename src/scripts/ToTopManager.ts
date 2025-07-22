@@ -6,6 +6,7 @@
 import { smoothScrollTo } from '../utils/scroll-utils';
 import { scrollObserverManager } from './ScrollObserverManager';
 import { registerGlobalCleanup } from './CleanupManager';
+import { globalEventManager } from './GlobalEventManager';
 import styles from '../styles/components/ToTop.module.css';
 
 /**
@@ -69,8 +70,8 @@ class ToTopManager {
       threshold: 0,
     });
 
-    // 直接绑定点击事件
-    this.#button?.addEventListener('click', this.#scrollToTop);
+    // 使用 GlobalEventManager 统一管理点击事件
+    globalEventManager.onClick('to-top-button', this.#scrollToTop);
   }
 
   /**
@@ -82,8 +83,8 @@ class ToTopManager {
     // 清理滚动观察器
     scrollObserverManager.unregister(this.#observerId);
 
-    // 清理点击事件监听
-    this.#button?.removeEventListener('click', this.#scrollToTop);
+    // 使用 GlobalEventManager 移除点击事件监听
+    globalEventManager.offEvents('to-top-button');
 
     this.#button = null;
     this.#isInitialized = false;
@@ -103,15 +104,13 @@ class ToTopManager {
     }
 
     if (this.#isInitialized) {
-      // 页面切换后，先清理旧的观察器，再重新初始化
-      scrollObserverManager.unregister(this.#observerId);
-
-      // 重置状态
+      // 页面切换后，只需要重置状态和重新绑定事件
       this.#isVisible = false;
       this.#button.classList.remove(styles.show);
-
-      // 重新初始化
-      this.#initInternal();
+      
+      // 重新绑定点击事件（防止元素被替换）
+      globalEventManager.offEvents('to-top-button');
+      globalEventManager.onClick('to-top-button', this.#scrollToTop);
     } else {
       // 首次初始化
       this.#initInternal();

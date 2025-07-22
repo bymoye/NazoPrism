@@ -36,7 +36,8 @@ const { title, time, content, category, url, cover, id } = Astro.props;
 
 <script>
   import { initArticleAnimations } from '../scripts/ArticleAnimationManager';
+  import { globalEventManager } from '../scripts/GlobalEventManager';
 
-  // 监听 Astro 页面加载事件
-  document.addEventListener('astro:page-load', initArticleAnimations);
+  // 使用 GlobalEventManager 统一管理事件监听
+  globalEventManager.onAstroPageLoad('article-animations', initArticleAnimations);
 </script>

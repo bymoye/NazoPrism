@@ -17,7 +17,7 @@ function isCurrentPage(href: string): boolean {
 }
 ---
 
-<nav class:list={styles.nav} id="navigation" transition:persist-props>
+<nav class:list={styles.nav} id="navigation" transition:persist>
   <!-- Logo Section -->
   <div class:list={styles.navLogo}>
     <a aria-label="返回首页" class:list={styles.logoLink} href="/">
@@ -106,9 +106,3 @@ function isCurrentPage(href: string): boolean {
     </a>
   </div>
 </nav>
-
-<!-- <script>
-  import { initNavigation } from '../scripts/NavigationManager';
-
-  document.addEventListener('astro:page-load', initNavigation);
-</script> -->

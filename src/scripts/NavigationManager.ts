@@ -10,7 +10,7 @@ import styles from '../styles/components/Navigation.module.css';
 
 /**
  * 导航管理器类
- * 管理导航栏的滚动效果和状态变化
+ * 管理导航栏的滚动效果和当前页面状态
  */
 class NavigationManager {
   #nav: HTMLElement | null = null;
@@ -19,6 +19,7 @@ class NavigationManager {
   #isNavSticky = false;
   #isInitialized = false;
   #eventId = 'navigation';
+  #currentPath = '';
 
   // 单例实例
   static #instance: NavigationManager | null = null;
@@ -62,12 +63,58 @@ class NavigationManager {
   };
 
   /**
+   * 检查是否为当前页面
+   */
+  #isCurrentPage(href: string): boolean {
+    const normalizedCurrentPath = this.#currentPath.length > 1 ? this.#currentPath.replace(/\/$/, '') : '/';
+    const normalizedHref = href.length > 1 ? href.replace(/\/$/, '') : '/';
+
+    if (normalizedHref === '/') {
+      return normalizedCurrentPath === '/';
+    }
+    return normalizedCurrentPath.startsWith(normalizedHref);
+  }
+
+  /**
+   * 更新当前页面状态
+   */
+  #updateCurrentPageState(): void {
+    if (!this.#nav) return;
+
+    const currentPath = window.location.pathname;
+    if (currentPath === this.#currentPath) return;
+
+    this.#currentPath = currentPath;
+
+    // 更新导航链接的当前状态
+    const navLinks = this.#nav.querySelectorAll('a[href]');
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      const isCurrent = this.#isCurrentPage(href);
+      
+      // 更新 aria-current 属性
+      if (isCurrent) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+
+      // 更新 CSS 类
+      link.classList.toggle(styles.current, isCurrent);
+    });
+  }
+
+  /**
    * 内部初始化方法
    */
   #initInternal(): void {
     onScroll(this.#eventId, this.#updateNavigation);
     // 初始化时立即检查一次滚动位置
     this.#updateNavigation();
+    // 初始化时更新当前页面状态
+    this.#updateCurrentPageState();
   }
 
   /**
@@ -82,6 +129,7 @@ class NavigationManager {
     this.#lastScrollPosition = 0;
     this.#isNavSticky = false;
     this.#isInitialized = false;
+    this.#currentPath = '';
   }
 
   /**
@@ -102,8 +150,9 @@ class NavigationManager {
 
     if (this.#isInitialized) {
       // 如果已经初始化过，说明是页面切换
-      // 我们已经获取了新的 DOM 引用，只需立即更新一次状态即可
+      // 我们已经获取了新的 DOM 引用，需要更新滚动状态和当前页面状态
       this.#updateNavigation();
+      this.#updateCurrentPageState();
       return;
     }
 
@@ -125,6 +174,7 @@ class NavigationManager {
       lastScrollPosition: this.#lastScrollPosition,
       isNavSticky: this.#isNavSticky,
       isInitialized: this.#isInitialized,
+      currentPath: this.#currentPath,
     };
   }
 

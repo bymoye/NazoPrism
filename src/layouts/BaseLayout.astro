@@ -40,8 +40,22 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
     <script>
       import { initApp } from '../scripts/AppInitializer';
 
+      let hasInitialized = false;
+
+      /**
+       * 运行应用初始化
+       * 确保只执行一次，避免重复初始化
+       * GlobalEventManager 的初始化已在 AppInitializer 中统一处理
+       */
       function runInit() {
-        // 使用统一的应用初始化系统
+        if (hasInitialized) {
+          console.log('App already initialized, skipping...');
+          return;
+        }
+
+        hasInitialized = true;
+
+        // 使用统一的应用初始化系统，GlobalEventManager 会在其中被初始化
         const appConfig = {
           debug: import.meta.env.DEV,
         };
@@ -50,11 +64,10 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
           // 静默处理错误
         });
 
-        document.removeEventListener('astro:page-load', runInit);
         console.log('NazoPrism App Initialized.');
       }
 
-      // 监听 astro:page-load 事件，并确保它只运行一次
+      // 使用原生 astro:page-load 事件来启动初始化
       document.addEventListener('astro:page-load', runInit, { once: true });
     </script>
   </body>

@@ -99,9 +99,18 @@ class ScrollObserverManager {
       return;
     }
 
-    // 如果已存在同名回调，先注销
+    // 如果已存在同名回调，智能处理重复注册
     if (this.#registeredCallbacks.has(config.id)) {
-      this.unregister(config.id);
+      // 检查当前观察器是否还在观察正确的哨兵元素
+      const isObserving = intersectionObserverManager.isTargetObserved(`scroll-${config.id}`, this.#sentinelElement);
+      if (isObserving) {
+        // 如果已经在观察正确的元素，只更新回调函数
+        this.#registeredCallbacks.set(config.id, config.callback);
+        return;
+      } else {
+        // 如果观察的元素不正确，先注销再重新注册
+        this.unregister(config.id);
+      }
     }
 
     // 创建包装回调函数
@@ -109,7 +118,10 @@ class ScrollObserverManager {
       entries.forEach(entry => {
         // 当哨兵元素不在视口中时，说明页面已经滚动了一定距离
         const isScrolled = !entry.isIntersecting;
-        config.callback(isScrolled);
+        const currentCallback = this.#registeredCallbacks.get(config.id);
+        if (currentCallback) {
+          currentCallback(isScrolled);
+        }
       });
     };
 

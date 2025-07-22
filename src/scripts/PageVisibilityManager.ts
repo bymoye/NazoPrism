@@ -3,6 +3,8 @@
  * @description 页面可见性状态管理器
  */
 
+import { globalEventManager } from './GlobalEventManager';
+
 interface VisibilityHandler {
   onHidden: () => void;
   onVisible: () => void;
@@ -76,8 +78,9 @@ class PageVisibilityManager {
   init(): void {
     if (this.#isInitialized) return;
 
-    document.addEventListener('visibilitychange', this.#updateVisibilityState);
-    window.addEventListener('focus', this.#updateVisibilityState); // focus 事件可以修正一些边缘情况下的状态
+    // 使用 GlobalEventManager 统一管理事件监听
+    globalEventManager.onVisibilityChange('page-visibility-manager', this.#updateVisibilityState);
+    globalEventManager.onFocus('page-visibility-manager', this.#updateVisibilityState);
 
     this.#isInitialized = true;
   }
@@ -126,8 +129,8 @@ class PageVisibilityManager {
    */
   destroy(): void {
     if (this.#isInitialized) {
-      document.removeEventListener('visibilitychange', this.#updateVisibilityState);
-      window.removeEventListener('focus', this.#updateVisibilityState);
+      // 使用 GlobalEventManager 移除事件监听
+      globalEventManager.offEvents('page-visibility-manager');
     }
 
     this.#handlers.clear();
