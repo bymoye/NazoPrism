@@ -1,19 +1,19 @@
 ---
-import Layout from '../layouts/layout.astro';
-import styles from '../styles/pages/login.module.css';
+import Layout from '@/layouts/Layout.astro';
+import styles from '@/styles/pages/login.module.css';
 ---
 
-<Layout title="登录 - NazoPrism" description="用户登录页面">
-  <div class={styles.pageContent}>
+<Layout description="用户登录页面" title="登录 - NazoPrism">
+  <div class:list={styles.pageContent}>
     <h1>登录</h1>
-    <form class={styles.loginForm}>
-      <div class={styles.formGroup}>
+    <form class:list={styles.loginForm}>
+      <div class:list={styles.formGroup}>
         <label for="username">用户名:</label>
-        <input type="text" id="username" name="username" required />
+        <input id="username" name="username" required type="text" />
       </div>
-      <div class={styles.formGroup}>
+      <div class:list={styles.formGroup}>
         <label for="password">密码:</label>
-        <input type="password" id="password" name="password" required />
+        <input id="password" name="password" required type="password" />
       </div>
       <button type="submit">登录</button>
     </form>

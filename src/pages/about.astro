@@ -1,10 +1,10 @@
 ---
-import Layout from '../layouts/layout.astro';
-import styles from '../styles/pages/about.module.css';
+import Layout from '@/layouts/Layout.astro';
+import styles from '@/styles/pages/about.module.css';
 ---
 
-<Layout title="关于我们 - NazoPrism" description="了解更多关于我们的信息">
-  <div class={styles.pageContent}>
+<Layout description="了解更多关于我们的信息" title="关于我们 - NazoPrism">
+  <div class:list={styles.pageContent}>
     <h1>关于我们</h1>
     <p>这里是关于页面的内容。</p>
   </div>

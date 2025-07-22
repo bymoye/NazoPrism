@@ -1,10 +1,10 @@
 ---
-import Layout from '../layouts/layout.astro';
-import styles from '../styles/pages/login.module.css';
+import Layout from '@/layouts/Layout.astro';
+import styles from '@/styles/pages/login.module.css';
 ---
 
-<Layout title="用户 - NazoPrism" description="用户相关页面">
-  <div class={styles.pageContent}>
+<Layout description="用户相关页面" title="用户 - NazoPrism">
+  <div class:list={styles.pageContent}>
     <h1>用户</h1>
     <p>这里是用户页面的内容。</p>
   </div>

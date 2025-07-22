@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import Scrollbar from '@/components/scrollbar.astro';
-import BackgroundCarousel from '@/components/background-carousel.astro';
+import Scrollbar from '@/components/Scrollbar.astro';
+import BackgroundCarousel from '@/components/BackgroundCarousel.astro';
 
 export interface Props {
   title?: string;
@@ -15,9 +15,9 @@ const { title = 'NazoPrism', description = '沉淪在無盡的深淵中...' } = 
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta content={description} name="description" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <script is:inline type="module">
       if (!CSS.supports('animation-timeline: scroll()')) {
         import('https://static.nazo.run/scroll-timeline/scroll-timeline.js').catch(err =>

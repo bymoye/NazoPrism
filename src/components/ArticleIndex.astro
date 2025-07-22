@@ -1,11 +1,11 @@
 ---
-import Article from './article.astro';
-import { SAMPLE_ARTICLES } from '../config';
-import styles from '../styles/components/article-index.module.css';
+import _Article from './Article.astro';
+import { SAMPLE_ARTICLES as _SAMPLE_ARTICLES } from '../config';
+import styles from '../styles/components/ArticleIndex.module.css';
 ---
 
-<div class={styles.page}>
-  <div class={styles.content}>
+<div class:list={styles.page}>
+  <div class:list={styles.content}>
     <!-- {
       SAMPLE_ARTICLES.map(article => (
         <Article

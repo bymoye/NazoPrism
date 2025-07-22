@@ -6,7 +6,7 @@
 import { smoothScrollTo } from '../utils/scroll-utils';
 import { scrollObserverManager } from './scroll-observer-manager';
 import { registerGlobalCleanup } from './cleanup-manager';
-import styles from '../styles/components/to-top.module.css';
+import styles from '../styles/components/ToTop.module.css';
 
 const OBSERVER_ID = 'to-top';
 

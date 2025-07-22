@@ -1,0 +1,41 @@
+---
+import styles from '../styles/components/Article.module.css';
+
+export interface Props {
+  title: string;
+  time: string;
+  content: string;
+  category: string;
+  url: string;
+  cover: string;
+  id: number;
+}
+
+const { title, time, content, category, url, cover, id } = Astro.props;
+---
+
+<article
+  class:list={styles.postListThumb}
+  data-article-id={id}
+  data-show-class={styles.postListShow}    data-thumb-class={styles.postListThumb}
+>
+  <div class:list={styles.postThumb}>
+    <a class:list={styles.imageA} href={url} rel="noopener noreferrer" target="_blank">
+      <img alt={title} class:list={styles.postThumbImg} loading="lazy" src={cover} />
+    </a>
+  </div>
+  <div class:list={styles.postContentWrap}>
+    <div class:list={styles.title}>{title}</div>
+    <div class:list={styles.time}>{time}</div>
+    <div class:list={styles.content}>{content}</div>
+    <div class:list={styles.category}>{category}</div>
+    <div class:list={styles.url}>{url}</div>
+  </div>
+</article>
+
+<script>
+  import { initArticleAnimations } from '../scripts/article-animations';
+
+  // 监听 Astro 页面加载事件
+  document.addEventListener('astro:page-load', initArticleAnimations);
+</script>

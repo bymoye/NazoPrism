@@ -1,0 +1,11 @@
+---
+import { SITE_CONFIG } from '../config';
+import styles from '../styles/components/Cover.module.css';
+---
+
+<figure class:list={styles.siteCover}>
+  <div class:list={styles.focusInfo}>
+    <img alt="avatar" class:list={styles.avatar} src={SITE_CONFIG.avatar} />
+    <div class:list={styles.focusInfoText}>{SITE_CONFIG.description}</div>
+  </div>
+</figure>

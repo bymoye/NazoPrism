@@ -6,7 +6,7 @@
 import { registerGlobalCleanup } from './cleanup-manager';
 import { offEvents, onScroll } from './global-event-manager';
 import { getScrollTop } from '../utils/scroll-utils';
-import styles from '../styles/components/navigation.module.css';
+import styles from '../styles/components/Navigation.module.css';
 const EVENT_ID: string = 'navigation';
 
 const state = {
