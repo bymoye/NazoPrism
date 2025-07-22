@@ -2,6 +2,9 @@
 node_modules/
 .pnp
 .pnp.js
+.kiro
+.trae
+.vscode
 
 # testing
 coverage/
@@ -175,6 +178,6 @@ out
 *.bak
 *.backup
 
-# Lock files (keep package-lock.json for npm)
 yarn.lock
 pnpm-lock.yaml
+package-lock.json

@@ -17,7 +17,8 @@ const { title, time, content, category, url, cover, id } = Astro.props;
 <article
   class:list={styles.postListThumb}
   data-article-id={id}
-  data-show-class={styles.postListShow}    data-thumb-class={styles.postListThumb}
+  data-show-class={styles.postListShow}
+  data-thumb-class={styles.postListThumb}
 >
   <div class:list={styles.postThumb}>
     <a class:list={styles.imageA} href={url} rel="noopener noreferrer" target="_blank">
@@ -34,7 +35,7 @@ const { title, time, content, category, url, cover, id } = Astro.props;
 </article>
 
 <script>
-  import { initArticleAnimations } from '../scripts/article-animations';
+  import { initArticleAnimations } from '../scripts/ArticleAnimationManager';
 
   // 监听 Astro 页面加载事件
   document.addEventListener('astro:page-load', initArticleAnimations);
