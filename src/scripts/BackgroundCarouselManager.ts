@@ -275,7 +275,7 @@ class CarouselController {
         currentImg.remove();
         this.#currentImg = nextImg;
         this.#currentIndex = nextIndex;
-        
+
         // 通知背景管理器更新主题色（这会触发预载下一张图片）
         this.#onBackgroundChanged?.(this.#backgrounds[nextIndex]);
       })
@@ -440,26 +440,31 @@ class BackgroundCarouselManager {
    */
   #preExtractNextThemeColor(): void {
     if (!this.#carouselController.backgrounds.length) return;
-    
-    const nextIndex = (this.#carouselController.currentIndex + 1) % this.#carouselController.backgrounds.length;
+
+    const nextIndex =
+      (this.#carouselController.currentIndex + 1) % this.#carouselController.backgrounds.length;
     const nextBackground = this.#carouselController.backgrounds[nextIndex];
-    
+
     // 如果下一张图片的主题色已经提取过，则跳过
     if (this.#imageCache.has(nextBackground) && this.#imageCache.get(nextBackground)?.themeColor) {
       return;
     }
-    
+
     // 异步提取下一张图片的主题色（仅提取，不应用主题）
-    themeManager.extractColorFromImageOnly(nextBackground)
-      .then((sourceColor) => {
-        const cacheData = this.#imageCache.get(nextBackground) || { isLoaded: false, themeColor: undefined };
+    themeManager
+      .extractColorFromImageOnly(nextBackground)
+      .then(sourceColor => {
+        const cacheData = this.#imageCache.get(nextBackground) || {
+          isLoaded: false,
+          themeColor: undefined,
+        };
         cacheData.themeColor = sourceColor;
         this.#imageCache.set(nextBackground, cacheData);
-        console.log("提前提取下一张图片的主题色成功 ", sourceColor, nextBackground);
+        console.log('提前提取下一张图片的主题色成功 ', sourceColor, nextBackground);
         // 在主题色提取完成后检查是否可以关闭Worker
         this.#checkAndShutdownWorker();
       })
-      .catch((error) => {
+      .catch(error => {
         console.warn('[BackgroundCarousel] 提前提取下一张图片主题色失败:', error);
       });
   }
@@ -631,12 +636,12 @@ class BackgroundCarouselManager {
       }
 
       this.#carouselController.init(backgrounds);
-      
+
       // 设置背景变化回调
       this.#carouselController.setBackgroundChangeCallback((imageUrl: string) => {
         this.#updateThemeFromBackground(imageUrl);
       });
-      
+
       this.#setupEventListeners();
 
       // 注册全局清理

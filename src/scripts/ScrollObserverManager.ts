@@ -102,7 +102,10 @@ class ScrollObserverManager {
     // 如果已存在同名回调，智能处理重复注册
     if (this.#registeredCallbacks.has(config.id)) {
       // 检查当前观察器是否还在观察正确的哨兵元素
-      const isObserving = intersectionObserverManager.isTargetObserved(`scroll-${config.id}`, this.#sentinelElement);
+      const isObserving = intersectionObserverManager.isTargetObserved(
+        `scroll-${config.id}`,
+        this.#sentinelElement,
+      );
       if (isObserving) {
         // 如果已经在观察正确的元素，只更新回调函数
         this.#registeredCallbacks.set(config.id, config.callback);

@@ -360,13 +360,13 @@ class ThemeManagerImpl {
     // 清理所有待处理的Worker请求
     this.#pendingWorkerRequests.forEach(({ reject }) => reject(new Error('Worker 已关闭')));
     this.#pendingWorkerRequests.clear();
-    
+
     // 终止Worker并清理引用
     if (this.#worker) {
       this.#worker.terminate();
       this.#worker = null;
     }
-    
+
     // 移除颜色方案变化监听器
     if (this.#colorSchemeQuery) {
       this.#colorSchemeQuery.removeEventListener('change', this.#handleColorSchemeChange);

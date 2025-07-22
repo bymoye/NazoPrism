@@ -107,7 +107,7 @@ class ToTopManager {
       // 页面切换后，只需要重置状态和重新绑定事件
       this.#isVisible = false;
       this.#button.classList.remove(styles.show);
-      
+
       // 重新绑定点击事件（防止元素被替换）
       globalEventManager.offEvents('to-top-button');
       globalEventManager.onClick('to-top-button', this.#scrollToTop);

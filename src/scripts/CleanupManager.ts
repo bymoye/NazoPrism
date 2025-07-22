@@ -6,6 +6,22 @@
 import { globalEventManager } from './GlobalEventManager';
 
 /**
+ * 清理资源的元数据接口
+ */
+interface CleanupMetadata {
+  /** 资源名称 */
+  name?: string;
+  /** 超时时间（毫秒） */
+  timeout?: number;
+  /** 资源描述 */
+  description?: string;
+  /** 资源优先级 */
+  priority?: 'low' | 'normal' | 'high';
+  /** 其他自定义属性 */
+  [key: string]: unknown;
+}
+
+/**
  * 清理管理器类
  * 管理页面级和全局级的清理任务，确保资源正确释放
  */
@@ -13,10 +29,13 @@ class CleanupManager {
   #pageHandlers = new Set<() => void>();
   #globalHandlers = new Set<() => void>();
   #areListenersRegistered = false;
-  
+
   // 内存泄漏防护相关
   #weakRefs = new Set<WeakRef<object>>();
-  #resourceRegistry = new Map<string, { type: string; timestamp: number; metadata?: any }>();
+  #resourceRegistry = new Map<
+    string,
+    { type: string; timestamp: number; metadata?: CleanupMetadata }
+  >();
   #cleanupTimeouts = new Map<string, number>();
   #maxHandlers = 1000; // 防止处理器过多
   #autoCleanupInterval: number | null = null;
@@ -88,25 +107,27 @@ class CleanupManager {
    * 注册一个【页面级】的清理函数
    * 它会在每次 Astro 页面导航时被自动执行和清理
    */
-  registerPageCleanup(cleanup: () => void, metadata?: { name?: string; timeout?: number }): () => void {
+  registerPageCleanup(cleanup: () => void, metadata?: CleanupMetadata): () => void {
     this.#ensureListeners();
-    
+
     // 防止处理器过多导致内存泄漏
     if (this.#pageHandlers.size >= this.#maxHandlers) {
-      console.warn(`[CleanupManager] 页面级处理器数量已达上限 (${this.#maxHandlers})，可能存在内存泄漏`);
+      console.warn(
+        `[CleanupManager] 页面级处理器数量已达上限 (${this.#maxHandlers})，可能存在内存泄漏`,
+      );
       this.#performLeakDetection();
     }
-    
+
     this.#pageHandlers.add(cleanup);
-    
+
     // 注册资源追踪
     const resourceId = this.#generateResourceId();
     this.#resourceRegistry.set(resourceId, {
       type: 'page-cleanup',
       timestamp: Date.now(),
-      metadata: metadata || {}
+      metadata: metadata || {},
     });
-    
+
     // 设置超时清理（防止长期未清理的处理器）
     if (metadata?.timeout) {
       const timeoutId = window.setTimeout(() => {
@@ -114,14 +135,14 @@ class CleanupManager {
         this.#pageHandlers.delete(cleanup);
         this.#resourceRegistry.delete(resourceId);
       }, metadata.timeout);
-      
+
       this.#cleanupTimeouts.set(resourceId, timeoutId);
     }
 
     return () => {
       this.#pageHandlers.delete(cleanup);
       this.#resourceRegistry.delete(resourceId);
-      
+
       const timeoutId = this.#cleanupTimeouts.get(resourceId);
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -134,25 +155,27 @@ class CleanupManager {
    * 注册一个【全局级】的清理函数
    * 它只会在用户关闭标签页或离开网站时执行一次
    */
-  registerGlobalCleanup(cleanup: () => void, metadata?: { name?: string; timeout?: number }): () => void {
+  registerGlobalCleanup(cleanup: () => void, metadata?: CleanupMetadata): () => void {
     this.#ensureListeners();
-    
+
     // 防止处理器过多导致内存泄漏
     if (this.#globalHandlers.size >= this.#maxHandlers) {
-      console.warn(`[CleanupManager] 全局级处理器数量已达上限 (${this.#maxHandlers})，可能存在内存泄漏`);
+      console.warn(
+        `[CleanupManager] 全局级处理器数量已达上限 (${this.#maxHandlers})，可能存在内存泄漏`,
+      );
       this.#performLeakDetection();
     }
-    
+
     this.#globalHandlers.add(cleanup);
-    
+
     // 注册资源追踪
     const resourceId = this.#generateResourceId();
     this.#resourceRegistry.set(resourceId, {
       type: 'global-cleanup',
       timestamp: Date.now(),
-      metadata: metadata || {}
+      metadata: metadata || {},
     });
-    
+
     // 设置超时清理（防止长期未清理的处理器）
     if (metadata?.timeout) {
       const timeoutId = window.setTimeout(() => {
@@ -160,14 +183,14 @@ class CleanupManager {
         this.#globalHandlers.delete(cleanup);
         this.#resourceRegistry.delete(resourceId);
       }, metadata.timeout);
-      
+
       this.#cleanupTimeouts.set(resourceId, timeoutId);
     }
 
     return () => {
       this.#globalHandlers.delete(cleanup);
       this.#resourceRegistry.delete(resourceId);
-      
+
       const timeoutId = this.#cleanupTimeouts.get(resourceId);
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -204,27 +227,29 @@ class CleanupManager {
    */
   #performLeakDetection(): void {
     console.group('[CleanupManager] 内存泄漏检测');
-    
+
     // 检查长期存在的资源
     const now = Date.now();
     const oldResources = Array.from(this.#resourceRegistry.entries())
       .filter(([_, resource]) => now - resource.timestamp > 300000) // 5分钟
       .map(([id, resource]) => ({ id, ...resource }));
-    
+
     if (oldResources.length > 0) {
       console.warn(`发现 ${oldResources.length} 个长期存在的资源:`);
       oldResources.forEach(resource => {
-        console.warn(`  - ${resource.id}: ${resource.type} (存在时间: ${Math.round((now - resource.timestamp) / 1000)}s)`);
+        console.warn(
+          `  - ${resource.id}: ${resource.type} (存在时间: ${Math.round((now - resource.timestamp) / 1000)}s)`,
+        );
       });
     }
-    
+
     // 检查弱引用
     const deadRefs = Array.from(this.#weakRefs).filter(ref => ref.deref() === undefined);
     if (deadRefs.length > 0) {
       console.log(`清理 ${deadRefs.length} 个已失效的弱引用`);
       deadRefs.forEach(ref => this.#weakRefs.delete(ref));
     }
-    
+
     console.groupEnd();
   }
 
@@ -234,11 +259,11 @@ class CleanupManager {
   registerWeakRef(obj: object, name?: string): WeakRef<object> {
     const weakRef = new WeakRef(obj);
     this.#weakRefs.add(weakRef);
-    
+
     if (name) {
       console.log(`[CleanupManager] 注册弱引用: ${name}`);
     }
-    
+
     return weakRef;
   }
 
@@ -249,11 +274,11 @@ class CleanupManager {
     if (this.#autoCleanupInterval) {
       clearInterval(this.#autoCleanupInterval);
     }
-    
+
     this.#autoCleanupInterval = window.setInterval(() => {
       this.#performLeakDetection();
     }, intervalMs);
-    
+
     console.log(`[CleanupManager] 启动自动清理检测，间隔: ${intervalMs}ms`);
   }
 
@@ -288,13 +313,13 @@ class CleanupManager {
    */
   getResourceReport(): void {
     console.group('[CleanupManager] 资源报告');
-    
+
     console.log(`页面级处理器: ${this.#pageHandlers.size}`);
     console.log(`全局级处理器: ${this.#globalHandlers.size}`);
     console.log(`资源注册表: ${this.#resourceRegistry.size}`);
     console.log(`弱引用: ${this.#weakRefs.size}`);
     console.log(`清理超时: ${this.#cleanupTimeouts.size}`);
-    
+
     if (this.#resourceRegistry.size > 0) {
       console.group('资源详情:');
       this.#resourceRegistry.forEach((resource, id) => {
@@ -303,7 +328,7 @@ class CleanupManager {
       });
       console.groupEnd();
     }
-    
+
     console.groupEnd();
   }
 
@@ -313,20 +338,20 @@ class CleanupManager {
   destroy(): void {
     // 停止自动清理
     this.stopAutoCleanup();
-    
+
     // 清理所有超时
     this.#cleanupTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
     this.#cleanupTimeouts.clear();
-    
+
     // 清理所有处理器和资源
     this.#pageHandlers.clear();
     this.#globalHandlers.clear();
     this.#resourceRegistry.clear();
     this.#weakRefs.clear();
-    
+
     this.#areListenersRegistered = false;
     CleanupManager.#instance = null;
-    
+
     console.log('[CleanupManager] 管理器已完全销毁');
   }
 }

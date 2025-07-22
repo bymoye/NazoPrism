@@ -16,6 +16,14 @@ import { registerGlobalCleanup } from './CleanupManager';
 import { SITE_CONFIG } from '../config';
 
 /**
+ * Astro before-swap 事件接口
+ * 定义 astro:before-swap 事件的类型结构
+ */
+interface AstroBeforeSwapEvent extends Event {
+  newDocument?: Document;
+}
+
+/**
  * 应用配置接口
  */
 interface AppConfig {
@@ -70,7 +78,7 @@ class AppInitializer {
    */
   #setupAstroLifecycleHooks(): void {
     // 使用 GlobalEventManager 统一管理 Astro 生命周期事件
-    globalEventManager.onAstroBeforeSwap('app-initializer-theme', (event) => {
+    globalEventManager.onAstroBeforeSwap('app-initializer-theme', event => {
       const themeJson = sessionStorage.getItem('nazo-prism-theme-colors');
       if (!themeJson) return;
 
@@ -88,8 +96,8 @@ class AppInitializer {
           .join('\n');
 
         style.textContent = `:root { ${cssVars} }`;
-        // 类型断言以访问 Astro 特定的事件属性
-        (event as any)?.newDocument?.head?.appendChild(style);
+        // 使用类型安全的方式访问 Astro 特定的事件属性
+        (event as AstroBeforeSwapEvent)?.newDocument?.head?.appendChild(style);
       } catch (e) {
         console.error('主题应用失败 (astro:before-swap):', e);
       }
@@ -138,16 +146,16 @@ class AppInitializer {
         critical: false,
       },
       {
-          name: 'Navigation',
-          init: initNavigationManager,
-          critical: false,
-        },
-        {
-          name: 'To Top Button',
-          init: initToTopManager,
-          critical: false,
-        },
-      ];
+        name: 'Navigation',
+        init: initNavigationManager,
+        critical: false,
+      },
+      {
+        name: 'To Top Button',
+        init: initToTopManager,
+        critical: false,
+      },
+    ];
 
     // 初始化核心组件（全局性组件）
     for (const component of coreComponents) {

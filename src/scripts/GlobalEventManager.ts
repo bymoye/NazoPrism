@@ -52,7 +52,7 @@ class GlobalEventManager {
   #createDispatcher(handlers: Map<string, EventHandlerConfig>, eventName: string) {
     return (event?: Event) => {
       const toRemove: string[] = [];
-      
+
       handlers.forEach((config, id) => {
         try {
           config.handler(event);
@@ -65,7 +65,7 @@ class GlobalEventManager {
           }
         }
       });
-      
+
       // 移除一次性事件处理器
       toRemove.forEach(id => handlers.delete(id));
     };
@@ -83,17 +83,26 @@ class GlobalEventManager {
       () => this.#createDispatcher(this.#scrollHandlers, 'scroll')(),
       2,
     );
-    
+
     // 为resize事件创建防抖处理器
     const resizeDispatcher = debounce(() => {
       this.#createDispatcher(this.#resizeHandlers, 'resize')();
     }, 100);
-    
+
     const astroDispatcher = this.#createDispatcher(this.#astroHandlers, 'astro:page-load');
-    const astroBeforeSwapDispatcher = this.#createDispatcher(this.#astroBeforeSwapHandlers, 'astro:before-swap');
-    const visibilityChangeDispatcher = this.#createDispatcher(this.#visibilityChangeHandlers, 'visibilitychange');
+    const astroBeforeSwapDispatcher = this.#createDispatcher(
+      this.#astroBeforeSwapHandlers,
+      'astro:before-swap',
+    );
+    const visibilityChangeDispatcher = this.#createDispatcher(
+      this.#visibilityChangeHandlers,
+      'visibilitychange',
+    );
     const focusDispatcher = this.#createDispatcher(this.#focusHandlers, 'focus');
-    const beforeUnloadDispatcher = this.#createDispatcher(this.#beforeUnloadHandlers, 'beforeunload');
+    const beforeUnloadDispatcher = this.#createDispatcher(
+      this.#beforeUnloadHandlers,
+      'beforeunload',
+    );
     const clickDispatcher = this.#createDispatcher(this.#clickHandlers, 'click');
 
     window.addEventListener('scroll', scrollDispatcher, { passive: true });

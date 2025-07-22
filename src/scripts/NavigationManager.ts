@@ -66,7 +66,8 @@ class NavigationManager {
    * 检查是否为当前页面
    */
   #isCurrentPage(href: string): boolean {
-    const normalizedCurrentPath = this.#currentPath.length > 1 ? this.#currentPath.replace(/\/$/, '') : '/';
+    const normalizedCurrentPath =
+      this.#currentPath.length > 1 ? this.#currentPath.replace(/\/$/, '') : '/';
     const normalizedHref = href.length > 1 ? href.replace(/\/$/, '') : '/';
 
     if (normalizedHref === '/') {
@@ -93,7 +94,7 @@ class NavigationManager {
       if (!href) return;
 
       const isCurrent = this.#isCurrentPage(href);
-      
+
       // 更新 aria-current 属性
       if (isCurrent) {
         link.setAttribute('aria-current', 'page');

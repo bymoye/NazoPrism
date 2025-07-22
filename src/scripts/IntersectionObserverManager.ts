@@ -80,7 +80,9 @@ class IntersectionObserverManager {
 
     targets.forEach(target => observer!.observe(target));
 
-    console.log(`[IntersectionObserver] 注册任务: '${id}' (${wasReused ? '复用' : '创建'} Key: ${optionsKey})`);
+    console.log(
+      `[IntersectionObserver] 注册任务: '${id}' (${wasReused ? '复用' : '创建'} Key: ${optionsKey})`,
+    );
   }
 
   /**
@@ -98,14 +100,14 @@ class IntersectionObserverManager {
 
     if (observer && config) {
       const newTargets = targets.filter(target => !config.targets.includes(target));
-      
+
       if (newTargets.length === 0) return;
 
       newTargets.forEach(target => {
         observer.observe(target);
         config.targets.push(target);
       });
-      
+
       console.log(`[IntersectionObserver] 为 ID '${id}' 添加了 ${newTargets.length} 个新目标`);
     }
   }
@@ -125,12 +127,12 @@ class IntersectionObserverManager {
 
     if (observer && config) {
       const targetsToRemove = targets.filter(target => config.targets.includes(target));
-      
+
       if (targetsToRemove.length === 0) return;
 
       targetsToRemove.forEach(target => observer.unobserve(target));
       config.targets = config.targets.filter(t => !targetsToRemove.includes(t));
-      
+
       console.log(`[IntersectionObserver] 从 ID '${id}' 移除了 ${targetsToRemove.length} 个目标`);
     }
   }
@@ -144,7 +146,7 @@ class IntersectionObserverManager {
 
     const subscribers = this.#observerSubscribers.get(optionsKey);
     const config = subscribers?.get(id);
-    
+
     return config?.targets.includes(target) ?? false;
   }
 
@@ -225,13 +227,16 @@ class IntersectionObserverManager {
       callback: ObserverCallback;
       options?: IntersectionObserverInit;
       targets?: Element[];
-    }>
+    }>,
   ): void {
-    const optionsGroups = new Map<string, Array<{
-      id: string;
-      callback: ObserverCallback;
-      targets: Element[];
-    }>>();
+    const optionsGroups = new Map<
+      string,
+      Array<{
+        id: string;
+        callback: ObserverCallback;
+        targets: Element[];
+      }>
+    >();
 
     // 按 options 分组，减少 Observer 创建次数
     registrations.forEach(({ id, callback, options = {}, targets = [] }) => {
@@ -270,19 +275,19 @@ class IntersectionObserverManager {
       }
 
       const subscribers = this.#observerSubscribers.get(optionsKey)!;
-      
+
       // 批量注册该组的所有任务
       group.forEach(({ id, callback, targets }) => {
         const config: RegistrationConfig = { callback, targets: [...targets] };
         subscribers.set(id, config);
         this.#idToOptionsKeyMap.set(id, optionsKey);
-        
+
         // 批量观察所有目标
         targets.forEach(target => observer!.observe(target));
       });
 
       console.log(
-        `[IntersectionObserver] 批量注册了 ${group.length} 个任务 (${wasReused ? '复用' : '创建'} Key: ${optionsKey})`
+        `[IntersectionObserver] 批量注册了 ${group.length} 个任务 (${wasReused ? '复用' : '创建'} Key: ${optionsKey})`,
       );
     });
   }
