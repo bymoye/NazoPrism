@@ -25,7 +25,7 @@ class GlobalEventManager {
   #visibilityChangeHandlers = new Map<string, EventHandlerConfig>();
   #focusHandlers = new Map<string, EventHandlerConfig>();
   #beforeUnloadHandlers = new Map<string, EventHandlerConfig>();
-  #clickHandlers = new Map<string, EventHandlerConfig>();
+
   #isInitialized = false;
 
   // 单例实例
@@ -103,8 +103,6 @@ class GlobalEventManager {
       this.#beforeUnloadHandlers,
       'beforeunload',
     );
-    const clickDispatcher = this.#createDispatcher(this.#clickHandlers, 'click');
-
     window.addEventListener('scroll', scrollDispatcher, { passive: true });
     window.addEventListener('resize', resizeDispatcher, { passive: true });
     window.addEventListener('focus', focusDispatcher);
@@ -112,7 +110,6 @@ class GlobalEventManager {
     document.addEventListener('astro:page-load', astroDispatcher);
     document.addEventListener('astro:before-swap', astroBeforeSwapDispatcher);
     document.addEventListener('visibilitychange', visibilityChangeDispatcher);
-    document.addEventListener('click', clickDispatcher);
 
     this.#isInitialized = true;
   }
@@ -166,12 +163,7 @@ class GlobalEventManager {
     this.#beforeUnloadHandlers.set(id, { handler, once });
   }
 
-  /**
-   * 注册点击事件处理器
-   */
-  onClick(id: string, handler: (event?: Event) => void, once = false): void {
-    this.#clickHandlers.set(id, { handler, once });
-  }
+
 
   /**
    * 根据 ID 移除一个或多个事件处理器
@@ -184,7 +176,7 @@ class GlobalEventManager {
     this.#visibilityChangeHandlers.delete(id);
     this.#focusHandlers.delete(id);
     this.#beforeUnloadHandlers.delete(id);
-    this.#clickHandlers.delete(id);
+
   }
 
   /**
@@ -199,7 +191,7 @@ class GlobalEventManager {
       visibilityChangeHandlers: this.#visibilityChangeHandlers.size,
       focusHandlers: this.#focusHandlers.size,
       beforeUnloadHandlers: this.#beforeUnloadHandlers.size,
-      clickHandlers: this.#clickHandlers.size,
+
       isInitialized: this.#isInitialized,
     };
   }
@@ -215,7 +207,7 @@ class GlobalEventManager {
     this.#visibilityChangeHandlers.clear();
     this.#focusHandlers.clear();
     this.#beforeUnloadHandlers.clear();
-    this.#clickHandlers.clear();
+
     this.#isInitialized = false;
     GlobalEventManager.#instance = null;
   }
@@ -240,8 +232,7 @@ export const onFocus = (id: string, handler: (event?: Event) => void, once = fal
   globalEventManager.onFocus(id, handler, once);
 export const onBeforeUnload = (id: string, handler: (event?: Event) => void, once = false) =>
   globalEventManager.onBeforeUnload(id, handler, once);
-export const onClick = (id: string, handler: (event?: Event) => void, once = false) =>
-  globalEventManager.onClick(id, handler, once);
+
 export const offEvents = (id: string) => globalEventManager.offEvents(id);
 export const getEventStats = () => globalEventManager.getStats();
 
