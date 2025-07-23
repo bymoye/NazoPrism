@@ -21,8 +21,8 @@
   border-radius: var(--md-sys-shape-corner-large);
 
   /* M3 颜色系统 */
-  background-color: rgb(var(--md-sys-color-primary));
-  color: rgb(var(--md-sys-color-on-primary));
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 
   /* M3 阴影系统 */
   box-shadow: var(--md-sys-elevation-level3);
@@ -57,23 +57,23 @@
 
 /* M3 悬停状态 */
 .to-top-btn:hover {
-  background-color: rgb(var(--md-sys-color-primary-container));
-  color: rgb(var(--md-sys-color-on-primary-container));
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
   box-shadow: var(--md-sys-elevation-level4);
   transform: scale(1.05);
 }
 
 /* M3 点击状态 */
 .to-top-btn:active {
-  background-color: rgb(var(--md-sys-color-primary));
-  color: rgb(var(--md-sys-color-on-primary));
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
   box-shadow: var(--md-sys-elevation-level1);
   transform: scale(0.95);
 }
 
 /* M3 焦点状态 */
 .to-top-btn:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 
@@ -139,8 +139,8 @@
 /* 高对比度模式 */
 @media (prefers-contrast: high) {
   .to-top-btn {
-    background-color: rgb(var(--md-sys-color-primary)) !important;
-    border: 2px solid rgb(var(--md-sys-color-outline)) !important;
+    background-color: var(--md-sys-color-primary) !important;
+  border: 2px solid var(--md-sys-color-outline) !important;
   }
 }
 

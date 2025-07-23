@@ -1,4 +1,11 @@
-import { CorePalette, hexFromArgb } from '@material/material-color-utilities';
+import {
+  themeFromSourceColor,
+  hexFromArgb,
+  applyTheme,
+  Hct,
+  SchemeTonalSpot,
+  type Theme
+} from '@material/material-color-utilities';
 import type {
   ColorExtractionWorkerMessage,
   ColorExtractionWorkerResponse,
@@ -6,72 +13,19 @@ import type {
 } from '../types/worker';
 import ColorExtractionWorker from './color-extraction-worker.ts?worker';
 
-/**
- * Material Design 3 主题颜色接口
- */
-export interface IThemeColors {
-  primary: string;
-  onPrimary: string;
-  primaryContainer: string;
-  onPrimaryContainer: string;
-  secondary: string;
-  onSecondary: string;
-  secondaryContainer: string;
-  onSecondaryContainer: string;
-  tertiary: string;
-  onTertiary: string;
-  tertiaryContainer: string;
-  onTertiaryContainer: string;
-  error: string;
-  onError: string;
-  errorContainer: string;
-  onErrorContainer: string;
-  background: string;
-  onBackground: string;
-  surface: string;
-  onSurface: string;
-  surfaceVariant: string;
-  onSurfaceVariant: string;
-  outline: string;
-  outlineVariant: string;
-  shadow: string;
-  scrim: string;
-  inverseSurface: string;
-  inverseOnSurface: string;
-  inversePrimary: string;
-  surfaceDim: string;
-  surfaceBright: string;
-  surfaceContainerLowest: string;
-  surfaceContainerLow: string;
-  surfaceContainer: string;
-  surfaceContainerHigh: string;
-  surfaceContainerHighest: string;
-}
+
 
 // --- 模块内常量 ---
-const THEME_STORAGE_KEY = 'nazo-prism-theme-colors';
-const DYNAMIC_STYLE_TAG_ID = '#dynamic-material-theme-styles';
+const SEED_COLOR_STORAGE_KEY = 'nazo-prism-seed-color';
 const DEFAULT_SEED_COLOR = 0xff78ccc0; // 默认种子色
 const WORKER_TIMEOUT = 10000; // 10秒
 
-/**
- * 查找或创建一个用于动态注入样式的 <style> 元素
- */
-function getOrCreateStyleElement(id: string): HTMLStyleElement {
-  let styleEl = document.querySelector(id) as HTMLStyleElement | null;
-  if (!styleEl) {
-    styleEl = document.createElement('style');
-    styleEl.id = id;
-    document.head.appendChild(styleEl);
-  }
-  return styleEl;
-}
+
 
 class ThemeManagerImpl {
-  #currentTheme: IThemeColors | null = null;
+  #currentSeedColor: number | null = null;
   #lastAppliedImageUrl: string | null = null;
   #isUpdatingTheme = false;
-  readonly #defaultTheme: IThemeColors;
 
   #worker: Worker | null = null;
   #workerMessageId = 0;
@@ -83,7 +37,6 @@ class ThemeManagerImpl {
   #colorSchemeQuery: MediaQueryList | null = null;
 
   constructor() {
-    this.#defaultTheme = this.#generateTheme(DEFAULT_SEED_COLOR, this.prefersDarkMode());
     this.#initializeWorker();
     this.#listenForColorSchemeChanges();
   }
@@ -129,18 +82,16 @@ class ThemeManagerImpl {
     });
 
     try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) throw new Error(`图片加载失败: ${response.status}`);
-      const blob = await response.blob();
-
-      const arrayBuffer = await blob.arrayBuffer();
+      /// 判断屏幕的宽高
+      const isMobile = window.innerWidth < 768;
 
       const message: ColorExtractionWorkerMessage = {
-        arrayBuffer,
+        imageUrl,
         messageId,
+        isMobile,
       };
 
-      this.#worker.postMessage(message, [arrayBuffer]);
+      this.#worker.postMessage(message);
     } catch (error) {
       this.#pendingWorkerRequests.delete(messageId);
       throw error;
@@ -149,27 +100,28 @@ class ThemeManagerImpl {
     return colorPromise;
   }
 
-  #hexToRgb(hex: string): string {
-    const hexValue = hex.startsWith('#') ? hex.substring(1) : hex;
-    const [r, g, b] = hexValue.match(/.{1,2}/g)?.map(c => parseInt(c, 16)) || [0, 0, 0];
-    return `${r}, ${g}, ${b}`;
-  }
 
-  #loadThemeFromSession(): IThemeColors | null {
+  /**
+   * 从 sessionStorage 加载种子颜色
+   */
+  #loadSeedColorFromSession(): number | null {
     try {
-      const storedTheme = sessionStorage.getItem(THEME_STORAGE_KEY);
-      return storedTheme ? (JSON.parse(storedTheme) as IThemeColors) : null;
+      const storedSeedColor = sessionStorage.getItem(SEED_COLOR_STORAGE_KEY);
+      return storedSeedColor ? parseInt(storedSeedColor, 10) : null;
     } catch (error) {
-      console.warn('从 sessionStorage 加载主题失败:', error);
+      console.warn('从 sessionStorage 加载种子颜色失败:', error);
       return null;
     }
   }
 
-  #saveThemeToSession(theme: IThemeColors): void {
+  /**
+   * 保存种子颜色到 sessionStorage
+   */
+  #saveSeedColorToSession(seedColor: number): void {
     try {
-      sessionStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
+      sessionStorage.setItem(SEED_COLOR_STORAGE_KEY, seedColor.toString());
     } catch (error) {
-      console.warn('保存主题到 sessionStorage 失败:', error);
+      console.warn('保存种子颜色到 sessionStorage 失败:', error);
     }
   }
 
@@ -179,109 +131,99 @@ class ThemeManagerImpl {
     this.#colorSchemeQuery.addEventListener('change', this.#handleColorSchemeChange);
   }
 
+  /**
+   * 处理系统颜色方案变化
+   */
   #handleColorSchemeChange = (e: MediaQueryListEvent) => {
     const isDark = e.matches;
-    const currentTheme = this.getCurrentTheme();
-    const currentSeedColor = parseInt(currentTheme.primary.substring(1), 16);
-    const newTheme = this.#generateTheme(currentSeedColor, isDark);
-    this.#applyTheme(newTheme);
+    const currentSeedColor = this.getCurrentSeedColor();
+    const newTheme = themeFromSourceColor(currentSeedColor);
+    this.#applyTheme(newTheme, isDark);
   };
 
-  #generateTheme(sourceColor: number, isDark: boolean = false): IThemeColors {
-    const palette = CorePalette.of(sourceColor);
-    const tones: Record<keyof IThemeColors, number> = {
-      primary: isDark ? 80 : 40,
-      onPrimary: isDark ? 20 : 100,
-      primaryContainer: isDark ? 30 : 90,
-      onPrimaryContainer: isDark ? 90 : 10,
-      secondary: isDark ? 80 : 40,
-      onSecondary: isDark ? 20 : 100,
-      secondaryContainer: isDark ? 30 : 90,
-      onSecondaryContainer: isDark ? 90 : 10,
-      tertiary: isDark ? 80 : 40,
-      onTertiary: isDark ? 20 : 100,
-      tertiaryContainer: isDark ? 30 : 90,
-      onTertiaryContainer: isDark ? 90 : 10,
-      error: isDark ? 80 : 40,
-      onError: isDark ? 20 : 100,
-      errorContainer: isDark ? 30 : 90,
-      onErrorContainer: isDark ? 90 : 10,
-      background: isDark ? 6 : 98,
-      onBackground: isDark ? 90 : 10,
-      surface: isDark ? 6 : 98,
-      onSurface: isDark ? 90 : 10,
-      surfaceVariant: isDark ? 30 : 90,
-      onSurfaceVariant: isDark ? 80 : 30,
-      outline: isDark ? 60 : 50,
-      outlineVariant: isDark ? 30 : 80,
-      shadow: 0,
-      scrim: 0,
-      inverseSurface: isDark ? 90 : 20,
-      inverseOnSurface: isDark ? 20 : 95,
-      inversePrimary: isDark ? 40 : 80,
-      surfaceDim: isDark ? 6 : 87,
-      surfaceBright: isDark ? 24 : 98,
-      surfaceContainerLowest: isDark ? 4 : 100,
-      surfaceContainerLow: isDark ? 10 : 96,
-      surfaceContainer: isDark ? 12 : 94,
-      surfaceContainerHigh: isDark ? 17 : 92,
-      surfaceContainerHighest: isDark ? 22 : 90,
-    };
-    // This logic is complex, but kept as per your original implementation's apparent intent.
-    const theme: { [K in keyof IThemeColors]?: string } = {};
-    for (const key in tones) {
-      const role = key as keyof IThemeColors;
-      let p;
-      if (role.startsWith('secondary')) p = palette.a2;
-      else if (role.startsWith('tertiary')) p = palette.a3;
-      else if (role.startsWith('error')) p = palette.error;
-      else if (role.includes('Variant')) p = palette.n2;
-      else if (
-        ['background', 'surface', 'shadow', 'scrim', 'inverseSurface', 'inverseOnSurface'].includes(
-          role,
-        ) ||
-        /Container(Lowest|Low|High|Highest)?$/.test(role)
-      )
-        p = palette.n1;
-      else p = palette.a1;
-      theme[role] = hexFromArgb(p.tone(tones[role]));
-    }
-    return theme as IThemeColors;
-  }
 
-  public getCurrentTheme(): IThemeColors {
-    if (this.#currentTheme) return this.#currentTheme;
-    const sessionTheme = this.#loadThemeFromSession();
-    if (sessionTheme) {
-      this.#currentTheme = sessionTheme;
-      return sessionTheme;
-    }
-    return this.#defaultTheme;
-  }
 
-  #applyTheme(theme: IThemeColors): void {
-    requestAnimationFrame(() => {
-      const cssVarsString = Object.entries(theme)
-        .map(
-          ([key, value]) =>
-            `--md-sys-color-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${this.#hexToRgb(value)};`,
-        )
-        .join('\n');
-      const styleEl = getOrCreateStyleElement(DYNAMIC_STYLE_TAG_ID);
-      const newRule = `:root { ${cssVarsString} }`;
-      if (styleEl.textContent !== newRule) {
-        styleEl.textContent = newRule;
+  /**
+   * 使用 DynamicScheme 应用额外的 surface-container 颜色变量
+   * @param sourceColor 源颜色 ARGB 值
+   * @param isDark 是否为深色模式
+   */
+  #applyDynamicSchemeColors(sourceColor: number, isDark: boolean = false): void {
+    try {
+      // 创建 HCT 颜色对象
+      const sourceColorHct = Hct.fromInt(sourceColor);
+      
+      // 创建 DynamicScheme（使用 TonalSpot 变体，这是默认的 Material You 主题）
+      const dynamicScheme = new SchemeTonalSpot(sourceColorHct, isDark, 0.0);
+      
+      // 获取所有 surface-container 相关的颜色
+      const surfaceColors = {
+        'surface-dim': hexFromArgb(dynamicScheme.surfaceDim),
+        'surface-bright': hexFromArgb(dynamicScheme.surfaceBright),
+        'surface-container-lowest': hexFromArgb(dynamicScheme.surfaceContainerLowest),
+        'surface-container-low': hexFromArgb(dynamicScheme.surfaceContainerLow),
+        'surface-container': hexFromArgb(dynamicScheme.surfaceContainer),
+        'surface-container-high': hexFromArgb(dynamicScheme.surfaceContainerHigh),
+        'surface-container-highest': hexFromArgb(dynamicScheme.surfaceContainerHighest),
+      };
+      
+      // 应用这些颜色变量到 document.body
+      for (const [key, color] of Object.entries(surfaceColors)) {
+        document.body.style.setProperty(`--md-sys-color-${key}`, color);
       }
-      this.#currentTheme = theme;
-      this.#saveThemeToSession(theme);
+    } catch (error) {
+      console.error('应用 DynamicScheme 颜色时出错:', error);
+    }
+  }
+
+
+
+  /**
+   * 获取当前种子颜色
+   */
+  public getCurrentSeedColor(): number {
+    if (this.#currentSeedColor !== null) return this.#currentSeedColor;
+    const sessionSeedColor = this.#loadSeedColorFromSession();
+    if (sessionSeedColor !== null) {
+      this.#currentSeedColor = sessionSeedColor;
+      return sessionSeedColor;
+    }
+    return DEFAULT_SEED_COLOR;
+  }
+
+  /**
+   * 使用 Material Color Utilities 的官方 applyTheme API 和 DynamicScheme
+   * @param theme Material Design 主题对象
+   * @param isDark 是否为深色模式
+   */
+  #applyTheme(theme: Theme, isDark: boolean = this.prefersDarkMode()): void {
+    requestAnimationFrame(() => {
+      try {
+        // 使用官方的 applyTheme API 直接应用主题
+        applyTheme(theme, { target: document.body, dark: isDark });
+        
+        // 使用 DynamicScheme 生成额外的 surface-container 变量
+        this.#applyDynamicSchemeColors(theme.source, isDark);
+        
+        // 保存种子颜色
+        this.#currentSeedColor = theme.source;
+        this.#saveSeedColorToSession(theme.source);
+      } catch (error) {
+        console.error('应用主题时出错:', error);
+      }
     });
   }
+  
 
+
+  /**
+   * 从图片更新主题
+   */
   public async updateThemeFromImage(
     imageUrl: string,
     isDark: boolean = this.prefersDarkMode(),
   ): Promise<number | undefined> {
-    if (this.#lastAppliedImageUrl === imageUrl && this.#currentTheme) return;
+    if (this.#lastAppliedImageUrl === imageUrl && this.#currentSeedColor !== null) return;
     if (this.#isUpdatingTheme) {
       console.warn('主题正在更新中，本次请求被忽略。');
       return;
@@ -290,33 +232,40 @@ class ThemeManagerImpl {
     this.#isUpdatingTheme = true;
     try {
       const sourceColor = await this.#extractColorFromImage(imageUrl);
-      const theme = this.#generateTheme(sourceColor, isDark);
-      this.#applyTheme(theme);
+      const theme = themeFromSourceColor(sourceColor);
+      this.#applyTheme(theme, isDark);
       this.#lastAppliedImageUrl = imageUrl;
       return sourceColor;
     } catch (error) {
       console.error(`从图片 '${imageUrl}' 更新主题失败，应用默认主题`, error);
       // 失败时，也使用当前的 isDark 状态来生成默认主题
-      this.#applyTheme(this.#generateTheme(DEFAULT_SEED_COLOR, isDark));
+      const defaultTheme = themeFromSourceColor(DEFAULT_SEED_COLOR);
+      this.#applyTheme(defaultTheme, isDark);
       return undefined;
     } finally {
       this.#isUpdatingTheme = false;
     }
   }
 
-  public async updateThemeFromColor(sourceColor: number, isDark: boolean = false): Promise<number> {
+  /**
+   * 从颜色更新主题
+   */
+  public async updateThemeFromColor(sourceColor: number, isDark: boolean = this.prefersDarkMode()): Promise<number> {
     try {
-      const theme = this.generateTheme(sourceColor, isDark);
-      this.applyTheme(theme);
+      const theme = themeFromSourceColor(sourceColor);
+      this.#applyTheme(theme, isDark);
       return sourceColor;
     } catch (error) {
       console.error('从颜色更新主题失败:', error);
-      const defaultTheme = this.#generateTheme(DEFAULT_SEED_COLOR, isDark);
-      this.#applyTheme(defaultTheme);
+      const defaultTheme = themeFromSourceColor(DEFAULT_SEED_COLOR);
+      this.#applyTheme(defaultTheme, isDark);
       return DEFAULT_SEED_COLOR;
     }
   }
 
+  /**
+   * 检查是否偏好深色模式
+   */
   public prefersDarkMode(): boolean {
     if (!window.matchMedia) return false;
     if (!this.#colorSchemeQuery) {
@@ -325,10 +274,13 @@ class ThemeManagerImpl {
     return this.#colorSchemeQuery.matches;
   }
 
-  public getPersistedThemeInfo(): { imageUrl: string | null; hasTheme: boolean } {
+  /**
+   * 获取持久化的主题信息
+   */
+  public getPersistedThemeInfo(): { imageUrl: string | null; hasSeedColor: boolean } {
     return {
       imageUrl: this.#lastAppliedImageUrl,
-      hasTheme: this.#currentTheme !== null || sessionStorage.getItem(THEME_STORAGE_KEY) !== null,
+      hasSeedColor: this.#currentSeedColor !== null || sessionStorage.getItem(SEED_COLOR_STORAGE_KEY) !== null,
     };
   }
 
@@ -337,20 +289,6 @@ class ThemeManagerImpl {
    */
   public async extractColorFromImageOnly(imageUrl: string): Promise<number> {
     return this.#extractColorFromImage(imageUrl);
-  }
-
-  /**
-   * 生成主题颜色（公共API）
-   */
-  public generateTheme(sourceColor: number, isDark: boolean = false): IThemeColors {
-    return this.#generateTheme(sourceColor, isDark);
-  }
-
-  /**
-   * 应用主题（公共API）
-   */
-  public applyTheme(theme: IThemeColors): void {
-    this.#applyTheme(theme);
   }
 
   /**

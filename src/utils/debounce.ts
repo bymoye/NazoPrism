@@ -1,113 +1,161 @@
 /**
- * 统一的工具函数库
- * 避免重复实现，提供一致的API
+ * @file src/utils/debounce.ts
+ * @description 防抖函数工具
  */
-
-import { getScrollTop } from './scroll-utils';
 
 /**
- * 防抖函数 - 支持头部和尾部执行选项
+ * 防抖函数 - 在指定时间内只执行最后一次调用
+ * @param func 要防抖的函数
+ * @param wait 等待时间（毫秒）
+ * @param immediate 是否立即执行第一次调用
+ * @returns 防抖后的函数
  */
-export function debounce<F extends (...args: unknown[]) => unknown>(
-  fn: F,
-  delay: number,
-  leading: boolean = false,
-): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {
-  let timer: ReturnType<typeof setTimeout> | null = null;
+export function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number,
+  immediate = false
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  let result: ReturnType<T>;
 
-  return function (this: ThisParameterType<F>, ...args: Parameters<F>): void {
+  return function executedFunction(...args: Parameters<T>) {
     const later = () => {
-      timer = null;
-      if (!leading) {
-        fn.apply(this, args);
-      }
+      timeout = null;
+      if (!immediate) result = func(...args);
     };
 
-    const callNow = leading && !timer;
-
-    if (timer) {
-      clearTimeout(timer);
+    const callNow = immediate && !timeout;
+    
+    if (timeout) {
+      clearTimeout(timeout);
     }
-    timer = setTimeout(later, delay);
-
+    
+    timeout = setTimeout(later, wait);
+    
     if (callNow) {
-      fn.apply(this, args);
+      result = func(...args);
     }
+    
+    return result;
   };
 }
 
 /**
- * 节流函数 - 限制执行频率，在指定时间内最多执行一次
+ * 节流函数 - 在指定时间内最多执行一次
+ * @param func 要节流的函数
+ * @param limit 时间限制（毫秒）
+ * @returns 节流后的函数
  */
-export function throttle<F extends (...args: unknown[]) => unknown>(
-  fn: F,
-  limit: number,
-  trailing: boolean = true,
-): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {
-  let inThrottle: boolean = false;
-  let lastArgs: Parameters<F> | null = null;
+export function throttle<T extends (...args: any[]) => any>(
+  func: T,
+  limit: number
+): (...args: Parameters<T>) => void {
+  let inThrottle: boolean;
+  let lastResult: ReturnType<T>;
 
-  return function (this: ThisParameterType<F>, ...args: Parameters<F>): void {
+  return function executedFunction(...args: Parameters<T>) {
     if (!inThrottle) {
+      lastResult = func(...args);
       inThrottle = true;
-      fn.apply(this, args);
       setTimeout(() => {
         inThrottle = false;
-        if (trailing && lastArgs) {
-          fn.apply(this, lastArgs);
-          lastArgs = null;
-        }
       }, limit);
-    } else {
-      lastArgs = args;
     }
+    return lastResult;
   };
 }
 
 /**
- * 请求动画帧防抖 - 使用 requestAnimationFrame 进行防抖，适合动画和滚动
+ * 延迟执行函数
+ * @param func 要延迟执行的函数
+ * @param delay 延迟时间（毫秒）
+ * @returns Promise
  */
-export function rafDebounce<F extends (...args: unknown[]) => void>(
-  fn: F,
-): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {
-  let rafId: number | null = null;
-
-  return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-    }
-    rafId = requestAnimationFrame(() => {
-      fn.apply(this, args);
-      rafId = null;
+export function delay<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
+  return function delayedFunction(...args: Parameters<T>) {
+    return new Promise<ReturnType<T>>((resolve) => {
+      setTimeout(() => {
+        resolve(func(...args));
+      }, delay);
     });
   };
 }
 
 /**
- * 高性能滚动防抖
+ * 创建一个可取消的延迟函数
+ * @param func 要延迟执行的函数
+ * @param delay 延迟时间（毫秒）
+ * @returns 包含执行和取消方法的对象
+ */
+export function createCancelableDelay<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number
+) {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let isExecuted = false;
+
+  return {
+    execute(...args: Parameters<T>): Promise<ReturnType<T>> {
+      return new Promise<ReturnType<T>>((resolve, reject) => {
+        if (isExecuted) {
+          reject(new Error('Function already executed'));
+          return;
+        }
+
+        timeoutId = setTimeout(() => {
+          isExecuted = true;
+          timeoutId = null;
+          resolve(func(...args));
+        }, delay);
+      });
+    },
+
+    cancel(): boolean {
+      if (timeoutId && !isExecuted) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        return true;
+      }
+      return false;
+    },
+
+    get isExecuted(): boolean {
+      return isExecuted;
+    },
+
+    get isPending(): boolean {
+      return timeoutId !== null && !isExecuted;
+    }
+  };
+}
+
+/**
+ * 创建滚动事件处理器 - 针对滚动事件的特殊优化
+ * @param func 要执行的函数
+ * @param frameSkip 跳过的帧数，用于降低执行频率
+ * @returns 优化后的滚动处理函数
  */
 export function createScrollProcessor(
-  onScroll: (scrollTop: number) => void, // 回调函数直接接收 scrollTop
-  threshold: number = 1,
+  func: () => void,
+  frameSkip = 1
 ): () => void {
-  // 返回的函数不接收参数，因为滚动事件的上下文已经由内部处理
-  let rafId: number | null = null;
-  let lastScrollTop: number | null = null;
+  let frameCount = 0;
+  let isScheduled = false;
 
-  return function () {
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-    }
+  return function scrollProcessor() {
+    if (isScheduled) return;
 
-    rafId = requestAnimationFrame(() => {
-      const currentScrollTop = getScrollTop();
-
-      if (lastScrollTop === null || Math.abs(currentScrollTop - lastScrollTop) >= threshold) {
-        lastScrollTop = currentScrollTop;
-        // 直接将计算出的 scrollTop 传递给回调
-        onScroll(currentScrollTop);
+    isScheduled = true;
+    requestAnimationFrame(() => {
+      frameCount++;
+      if (frameCount >= frameSkip) {
+        func();
+        frameCount = 0;
       }
-      rafId = null;
+      isScheduled = false;
     });
   };
 }

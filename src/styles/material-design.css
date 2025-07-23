@@ -1,52 +1,8 @@
-/* Material Design 3 Expressive + Glassmorphism Styles */
+/* Material Design 3 Design System - Colors managed by @material/material-color-utilities */
 
 :root {
-  /* Material Design 3 Color System - will be dynamically updated */
-  /* 主题色将由 JavaScript 动态更新，这里提供默认值避免闪烁 */
-  --md-sys-color-primary: 120, 204, 192;
-  --md-sys-color-on-primary: 255, 255, 255;
-  --md-sys-color-primary-container: 168, 230, 220;
-  --md-sys-color-on-primary-container: 0, 74, 66;
-
-  --md-sys-color-secondary: 107, 155, 150;
-  --md-sys-color-on-secondary: 255, 255, 255;
-  --md-sys-color-secondary-container: 193, 240, 234;
-  --md-sys-color-on-secondary-container: 31, 74, 70;
-
-  --md-sys-color-tertiary: 122, 139, 154;
-  --md-sys-color-on-tertiary: 255, 255, 255;
-  --md-sys-color-tertiary-container: 184, 201, 216;
-  --md-sys-color-on-tertiary-container: 42, 58, 73;
-
-  --md-sys-color-error: 179, 38, 30;
-  --md-sys-color-on-error: 255, 255, 255;
-  --md-sys-color-error-container: 249, 222, 220;
-  --md-sys-color-on-error-container: 65, 14, 11;
-
-  --md-sys-color-background: 240, 248, 246;
-  --md-sys-color-on-background: 26, 28, 27;
-  --md-sys-color-surface: 240, 248, 246;
-  --md-sys-color-on-surface: 26, 28, 27;
-
-  --md-sys-color-surface-variant: 218, 229, 226;
-  --md-sys-color-on-surface-variant: 63, 73, 70;
-  --md-sys-color-outline: 111, 121, 117;
-  --md-sys-color-outline-variant: 191, 201, 197;
-
-  --md-sys-color-shadow: 0, 0, 0;
-  --md-sys-color-scrim: 0, 0, 0;
-  --md-sys-color-inverse-surface: 47, 49, 48;
-  --md-sys-color-inverse-on-surface: 240, 241, 240;
-  --md-sys-color-inverse-primary: 140, 212, 200;
-
-  /* Surface elevation colors */
-  --md-sys-color-surface-dim: 208, 216, 213;
-  --md-sys-color-surface-bright: 240, 248, 246;
-  --md-sys-color-surface-container-lowest: 255, 255, 255;
-  --md-sys-color-surface-container-low: 234, 242, 239;
-  --md-sys-color-surface-container: 228, 236, 233;
-  --md-sys-color-surface-container-high: 222, 230, 227;
-  --md-sys-color-surface-container-highest: 216, 224, 221;
+  /* Material Design 3 颜色由 @material/material-color-utilities 动态生成和管理 */
+  /* 不再手动定义颜色变量，完全依赖官方库 */
 
   /* Material Design 3 Typography */
   --md-sys-typescale-display-large: 57px;
@@ -127,62 +83,13 @@
     border-color var(--theme-transition-duration) var(--theme-transition-easing),
     box-shadow var(--theme-transition-duration) var(--theme-transition-easing);
 }
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark theme colors - will be dynamically updated */
-    --md-sys-color-primary: 208, 188, 255;
-    --md-sys-color-on-primary: 56, 30, 114;
-    --md-sys-color-primary-container: 79, 55, 139;
-    --md-sys-color-on-primary-container: 234, 221, 255;
-
-    --md-sys-color-secondary: 204, 194, 220;
-    --md-sys-color-on-secondary: 51, 45, 65;
-    --md-sys-color-secondary-container: 74, 68, 88;
-    --md-sys-color-on-secondary-container: 232, 222, 248;
-
-    --md-sys-color-tertiary: 239, 184, 200;
-    --md-sys-color-on-tertiary: 73, 37, 50;
-    --md-sys-color-tertiary-container: 99, 59, 72;
-    --md-sys-color-on-tertiary-container: 255, 216, 228;
-
-    --md-sys-color-error: 242, 184, 181;
-    --md-sys-color-on-error: 96, 20, 16;
-    --md-sys-color-error-container: 140, 29, 24;
-    --md-sys-color-on-error-container: 249, 222, 220;
-
-    --md-sys-color-background: 28, 27, 31;
-    --md-sys-color-on-background: 230, 225, 229;
-    --md-sys-color-surface: 28, 27, 31;
-    --md-sys-color-on-surface: 230, 225, 229;
-
-    --md-sys-color-surface-variant: 73, 69, 79;
-    --md-sys-color-on-surface-variant: 202, 196, 208;
-    --md-sys-color-outline: 147, 143, 153;
-    --md-sys-color-outline-variant: 73, 69, 79;
-
-    --md-sys-color-shadow: 0, 0, 0;
-    --md-sys-color-scrim: 0, 0, 0;
-    --md-sys-color-inverse-surface: 230, 225, 229;
-    --md-sys-color-inverse-on-surface: 49, 48, 51;
-    --md-sys-color-inverse-primary: 103, 80, 164;
-
-    /* Dark surface elevation colors */
-    --md-sys-color-surface-dim: 28, 27, 31;
-    --md-sys-color-surface-bright: 59, 56, 62;
-    --md-sys-color-surface-container-lowest: 15, 13, 19;
-    --md-sys-color-surface-container-low: 29, 27, 32;
-    --md-sys-color-surface-container: 33, 31, 38;
-    --md-sys-color-surface-container-high: 43, 41, 48;
-    --md-sys-color-surface-container-highest: 54, 52, 59;
-  }
-}
+/* 深色模式颜色由 @material/material-color-utilities 自动管理 */
 
 /* Pure Material Design 3 Surface */
 .md-surface {
-  background: rgb(var(--md-sys-color-surface));
-  color: rgb(var(--md-sys-color-on-surface));
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: var(--md-sys-elevation-level1);
   transition:
     background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
@@ -192,28 +99,28 @@
 
 /* Material Design 3 Surface Elevations */
 .surface-container-lowest {
-  background: rgb(var(--md-sys-color-surface-container-lowest));
-  color: rgb(var(--md-sys-color-on-surface));
+  background: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
 }
 
 .surface-container-low {
-  background: rgb(var(--md-sys-color-surface-container-low));
-  color: rgb(var(--md-sys-color-on-surface));
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
 }
 
 .surface-container {
-  background: rgb(var(--md-sys-color-surface-container));
-  color: rgb(var(--md-sys-color-on-surface));
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
 }
 
 .surface-container-high {
-  background: rgb(var(--md-sys-color-surface-container-high));
-  color: rgb(var(--md-sys-color-on-surface));
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
 }
 
 .surface-container-highest {
-  background: rgb(var(--md-sys-color-surface-container-highest));
-  color: rgb(var(--md-sys-color-on-surface));
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Material Design 3 Typography Classes */
@@ -382,15 +289,15 @@
 
 /* Tonal Button - Pure M3 */
 .md-button-tonal {
-  background: rgb(var(--md-sys-color-secondary-container));
-  color: rgb(var(--md-sys-color-on-secondary-container));
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 /* Elevated Button - Pure M3 */
 .md-button-elevated {
-  background: rgb(var(--md-sys-color-surface-container-low));
-  color: rgb(var(--md-sys-color-primary));
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-primary);
   box-shadow: var(--md-sys-elevation-level1);
 }
 
@@ -421,20 +328,20 @@
 }
 
 .md-card-filled {
-  background: rgb(var(--md-sys-color-surface-container-highest));
-  color: rgb(var(--md-sys-color-on-surface));
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .md-card-elevated {
-  background: rgb(var(--md-sys-color-surface-container-low));
-  color: rgb(var(--md-sys-color-on-surface));
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
   box-shadow: var(--md-sys-elevation-level1);
 }
 
 .md-card-outlined {
-  background: rgb(var(--md-sys-color-surface));
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 /* Hover effects for cards */
@@ -450,9 +357,9 @@
 
 /* Material Design 3 Navigation Bar - Pure M3 */
 .md-navigation-bar {
-  background: rgb(var(--md-sys-color-surface-container));
-  color: rgb(var(--md-sys-color-on-surface));
-  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: var(--md-sys-elevation-level2);
   transition:
     background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),

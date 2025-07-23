@@ -168,15 +168,18 @@ class GlobalEventManager {
   /**
    * 根据 ID 移除一个或多个事件处理器
    */
-  offEvents(id: string): void {
-    this.#scrollHandlers.delete(id);
-    this.#resizeHandlers.delete(id);
-    this.#astroHandlers.delete(id);
-    this.#astroBeforeSwapHandlers.delete(id);
-    this.#visibilityChangeHandlers.delete(id);
-    this.#focusHandlers.delete(id);
-    this.#beforeUnloadHandlers.delete(id);
-
+  offEvents(ids: string | string[]): void {
+    const idArray = Array.isArray(ids) ? ids : [ids];
+    
+    idArray.forEach(id => {
+      this.#scrollHandlers.delete(id);
+      this.#resizeHandlers.delete(id);
+      this.#astroHandlers.delete(id);
+      this.#astroBeforeSwapHandlers.delete(id);
+      this.#visibilityChangeHandlers.delete(id);
+      this.#focusHandlers.delete(id);
+      this.#beforeUnloadHandlers.delete(id);
+    });
   }
 
   /**
@@ -233,7 +236,7 @@ export const onFocus = (id: string, handler: (event?: Event) => void, once = fal
 export const onBeforeUnload = (id: string, handler: (event?: Event) => void, once = false) =>
   globalEventManager.onBeforeUnload(id, handler, once);
 
-export const offEvents = (id: string) => globalEventManager.offEvents(id);
+export const offEvents = (ids: string | string[]) => globalEventManager.offEvents(ids);
 export const getEventStats = () => globalEventManager.getStats();
 
 export { globalEventManager };

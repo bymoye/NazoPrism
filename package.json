@@ -19,6 +19,7 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
     "astro": "^5.12.1",
+    "lucide-react": "^0.525.0",
     "typescript": "^5.8.3"
   },
   "devDependencies": {

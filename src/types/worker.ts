@@ -4,8 +4,9 @@
 
 // Color Extraction Worker 消息类型
 export interface ColorExtractionWorkerMessage {
-  arrayBuffer: ArrayBuffer;
+  imageUrl: string;
   messageId: number;
+  isMobile: boolean;
 }
 
 // Color Extraction Worker 响应类型
@@ -13,7 +14,6 @@ export interface ColorExtractionWorkerResponse {
   messageId: number;
   success: boolean;
   color: number;
-  hex?: string;
   error?: string;
 }
 

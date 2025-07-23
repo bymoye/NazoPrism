@@ -20,7 +20,7 @@ body {
     'Helvetica Neue',
     sans-serif; */
 
-  color: rgb(var(--md-sys-color-on-background));
+  color: var(--md-sys-color-on-background);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -56,39 +56,39 @@ body {
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
-  background: rgb(var(--md-sys-color-surface-container-lowest));
+  background: var(--md-sys-color-surface-container-lowest);
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(var(--md-sys-color-surface-container-low));
+  background: var(--md-sys-color-surface-container-low);
   border-radius: var(--md-sys-shape-corner-small);
   margin: 2px;
   transition: background var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--md-sys-color-primary));
+  background: var(--md-sys-color-primary);
   border-radius: var(--md-sys-shape-corner-small);
-  border: 1px solid rgb(var(--md-sys-color-surface-container-low));
+  border: 1px solid var(--md-sys-color-surface-container-low);
   transition:
     background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
     border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--md-sys-color-primary-container));
-  border-color: rgb(var(--md-sys-color-surface-container));
+  background: var(--md-sys-color-primary-container);
+  border-color: var(--md-sys-color-surface-container);
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: rgb(var(--md-sys-color-secondary));
-  border-color: rgb(var(--md-sys-color-secondary-container));
+  background: var(--md-sys-color-secondary);
+  border-color: var(--md-sys-color-secondary-container);
 }
 
 /* Firefox Material Design 3 滚动条样式 - 跟随主题色 */
 html {
   scrollbar-width: thin;
-  scrollbar-color: rgb(var(--md-sys-color-primary)) rgb(var(--md-sys-color-surface-container-low));
+  scrollbar-color: var(--md-sys-color-primary) var(--md-sys-color-surface-container-low);
   transition: scrollbar-color var(--md-sys-motion-duration-theme)
     var(--md-sys-motion-easing-emphasized);
 }
@@ -101,17 +101,17 @@ main {
 
 /* Typography with Material Design 3 */
 a {
-  color: rgb(var(--md-sys-color-primary));
+  color: var(--md-sys-color-primary);
   text-decoration: none;
   transition: color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 a:hover {
-  color: rgb(var(--md-sys-color-tertiary));
+  color: var(--md-sys-color-tertiary);
 }
 
 a:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
   border-radius: var(--md-sys-shape-corner-extra-small);
 }
@@ -129,7 +129,7 @@ h1 {
   font-size: var(--md-sys-typescale-display-medium);
   line-height: 1.16;
   font-weight: 400;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 h2 {
@@ -137,7 +137,7 @@ h2 {
   font-size: var(--md-sys-typescale-headline-large);
   line-height: 1.25;
   font-weight: 400;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 h3 {
@@ -145,7 +145,7 @@ h3 {
   font-size: var(--md-sys-typescale-headline-medium);
   line-height: 1.29;
   font-weight: 400;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 h4 {
@@ -153,7 +153,7 @@ h4 {
   font-size: var(--md-sys-typescale-headline-small);
   line-height: 1.33;
   font-weight: 400;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 h5 {
@@ -161,7 +161,7 @@ h5 {
   font-size: var(--md-sys-typescale-title-large);
   line-height: 1.27;
   font-weight: 400;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 h6 {
@@ -169,7 +169,7 @@ h6 {
   font-size: var(--md-sys-typescale-title-medium);
   line-height: 1.5;
   font-weight: 500;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 p {
@@ -177,7 +177,7 @@ p {
   font-size: var(--md-sys-typescale-body-large);
   line-height: 1.5;
   letter-spacing: 0.5px;
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 ul {
@@ -190,7 +190,7 @@ li {
   font-size: var(--md-sys-typescale-body-large);
   line-height: 1.5;
   letter-spacing: 0.5px;
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* Button base styles - use Material Design 3 button classes */
@@ -209,13 +209,13 @@ button {
 
 /* Selection styles */
 ::selection {
-  background-color: rgb(var(--md-sys-color-primary));
-  color: rgb(var(--md-sys-color-on-primary));
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 }
 
 /* Focus visible for accessibility */
 :focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 

@@ -14,7 +14,6 @@
     width 1s ease,
     border-radius 1s ease,
     background-color 1s ease,
-    backdrop-filter 1s ease,
     box-shadow 1s ease,
     transform 0.3s ease;
   justify-content: space-between;
@@ -23,13 +22,11 @@
   z-index: 9999;
 
   /* M3 + Morphic Glass Effect */
-  background: rgba(var(--md-sys-color-surface-container), 0.85);
-  backdrop-filter: blur(24px) saturate(1.8);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
   box-shadow:
-    0 8px 32px rgba(var(--md-sys-color-shadow), 0.12),
-    0 2px 8px rgba(var(--md-sys-color-shadow), 0.08),
+    0 8px 32px color-mix(in srgb, var(--md-sys-color-shadow) 12%, transparent),
+    0 2px 8px color-mix(in srgb, var(--md-sys-color-shadow) 8%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -39,24 +36,26 @@
   left: 0;
   width: 100vw;
   border-radius: 0;
-  background: rgba(var(--md-sys-color-surface), 0.9);
-  backdrop-filter: blur(32px) saturate(2);
-  -webkit-backdrop-filter: blur(32px) saturate(2);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
   border: none;
-  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.4);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
   box-shadow:
-    0 4px 24px rgba(var(--md-sys-color-shadow), 0.15),
-    0 1px 4px rgba(var(--md-sys-color-shadow), 0.1);
+    0 4px 24px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent),
+    0 1px 4px color-mix(in srgb, var(--md-sys-color-shadow) 10%, transparent);
+}
+
+/* Hidden navigation state */
+.hidden {
+  transform: translateY(-100%);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
 }
 
 /* Enhanced hover state */
 .nav:hover {
-  background: rgba(var(--md-sys-color-surface-container-high), 0.9);
-  backdrop-filter: blur(28px) saturate(2);
-  -webkit-backdrop-filter: blur(28px) saturate(2);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 90%, transparent);
   box-shadow:
-    0 12px 40px rgba(var(--md-sys-color-shadow), 0.16),
-    0 4px 12px rgba(var(--md-sys-color-shadow), 0.12),
+    0 12px 40px color-mix(in srgb, var(--md-sys-color-shadow) 16%, transparent),
+    0 4px 12px color-mix(in srgb, var(--md-sys-color-shadow) 12%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
@@ -90,20 +89,20 @@
   width: 40px;
   height: 40px;
   border-radius: var(--md-sys-shape-corner-medium);
-  background: rgba(var(--md-sys-color-primary), 0.12);
-  color: rgb(var(--md-sys-color-primary));
+  background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+  color: var(--md-sys-color-primary);
   transition: all 0.3s ease;
 }
 
 .logo-link:hover .logo-icon {
-  background: rgba(var(--md-sys-color-primary), 0.16);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 16%, transparent);
   transform: rotate(5deg);
 }
 
 .logo-text {
   font-size: var(--md-sys-typescale-title-large);
   font-weight: 600;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
   letter-spacing: -0.5px;
 }
 
@@ -137,7 +136,7 @@
   text-decoration: none;
   font-size: var(--md-sys-typescale-label-large);
   font-weight: 500;
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
   overflow: hidden;
 }
@@ -146,17 +145,17 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(var(--md-sys-color-primary), 0);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 0%, transparent);
   border-radius: inherit;
   transition: background-color 0.3s ease;
 }
 
 .nav-link:hover::before {
-  background: rgba(var(--md-sys-color-primary), 0.08);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
 }
 
 .nav-link:hover {
-  color: rgb(var(--md-sys-color-primary));
+  color: var(--md-sys-color-primary);
 }
 
 /* Navigation Link Text */
@@ -173,7 +172,7 @@
   transform: translateX(-50%) scaleX(0);
   height: 3px;
   width: calc(100% - 24px);
-  background: rgb(var(--md-sys-color-primary));
+  background: var(--md-sys-color-primary);
   border-radius: var(--md-sys-shape-corner-full);
   transition: transform 0.3s var(--md-sys-motion-easing-emphasized);
   overflow: hidden;
@@ -186,8 +185,8 @@
   inset: 0;
   background: linear-gradient(
     90deg,
-    rgb(var(--md-sys-color-tertiary)),
-    rgb(var(--md-sys-color-secondary))
+    var(--md-sys-color-tertiary),
+    var(--md-sys-color-secondary)
   );
   transform: translateX(-100%);
   transition: transform 0.6s ease;
@@ -203,19 +202,17 @@
 
 /* Current page state */
 .nav-link.current {
-  color: rgb(var(--md-sys-color-on-primary-container));
-  background: rgba(var(--md-sys-color-primary-container), 0.9);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  color: var(--md-sys-color-on-primary-container);
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 90%, transparent);
 }
 
 .nav-link.current::before {
-  background: rgba(var(--md-sys-color-primary), 0.12);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
 }
 
 .nav-link.current .nav-link-indicator {
   transform: translateX(-50%) scaleX(1);
-  background: rgb(var(--md-sys-color-primary));
+  background: var(--md-sys-color-primary);
 }
 
 .nav-link.current .nav-link-indicator::before {
@@ -224,7 +221,7 @@
 
 /* Focus states */
 .nav-link:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
   border-radius: var(--md-sys-shape-corner-full);
 }
@@ -244,8 +241,8 @@
   height: 44px;
   padding: 0 20px;
   border-radius: var(--md-sys-shape-corner-full);
-  background: rgba(var(--md-sys-color-primary), 0.9);
-  color: rgb(var(--md-sys-color-on-primary));
+  background: color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent);
+  color: var(--md-sys-color-on-primary);
   text-decoration: none;
   font-size: var(--md-sys-typescale-label-large);
   font-weight: 600;
@@ -255,11 +252,10 @@
     box-shadow 0.3s var(--md-sys-motion-easing-emphasized),
     background-color 0.3s var(--md-sys-motion-easing-emphasized);
   box-shadow:
-    0 4px 12px rgba(var(--md-sys-color-primary), 0.3),
-    0 2px 4px rgba(var(--md-sys-color-shadow), 0.1);
+    0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent),
+    0 2px 4px color-mix(in srgb, var(--md-sys-color-shadow) 10%, transparent);
   overflow: hidden;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
 }
 
 /* 渐变动画层 */
@@ -269,8 +265,8 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(var(--md-sys-color-tertiary), 0.8),
-    rgba(var(--md-sys-color-secondary), 0.6)
+    color-mix(in srgb, var(--md-sys-color-tertiary) 80%, transparent),
+    color-mix(in srgb, var(--md-sys-color-secondary) 60%, transparent)
   );
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -289,9 +285,9 @@
 .login-btn:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow:
-    0 8px 24px rgba(var(--md-sys-color-primary), 0.4),
-    0 4px 8px rgba(var(--md-sys-color-shadow), 0.15);
-  background: rgba(var(--md-sys-color-primary), 1);
+    0 8px 24px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent),
+    0 4px 8px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
+  background: var(--md-sys-color-primary);
 }
 
 .login-btn:hover::before {
@@ -321,22 +317,22 @@
 
 /* Current state for login */
 .login-btn.current {
-  background: rgba(var(--md-sys-color-tertiary), 0.9);
-  color: rgb(var(--md-sys-color-on-tertiary));
+  background: color-mix(in srgb, var(--md-sys-color-tertiary) 90%, transparent);
+  color: var(--md-sys-color-on-tertiary);
 }
 
 .login-btn.current::after {
   opacity: 1;
   background: linear-gradient(
     135deg,
-    rgba(var(--md-sys-color-secondary), 0.8),
-    rgba(var(--md-sys-color-primary), 0.6)
+    color-mix(in srgb, var(--md-sys-color-secondary) 80%, transparent),
+    color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent)
   );
 }
 
 /* Focus states */
 .login-btn:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 
@@ -357,13 +353,13 @@
   0%,
   100% {
     box-shadow:
-      0 4px 12px rgba(var(--md-sys-color-primary), 0.3),
-      0 2px 4px rgba(var(--md-sys-color-shadow), 0.1);
+      0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent),
+    0 2px 4px color-mix(in srgb, var(--md-sys-color-shadow) 10%, transparent);
   }
   50% {
     box-shadow:
-      0 6px 16px rgba(var(--md-sys-color-primary), 0.4),
-      0 3px 6px rgba(var(--md-sys-color-shadow), 0.15);
+      0 6px 16px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent),
+    0 3px 6px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
   }
 }
 
@@ -466,58 +462,49 @@
   }
 }
 
-/* Dark mode adjustments */
+/* Dark mode adjustments - 优化性能，移除过度的backdrop-filter */
 @media (prefers-color-scheme: dark) {
   .nav {
-    background: rgba(var(--md-sys-color-surface-container), 0.9);
-    backdrop-filter: blur(32px) saturate(1.5);
-    -webkit-backdrop-filter: blur(32px) saturate(1.5);
-    border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.4);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container) 95%, transparent);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 2px 8px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      0 4px 16px rgba(0, 0, 0, 0.2),
+      0 1px 4px rgba(0, 0, 0, 0.1);
   }
 
   .ceil_nav {
-    background: rgba(var(--md-sys-color-surface), 0.95);
-    backdrop-filter: blur(40px) saturate(1.8);
-    -webkit-backdrop-filter: blur(40px) saturate(1.8);
-    border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant), 0.5);
+    background: color-mix(in srgb, var(--md-sys-color-surface) 98%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .nav:hover {
-    background: rgba(var(--md-sys-color-surface-container-high), 0.95);
-    backdrop-filter: blur(36px) saturate(2);
-    -webkit-backdrop-filter: blur(36px) saturate(2);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 98%, transparent);
     box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.4),
-      0 4px 12px rgba(0, 0, 0, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      0 6px 20px rgba(0, 0, 0, 0.25),
+      0 2px 6px rgba(0, 0, 0, 0.15);
   }
 
-  /* Enhanced glass effect for login button in dark mode */
+  /* 简化登录按钮样式，移除backdrop-filter */
   .login-btn {
-    background: rgba(var(--md-sys-color-primary), 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--md-sys-color-primary) 85%, transparent);
     box-shadow:
-      0 4px 16px rgba(var(--md-sys-color-primary), 0.4),
-      0 2px 4px rgba(0, 0, 0, 0.2);
+      0 2px 8px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent),
+      0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   .login-btn::after {
     background: linear-gradient(
       135deg,
-      rgba(var(--md-sys-color-tertiary), 0.7),
-      rgba(var(--md-sys-color-secondary), 0.5)
+      color-mix(in srgb, var(--md-sys-color-tertiary) 70%, transparent),
+    color-mix(in srgb, var(--md-sys-color-secondary) 50%, transparent)
     );
   }
 
   .login-btn:hover {
-    background: rgba(var(--md-sys-color-primary), 0.9);
+    background: color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent);
     box-shadow:
-      0 8px 28px rgba(var(--md-sys-color-primary), 0.5),
+      0 8px 28px color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent),
       0 4px 8px rgba(0, 0, 0, 0.3);
   }
 }

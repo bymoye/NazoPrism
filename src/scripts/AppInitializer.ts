@@ -6,12 +6,13 @@
 import { initArticleAnimations } from './ArticleAnimationManager';
 import { initBackgroundCarousel } from './BackgroundCarouselManager';
 import { initGlobalEventManager, globalEventManager } from './GlobalEventManager';
-import { initNavigationManager } from './NavigationManager';
+import { initNavigation } from './NavigationManager';
 import { initPageVisibilityManager } from './PageVisibilityManager';
 import { initTheme } from './theme-init';
 import { initToTopManager } from './ToTopManager';
 import { intersectionObserverManager } from './IntersectionObserverManager';
 import { registerGlobalCleanup } from './CleanupManager';
+import { themeManager } from '../utils/theme-manager';
 
 import { SITE_CONFIG } from '../config';
 
@@ -79,39 +80,42 @@ class AppInitializer {
   #setupAstroLifecycleHooks(): void {
     // 使用 GlobalEventManager 统一管理 Astro 生命周期事件
     globalEventManager.onAstroBeforeSwap('app-initializer-theme', event => {
-      const themeJson = sessionStorage.getItem('nazo-prism-theme-colors');
-      if (!themeJson) return;
-
+      // 保存当前主题状态到新页面
+      const currentSeedColor = themeManager.getCurrentSeedColor();
+      const isDark = themeManager.prefersDarkMode();
+      
+      // 将主题信息传递到新页面的 sessionStorage
       try {
-        const themeColors = JSON.parse(themeJson);
-        const style = document.createElement('style');
-
-        const cssVars = Object.entries(themeColors)
-          .map(([key, value]) => {
-            const cssVarName = `--md-sys-color-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-            const hex = String(value).substring(1);
-            const [r, g, b] = hex.match(/.{1,2}/g)?.map(c => parseInt(c, 16)) || [0, 0, 0];
-            return `${cssVarName}: ${r}, ${g}, ${b};`;
-          })
-          .join('\n');
-
-        style.textContent = `:root { ${cssVars} }`;
-        // 使用类型安全的方式访问 Astro 特定的事件属性
-        (event as AstroBeforeSwapEvent)?.newDocument?.head?.appendChild(style);
+        sessionStorage.setItem('nazo-prism-seed-color', currentSeedColor.toString());
+        sessionStorage.setItem('nazo-prism-theme-dark', isDark.toString());
       } catch (e) {
-        console.error('主题应用失败 (astro:before-swap):', e);
+        console.warn('保存主题状态失败:', e);
       }
     });
 
     // 注册页面切换时的组件重新初始化
     // 这些组件需要在每次页面切换时重新初始化以适应新的DOM结构
-    globalEventManager.onAstroPageLoad('app-initializer-components', () => {
+    globalEventManager.onAstroPageLoad('app-initializer-components', async () => {
+      // 恢复主题状态
+      try {
+        const savedSeedColor = sessionStorage.getItem('nazo-prism-seed-color');
+        const savedDarkMode = sessionStorage.getItem('nazo-prism-theme-dark');
+        
+        if (savedSeedColor) {
+          const seedColor = parseInt(savedSeedColor, 10);
+          const isDark = savedDarkMode === 'true';
+          await themeManager.updateThemeFromColor(seedColor, isDark);
+        }
+      } catch (e) {
+        console.warn('恢复主题状态失败:', e);
+      }
+      
       // 只重新初始化需要适应DOM变化的组件
       // 其他组件已在 #initializeCoreModules 中初始化，无需重复
       initArticleAnimations();
       initToTopManager();
-      initNavigationManager();
-    });
+       initNavigation();
+     });
   }
 
   /**
@@ -147,7 +151,7 @@ class AppInitializer {
       },
       {
         name: 'Navigation',
-        init: initNavigationManager,
+        init: initNavigation,
         critical: false,
       },
       {

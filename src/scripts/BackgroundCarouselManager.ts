@@ -263,6 +263,13 @@ class CarouselController {
 
     currentImg.before(nextImg);
 
+    // 立即更新索引和当前图片引用
+    this.#currentIndex = nextIndex;
+    this.#currentImg = nextImg;
+
+    // 同步开始主题色变换和背景切换动画
+    this.#onBackgroundChanged?.(this.#backgrounds[nextIndex]);
+
     // 捕获动画实例
     this.#activeAnimation = currentImg.animate([{ opacity: 1 }, { opacity: 0 }], {
       duration: this.#config.switchDuration,
@@ -271,13 +278,8 @@ class CarouselController {
     // 监听动画的完成或取消
     this.#activeAnimation.finished
       .then(() => {
-        // 动画正常完成
+        // 动画正常完成，清理旧图片
         currentImg.remove();
-        this.#currentImg = nextImg;
-        this.#currentIndex = nextIndex;
-
-        // 通知背景管理器更新主题色（这会触发预载下一张图片）
-        this.#onBackgroundChanged?.(this.#backgrounds[nextIndex]);
       })
       .catch(error => {
         // 如果动画被手动 .cancel()，会触发 catch
@@ -506,8 +508,7 @@ class BackgroundCarouselManager {
     } catch (error) {
       console.error('[updateThemeFromBackground] 提取主题色失败:', error);
       // 使用默认主题色
-      const defaultTheme = themeManager.generateTheme(0xff6750a4, isDark);
-      themeManager.applyTheme(defaultTheme);
+      await themeManager.updateThemeFromColor(0xff6750a4, isDark);
       // 即使主题色提取失败，也要提前提取下一张图片的主题色
       this.#preExtractNextThemeColor();
     }
