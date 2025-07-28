@@ -1,0 +1,27 @@
+// Scrollbar component styles - migrated from Scrollbar.astro
+
+.scrollbar {
+  display: block;
+  height: 3px;
+  background-color: var(--md-primary);
+  animation-name: scaleExpand;
+  animation-duration: var(--md-sys-motion-duration-theme);
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  position: sticky;
+  transform-origin: left;
+  top: 0;
+  z-index: 99999;
+  transition: background-color var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-emphasized);
+}
+
+@keyframes scaleExpand {
+  from {
+    scale: 0 1;
+  }
+
+  to {
+    scale: 1 1;
+  }
+}

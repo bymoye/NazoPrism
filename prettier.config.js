@@ -1,6 +1,5 @@
 /** @type {import("prettier").Config} */
 export default {
-  // 基础格式化选项
   printWidth: 100,
   tabWidth: 2,
   useTabs: false,
@@ -12,11 +11,5 @@ export default {
   bracketSameLine: false,
   arrowParens: 'avoid',
   endOfLine: 'lf',
-  plugins: ['prettier-plugin-astro'],
-  overrides: [
-    {
-      files: ['**/*.astro'],
-      options: { parser: 'astro' },
-    },
-  ],
+  jsxSingleQuote: true,
 };

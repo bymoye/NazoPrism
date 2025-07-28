@@ -13,8 +13,7 @@ coverage/
 build/
 dist/
 
-# Astro
-.astro/
+# Vercel and Netlify
 .vercel/
 .netlify/
 
@@ -136,6 +135,9 @@ web_modules/
 # Next.js build output
 .next
 out
+
+# SWC cache
+.swc/
 
 # Nuxt.js build / generate output
 .nuxt

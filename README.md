@@ -1,15 +1,16 @@
 # 🌟 NazoPrism
 
-> 一个基于 Astro 构建的现代化博客前端，采用 Material Design 3 设计语言，具有智能主题系统和流畅的用户体验。
+> 一个基于 Next.js 构建的现代化博客前端，采用 Material Design 3 设计语言，具有智能主题系统和流畅的用户体验。
 
-[![Astro](https://img.shields.io/badge/Astro-5.11.0-FF5D01?style=flat-square&logo=astro)](https://astro.build/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.4.3-000000?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Material Design 3](https://img.shields.io/badge/Material%20Design-3-1976D2?style=flat-square&logo=material-design)](https://m3.material.io/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 ## ✨ 项目概述
 
-NazoPrism 是一个高性能、现代化的博客前端应用，采用 **Astro 5.11.0** 框架构建，完全遵循 **Material Design 3** 设计规范。项目具有智能主题系统、动态背景轮播、Web Workers 优化等先进特性，为用户提供卓越的阅读体验。
+NazoPrism 是一个高性能、现代化的博客前端应用，采用 **Next.js 15.4.3** 和 **React 19.1.0** 构建，完全遵循 **Material Design 3** 设计规范。项目具有智能主题系统、动态背景轮播、Web Workers 优化等先进特性，为用户提供卓越的阅读体验。
 
 ### 🎯 设计理念
 
@@ -23,21 +24,23 @@ NazoPrism 是一个高性能、现代化的博客前端应用，采用 **Astro 5
 
 ### 核心框架
 
-- **[Astro](https://astro.build/)** `5.11.0` - 现代化静态站点生成器
+- **[Next.js](https://nextjs.org/)** `15.4.3` - 现代化 React 全栈框架
+- **[React](https://reactjs.org/)** `19.1.0` - 用户界面构建库
 - **[TypeScript](https://www.typescriptlang.org/)** `5.8.3` - 类型安全的 JavaScript
-- **[Vite](https://vitejs.dev/)** - 快速构建工具 (Astro 内置)
 
 ### 设计系统
 
 - **[Material Design 3](https://m3.material.io/)** - Google 最新设计语言
-- **[Material Color Utilities](https://github.com/material-foundation/material-color-utilities)** `0.3.0` - 官方颜色工具库
+- **[Color Thief](https://github.com/lokesh/color-thief)** `2.6.0` - 智能颜色提取库
+- **[Culori](https://culorijs.org/)** `4.0.2` - 现代颜色处理和色板生成库
 - **CSS Variables** - 动态主题系统
 
 ### 开发工具
 
-- **[ESLint](https://eslint.org/)** `9.30.1` - 代码质量检查
+- **[ESLint](https://eslint.org/)** `9.31.0` - 代码质量检查
 - **[Prettier](https://prettier.io/)** `3.6.2` - 代码格式化
-- **[Astro Check](https://docs.astro.build/en/reference/cli-reference/#astro-check)** - 类型检查
+- **[Jest](https://jestjs.io/)** `30.0.5` - 单元测试框架
+- **[Testing Library](https://testing-library.com/)** - React 组件测试
 
 ## 🚀 核心特性
 
@@ -53,7 +56,7 @@ NazoPrism 是一个高性能、现代化的博客前端应用，采用 **Astro 5
 - **🔧 Web Workers**: 图片处理和主题色提取在后台线程执行
 - **📦 代码分割**: 智能分包，按需加载，减少初始加载时间
 - **🖼️ 图片预加载**: 背景图片智能预加载和缓存管理
-- **🎭 PJAX 导航**: 页面间无刷新切换，保持状态持久化
+- **🎭 SPA 导航**: 基于 Next.js App Router 的无刷新页面切换
 - **⏱️ 防抖优化**: 滚动、窗口调整等事件的高性能防抖处理
 
 ### 🎬 视觉体验
@@ -76,70 +79,63 @@ NazoPrism 是一个高性能、现代化的博客前端应用，采用 **Astro 5
 
 ```
 NazoPrism/
-├── 📂 src/
-│   ├── 🧩 components/              # Astro 组件层
-│   │   ├── Article.astro           # 📄 文章展示组件
-│   │   ├── ArticleIndex.astro      # 📋 文章列表组件
-│   │   ├── Cover.astro             # 🖼️ 封面组件
-│   │   ├── Footer.astro            # 🦶 页脚组件
-│   │   ├── Navigation.astro        # 🧭 导航栏组件
-│   │   ├── Scrollbar.astro         # 📜 滚动条组件
-│   │   └── ToTop.astro             # ⬆️ 返回顶部组件
+├── 📂 app/                         # Next.js App Router
+│   ├── page.tsx                    # 🏠 首页
+│   ├── about/page.tsx              # ℹ️ 关于页
+│
+│   ├── users/page.tsx              # 👥 用户页
+│   ├── layout.tsx                  # 📐 根布局
+│   └── globals.scss                # 🌍 全局样式
+│
+├── 📂 components/                  # React 组件层
+│   ├── layouts/                    # 布局组件
+│   │   ├── BaseLayout.tsx          # 🏠 基础布局
+│   │   └── Layout.tsx              # 📐 主布局
 │   │
-│   ├── 🏗️ layouts/                 # 布局模板
-│   │   ├── BaseLayout.astro        # 🏠 基础布局
-│   │   └── Layout.astro            # 📐 主布局
-│   │
-│   ├── 📄 pages/                   # 页面路由
-│   │   ├── index.astro             # 🏠 首页
-│   │   ├── about.astro             # ℹ️ 关于页
-│   │   ├── login.astro             # 🔐 登录页
-│   │   └── users.astro             # 👥 用户页
-│   │
-│   ├── ⚙️ scripts/                 # 业务逻辑层
-│   │   ├── app-init.ts             # 🚀 应用初始化
-│   │   ├── article-animations.ts   # ✨ 文章动画控制
-│   │   ├── background-carousel.ts  # 🌅 背景轮播管理
-│   │   ├── cleanup-manager.ts      # 🧹 资源清理管理
-│   │   ├── global-event-manager.ts # 🌐 全局事件管理
-│   │   ├── navigation.ts           # 🧭 导航栏逻辑
-│   │   ├── page-visibility-manager.ts # 👁️ 页面可见性管理
-│   │   ├── progress-bar.ts         # 📊 进度条控制
-│   │   ├── theme-init.ts           # 🎨 主题初始化
-│   │   └── to-top.ts               # ⬆️ 返回顶部逻辑
-│   │
-│   ├── 🎨 styles/                  # 样式系统
-│   │   ├── global.css              # 🌍 全局样式
-│   │   └── material-design.css     # 🎯 Material Design 3 样式
-│   │
-│   ├── 🔧 utils/                   # 工具函数层
-│   │   ├── color-extraction-worker.ts # 🎨 颜色提取 Worker
-│   │   ├── debounce.ts             # ⏱️ 防抖工具
-│   │   ├── scroll-utils.ts         # 📜 滚动工具
-│   │   └── theme-manager.ts        # 🌈 主题管理器
-│   │
-│   ├── 📝 types/                   # 类型定义
-│   │   └── worker.ts               # 🔧 Worker 类型定义
-│   │
-│   ├── ⚙️ config.ts                # 📋 项目配置
-│   └── 🌍 env.d.ts                 # 🔧 环境类型定义
+│   └── ui/                         # UI 组件
+│       ├── Article.tsx             # 📄 文章展示组件
+│       ├── ArticleIndex.tsx        # 📋 文章列表组件
+│       ├── BackgroundCarousel.tsx  # 🌅 背景轮播组件
+│       ├── Footer.tsx              # 🦶 页脚组件
+│       ├── Navigation.tsx          # 🧭 导航栏组件
+│       ├── Scrollbar.tsx           # 📜 滚动条组件
+│       └── ToTop.tsx               # ⬆️ 返回顶部组件
+│
+├── 📂 hooks/                       # React Hooks
+│   ├── useArticleAnimation.ts      # ✨ 文章动画 Hook
+│   └── useIntersectionObserver.ts  # 👁️ 交叉观察器 Hook
+│
+├── 📂 contexts/                    # React Context
+│   └── ThemeContext.tsx            # 🎨 主题上下文
+│
+
+│
+├── 📂 utils/                       # 工具函数层
+│   ├── theme-manager.ts            # 🎨 主题管理器
+│   ├── debounce.ts                 # ⏱️ 防抖工具
+│   ├── scroll-utils.ts             # 📜 滚动工具
+│   └── type-guards.ts              # 🔍 类型守卫
+│
+├── 📂 __tests__/                   # 测试文件
+│   ├── components/                 # 组件测试
+│   ├── hooks/                      # Hook 测试
+│   └── pages/                      # 页面测试
 │
 ├── 📦 public/                      # 静态资源
-├── ⚙️ astro.config.mjs             # 🚀 Astro 配置
+├── ⚙️ next.config.js               # 🚀 Next.js 配置
 ├── 📝 tsconfig.json                # 🔧 TypeScript 配置
 ├── 📦 package.json                 # 📋 项目依赖
-├── 🎨 prettier.config.js           # ✨ 代码格式化配置
-├── 🔍 eslint.config.js             # 📏 代码质量配置
+├── 🧪 jest.config.js               # 🧪 Jest 测试配置
 └── 📖 README.md                    # 📚 项目文档
 ```
 
 ### 🏗️ 架构特点
 
-- **🧩 组件化**: Astro 组件 + TypeScript 逻辑分离
+- **🧩 组件化**: React 组件 + TypeScript 类型安全
 - **📦 模块化**: 清晰的功能模块划分
-- **🔧 工具化**: 丰富的工具函数和管理器
+- **🪝 Hook 化**: 自定义 React Hooks 管理状态和副作用
 - **🎨 主题化**: 完整的 Material Design 3 主题系统
-- **⚡ 性能化**: Web Workers + 代码分割优化
+- **⚡ 性能化**: Next.js 优化 + Web Workers + 代码分割
 
 ## 🚀 快速开始
 
@@ -163,54 +159,66 @@ npm install
 npm run dev
 ```
 
-🎉 打开 [http://localhost:4321](http://localhost:4321) 即可预览！
+🎉 打开 [http://localhost:3000](http://localhost:3000) 即可预览！
 
 ### 📜 可用脚本
 
 ```bash
 # 🔧 开发相关
-npm run dev          # 启动开发服务器 (带类型检查)
+npm run dev          # 启动开发服务器
 npm run build        # 构建生产版本
-npm run preview      # 预览生产版本
+npm run start        # 启动生产服务器
 
 # 🔍 代码质量
-npm run check        # TypeScript 类型检查
+npm run type-check   # TypeScript 类型检查
 npm run lint         # ESLint 代码检查
 npm run lint:fix     # 自动修复 ESLint 问题
 npm run format       # Prettier 代码格式化
 npm run format:check # 检查代码格式
 
-# 🎯 一键操作
-npm run style        # 检查代码质量和格式
-npm run style:fix    # 自动修复所有代码问题
+# 🧪 测试相关
+npm run test         # 运行单元测试
+npm run test:watch   # 监听模式运行测试
+npm run test:coverage # 生成测试覆盖率报告
+
+# 🛠️ 工具命令
+npm run clean        # 清理构建文件
+npm run prebuild     # 构建前检查
 ```
 
 ### ⚙️ 项目配置
 
-编辑 `src/config.ts` 自定义项目设置：
+编辑 `next.config.js` 自定义 Next.js 设置：
+
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  trailingSlash: true,
+  images: {
+    domains: ['picsum.photos'],
+    unoptimized: false,
+  },
+  // 其他配置...
+};
+
+export default nextConfig;
+```
+
+编辑 `config/site.config.ts` 自定义应用设置：
 
 ```typescript
 export const SITE_CONFIG = {
   // 🌐 站点信息
   title: 'NazoPrism',
   description: '现代化博客前端',
-
-  // 🎨 主题配置
-  theme: {
-    defaultTheme: 'auto', // 'light' | 'dark' | 'auto'
-    enableDynamicTheme: true, // 启用动态主题色
-  },
+  author: 'NazoPrism Team',
+  url: 'https://nazoprism.example.com',
 
   // 🌅 背景轮播
-  carousel: {
+  backgroundApi: {
     interval: 8000, // 切换间隔 (毫秒)
     enableAutoPlay: true,
-    pauseOnHover: true,
-  },
-
-  // 🔗 API 配置 (可选)
-  api: {
-    baseUrl: 'https://your-api-url.com',
   },
 };
 ```
@@ -220,59 +228,76 @@ export const SITE_CONFIG = {
 ### 📄 添加新页面
 
 ```bash
-# 在 src/pages/ 创建新页面
-touch src/pages/blog.astro
+# 在 app/ 创建新页面目录和文件
+mkdir app/blog
+touch app/blog/page.tsx
 ```
 
-Astro 会自动生成路由：`/blog`
+Next.js 会自动生成路由：`/blog`
 
 ### 🧩 创建新组件
 
 ```typescript
-// 1. 创建 Astro 组件 (src/components/MyComponent.astro)
----
-// 组件逻辑
----
-<div class="my-component">
-  <!-- 组件模板 -->
-</div>
+// 1. 创建 React 组件 (components/ui/MyComponent.tsx)
+import styles from './MyComponent.module.scss';
 
-<style>
-  /* 组件样式 (自动作用域隔离) */
-</style>
+interface MyComponentProps {
+  title: string;
+}
 
-// 2. 创建 TypeScript 逻辑 (src/scripts/my-component.ts)
-export class MyComponentManager {
-  // 组件逻辑
+export default function MyComponent({ title }: MyComponentProps) {
+  return (
+    <div className={styles.container}>
+      <h1>{title}</h1>
+    </div>
+  );
+}
+
+// 2. 创建样式文件 (components/ui/MyComponent.module.scss)
+.container {
+  /* 组件样式 (CSS Modules 自动作用域隔离) */
+}
+
+// 3. 创建自定义 Hook (hooks/useMyComponent.ts)
+export function useMyComponent() {
+  // Hook 逻辑
 }
 ```
 
 ### 🎨 样式开发
 
-```css
-/* 全局样式 - src/styles/global.css */
+```scss
+/* 全局样式 - app/globals.scss */
 :root {
-  --custom-color: rgb(var(--md-sys-color-primary));
+  --custom-color: rgb(var(--color-primary));
 }
 
-/* Material Design 3 样式 - src/styles/material-design.css */
-.md-button {
+/* 组件样式 - components/ui/Component.module.scss */
+.button {
   /* 使用 M3 设计规范 */
+  background: rgb(var(--color-primary));
 }
 ```
 
 ### 🌈 主题定制
 
 ```typescript
-// 扩展主题管理器
-import { ThemeManager } from './utils/theme-manager';
+// 使用主题上下文
+import { useTheme } from '@/contexts/ThemeContext';
 
-const themeManager = new ThemeManager();
-themeManager.setCustomTheme({
-  primary: [103, 80, 164],
-  secondary: [125, 82, 96],
-  // ... 更多颜色
-});
+function MyComponent() {
+  const { setTheme, currentTheme } = useTheme();
+
+  const handleThemeChange = () => {
+    setTheme({
+      primary: [103, 80, 164],
+      secondary: [125, 82, 96],
+      // ... 更多颜色
+    });
+  };
+
+  return <button onClick={handleThemeChange}>切换主题</button>;
+}
 ```
 
 ## 🚀 部署指南
@@ -285,7 +310,7 @@ themeManager.setCustomTheme({
 # 构建生产版本
 npm run build
 
-# 输出目录: dist/
+# 输出目录: out/
 ```
 
 ### 🔧 Vercel 部署
@@ -318,7 +343,7 @@ jobs:
       - run: npm run build
       - uses: actions/deploy-pages@v3
         with:
-          path: ./dist
+          path: ./out
 ```
 
 ## 🤝 贡献指南
@@ -349,7 +374,7 @@ npm install
 npm run dev
 
 # 4️⃣ 确保代码质量
-npm run style:fix  # 自动修复代码风格
+npm run format     # 代码格式化
 npm run build      # 确保构建成功
 
 # 5️⃣ 提交更改
@@ -385,20 +410,23 @@ git push origin feature/amazing-feature
 
 ### 📚 技术文档
 
-- **[Astro 官方文档](https://docs.astro.build/)** - 框架文档
+- **[Next.js 官方文档](https://nextjs.org/docs)** - 框架文档
+- **[React 官方文档](https://react.dev/)** - React 文档
 - **[Material Design 3](https://m3.material.io/)** - 设计规范
 - **[TypeScript 手册](https://www.typescriptlang.org/docs/)** - 语言文档
 
 ### 🛠️ 开发工具
 
 - **[VS Code](https://code.visualstudio.com/)** - 推荐编辑器
-- **[Astro 扩展](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode)** - 语法高亮
+- **[ES7+ React/Redux/React-Native snippets](https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets)** - React 代码片段
+- **[TypeScript Importer](https://marketplace.visualstudio.com/items?itemName=pmneo.tsimporter)** - 自动导入
 - **[Material Theme](https://marketplace.visualstudio.com/items?itemName=Equinusocio.vsc-material-theme)** - 主题
 
 ### 🌟 灵感来源
 
 - **[Material You](https://material.io/blog/announcing-material-you)** - 动态主题设计
-- **[Astro Islands](https://docs.astro.build/en/concepts/islands/)** - 架构理念
+- **[Next.js App Router](https://nextjs.org/docs/app)** - 现代路由架构
+- **[React Server Components](https://react.dev/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023#react-server-components)** - 服务端组件理念
 
 ## 💬 社区与支持
 

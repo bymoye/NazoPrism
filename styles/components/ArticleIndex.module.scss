@@ -1,0 +1,300 @@
+/* M3 + Morphic Glass Article List Container - migrated from src/styles/components/ArticleIndex.module.scss */
+
+// SCSS Variables
+$page-padding: 2rem;
+$page-padding-mobile: 1rem;
+$content-max-width: 1000px;
+$content-padding: 2rem;
+$content-padding-tablet: 1.5rem;
+$content-padding-mobile: 1rem;
+$content-padding-small: 0.75rem;
+$content-border-radius: var(--md-sys-shape-corner-extra-large);
+$content-border-radius-mobile: var(--md-sys-shape-corner-large);
+$content-border-radius-small: var(--md-sys-shape-corner-medium);
+
+// SCSS Mixins
+@mixin glass-effect {
+  background: var(--md-surface-container-high);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid var(--md-outline-variant);
+}
+
+@mixin content-shadow {
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+@mixin gradient-overlay {
+  background: var(--md-surface-dim);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $page-padding 0;
+  min-height: 100vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: $content-padding;
+  border-radius: $content-border-radius;
+
+  /* M3 + Morphic Glass Effect */
+  @include glass-effect;
+  @include content-shadow;
+
+  /* Smooth transitions */
+  transition: all 0.3s var(--md-sys-motion-easing-emphasized);
+  overflow: hidden;
+  position: relative;
+
+  /* Subtle gradient overlay for depth */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    @include gradient-overlay;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* Enhanced glass effect on hover */
+  &:hover {
+    background: var(--md-surface-container-highest);
+    backdrop-filter: blur(28px) saturate(2);
+    -webkit-backdrop-filter: blur(28px) saturate(2);
+    box-shadow: var(--md-sys-elevation-level4);
+    transform: translateY(-2px);
+  }
+}
+
+.title {
+  font-size: var(--md-sys-typescale-display-small);
+  font-weight: 600;
+  color: var(--md-on-surface);
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.pinnedSection,
+.articlesSection {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.sectionTitle {
+  font-size: var(--md-sys-typescale-headline-medium);
+  font-weight: 600;
+  color: var(--md-primary);
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--md-outline);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: var(--md-primary);
+    border-radius: 1px;
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 2rem 0 1rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.paginationButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--md-outline);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-surface-container);
+  color: var(--md-on-surface);
+  font-size: var(--md-sys-typescale-label-medium);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s var(--md-sys-motion-easing-emphasized);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  &:hover {
+    background: var(--md-surface-container-high);
+    color: var(--md-primary);
+    border-color: var(--md-outline);
+    transform: translateY(-1px);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.paginationActive {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  border-color: var(--md-primary);
+  box-shadow: var(--md-sys-elevation-level3);
+
+  &:hover {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+}
+
+.paginationEllipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  color: var(--md-on-surface);
+  font-size: var(--md-sys-typescale-label-medium);
+  font-weight: 500;
+}
+
+.articleInfo {
+  font-size: var(--md-sys-typescale-body-medium);
+  color: var(--md-on-surface);
+  text-align: center;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .content {
+    max-width: 95%;
+    margin: 0 2.5%;
+    padding: $content-padding-tablet;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: $page-padding-mobile 0;
+  }
+
+  .content {
+    max-width: calc(100% - 1rem);
+    margin: 0 0.5rem;
+    padding: $content-padding-mobile;
+    border-radius: $content-border-radius-mobile;
+  }
+
+  .title {
+    font-size: var(--md-sys-typescale-display-small);
+    margin-bottom: 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: var(--md-sys-typescale-headline-small);
+    margin: 1.5rem 0 0.75rem 0;
+  }
+
+  .pagination {
+    gap: 4px;
+    margin: 1.5rem 0 0.75rem 0;
+  }
+
+  .paginationButton {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    font-size: var(--md-sys-typescale-label-small);
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    max-width: 100%;
+    margin: 0;
+    padding: $content-padding-small;
+    border-radius: $content-border-radius-small;
+    border-left: none;
+    border-right: none;
+  }
+
+  .title {
+    font-size: var(--md-sys-typescale-headline-large);
+  }
+
+  .sectionTitle {
+    font-size: var(--md-sys-typescale-title-large);
+  }
+
+  .paginationButton {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .content {
+    background: var(--md-surface-container-low);
+    backdrop-filter: blur(32px) saturate(1.5);
+    -webkit-backdrop-filter: blur(32px) saturate(1.5);
+    box-shadow: var(--md-sys-elevation-level5);
+
+    &::before {
+      background: var(--md-surface-dim);
+    }
+
+    &:hover {
+      background: var(--md-surface-container);
+      backdrop-filter: blur(36px) saturate(2);
+      -webkit-backdrop-filter: blur(36px) saturate(2);
+      box-shadow: var(--md-sys-elevation-level5);
+    }
+  }
+
+  .paginationButton {
+    background: var(--md-surface-container-low);
+    border: 1px solid var(--md-outline-variant);
+
+    &:hover {
+      background: var(--md-surface-container);
+      box-shadow: var(--md-sys-elevation-level2);
+    }
+  }
+
+  .paginationActive {
+    background: var(--md-primary-container);
+    box-shadow: var(--md-sys-elevation-level3);
+
+    &:hover {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      box-shadow: var(--md-sys-elevation-level4);
+    }
+  }
+}

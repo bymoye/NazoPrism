@@ -1,0 +1,113 @@
+/**
+ * Material Design 3 系统变量定义
+ * 这个文件定义了项目中使用的所有 --md-sys 开头的CSS变量
+ * 包括形状、动画、排版、阴影等系统变量
+ */
+
+:root {
+  /* ===== 形状系统 (Shape System) ===== */
+
+  /* 圆角半径 */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 50%;
+
+  /* ===== 动画系统 (Motion System) ===== */
+
+  /* 动画时长 */
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+  --md-sys-motion-duration-theme: 1500ms;
+
+  /* 缓动函数 */
+  --md-sys-motion-easing-linear: linear;
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-decelerated: cubic-bezier(0, 0, 0.2, 1);
+  --md-sys-motion-easing-accelerated: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ===== 排版系统 (Typography System) ===== */
+
+  /* 显示文本 - 字体大小 */
+  --md-sys-typescale-display-large: 57px;
+  --md-sys-typescale-display-medium: 45px;
+  --md-sys-typescale-display-small: 36px;
+
+  /* 标题文本 - 字体大小 */
+  --md-sys-typescale-headline-large: 32px;
+  --md-sys-typescale-headline-medium: 28px;
+  --md-sys-typescale-headline-small: 24px;
+
+  /* 标题文本 - 字体大小 */
+  --md-sys-typescale-title-large: 22px;
+  --md-sys-typescale-title-medium: 16px;
+  --md-sys-typescale-title-small: 14px;
+
+  /* 正文文本 - 字体大小 */
+  --md-sys-typescale-body-large: 16px;
+  --md-sys-typescale-body-medium: 14px;
+  --md-sys-typescale-body-small: 12px;
+
+  /* 标签文本 - 字体大小 */
+  --md-sys-typescale-label-large: 14px;
+  --md-sys-typescale-label-medium: 12px;
+  --md-sys-typescale-label-small: 11px;
+
+  /* ===== 阴影系统 (Elevation System) ===== */
+
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level2: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level4: 0 6px 10px 4px rgba(0, 0, 0, 0.15), 0 2px 3px 0 rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-level5: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 暗色主题适配 ===== */
+[data-theme='dark'] {
+  /* 暗色主题下的阴影调整 */
+  --md-sys-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 3px 1px rgba(0, 0, 0, 0.25);
+  --md-sys-elevation-level2: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 2px 6px 2px rgba(0, 0, 0, 0.25);
+  --md-sys-elevation-level3: 0 4px 8px 3px rgba(0, 0, 0, 0.25), 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+  --md-sys-elevation-level4: 0 6px 10px 4px rgba(0, 0, 0, 0.25), 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+  --md-sys-elevation-level5: 0 8px 12px 6px rgba(0, 0, 0, 0.25), 0 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 响应式排版调整 ===== */
+@media (max-width: 768px) {
+  :root {
+    /* 移动端字体大小调整 */
+    --md-sys-typescale-display-large: 48px;
+    --md-sys-typescale-display-medium: 36px;
+    --md-sys-typescale-display-small: 28px;
+    --md-sys-typescale-headline-large: 28px;
+    --md-sys-typescale-headline-medium: 24px;
+    --md-sys-typescale-headline-small: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    /* 小屏幕设备字体大小进一步调整 */
+    --md-sys-typescale-display-large: 40px;
+    --md-sys-typescale-display-medium: 32px;
+    --md-sys-typescale-display-small: 24px;
+    --md-sys-typescale-headline-large: 24px;
+    --md-sys-typescale-headline-medium: 20px;
+    --md-sys-typescale-headline-small: 18px;
+  }
+}

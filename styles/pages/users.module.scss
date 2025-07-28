@@ -1,0 +1,41 @@
+// SCSS Variables - 使用Material Design 3规范
+$page-max-width: 800px;
+$page-margin-top: 100px;
+$page-padding: 2rem;
+$page-border-radius: 16px; // 使用MD3标准圆角
+
+// SCSS Mixins
+@mixin page-shadow {
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.pageContent {
+  max-width: $page-max-width;
+  margin: $page-margin-top auto;
+  padding: $page-padding;
+  background-color: var(--md-surface-container-high);
+  color: var(--md-on-surface-container-high);
+  border-radius: $page-border-radius;
+  border: 1px solid var(--md-outline-variant);
+  @include page-shadow;
+  transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+
+  &:hover {
+    background-color: var(--md-surface-container-highest);
+    border-color: var(--md-outline);
+    transform: translateY(-2px);
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+
+  h1 {
+    color: var(--md-primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  p {
+    color: var(--md-on-surface-variant);
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+}

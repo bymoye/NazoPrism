@@ -1,0 +1,275 @@
+// SCSS Mixins for Next.js application with Material Design 3
+// This file contains reusable mixins and functions
+
+@use 'sass:math';
+// Import variables using modern @use syntax
+@use 'variables' as *;
+
+// Container mixins
+@mixin container($max-width: $container-xl) {
+  width: 100%;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+
+  @media (max-width: #{$breakpoint-mobile - 1px}) {
+    padding: 0 $spacing-sm;
+  }
+}
+
+// Utility mixins
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+// Flexbox utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Typography mixins
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Button mixins
+@mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--md-primary, #6750a4);
+    outline-offset: 2px;
+  }
+}
+
+// Focus styles
+@mixin focus-ring {
+  outline: 2px solid var(--md-primary, #6750a4);
+  outline-offset: 2px;
+}
+
+// Animation mixins
+@mixin transition($properties: all, $duration: $duration-normal, $easing: $ease-in-out) {
+  transition: $properties $duration $easing;
+}
+
+@mixin fade-in($duration: $duration-normal) {
+  animation: fadeIn $duration $ease-out;
+}
+
+@mixin slide-up($duration: $duration-normal) {
+  animation: slideUp $duration $ease-out;
+}
+
+// Keyframe animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Material Design 3 elevation shadows
+@mixin elevation($level) {
+  @if $level == 0 {
+    box-shadow: none;
+  } @else if $level == 1 {
+    box-shadow: var(--md-sys-elevation-level1);
+  } @else if $level == 2 {
+    box-shadow: var(--md-sys-elevation-level2);
+  } @else if $level == 3 {
+    box-shadow: var(--md-sys-elevation-level3);
+  } @else if $level == 4 {
+    box-shadow: var(--md-sys-elevation-level4);
+  } @else if $level == 5 {
+    box-shadow: var(--md-sys-elevation-level5);
+  }
+}
+
+// Glass morphism effect
+@mixin glass-effect {
+  background: var(--md-surface-container-high);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid var(--md-outline-variant);
+}
+
+// Material Design 3 surface
+@mixin md-surface($elevation: 1) {
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  border-radius: $radius-md;
+  @include elevation($elevation);
+  transition:
+    background-color $duration-theme $ease-emphasized,
+    box-shadow $duration-normal $ease-emphasized;
+}
+
+// Simplified Material Design 3 mixins
+@mixin md-button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  height: $button-height;
+  padding: 0 24px;
+  border: none;
+  border-radius: 20px;
+  font-family: $font-family-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $duration-normal $ease-emphasized;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+}
+
+@mixin md-card {
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-container);
+  border-radius: 16px;
+  padding: $card-padding;
+  border: 1px solid var(--md-outline-variant);
+  transition: all $duration-normal $ease-emphasized;
+}
+
+// Responsive typography
+@mixin responsive-text($mobile-size, $desktop-size: null) {
+  font-size: $mobile-size;
+
+  @if $desktop-size {
+    @include desktop {
+      font-size: $desktop-size;
+    }
+  }
+}
+
+// Aspect ratio
+@mixin aspect-ratio($width, $height) {
+  aspect-ratio: #{$width} / #{$height};
+
+  // Fallback for older browsers
+  @supports not (aspect-ratio: 1) {
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      padding-top: math.percentage(math.div($height, $width));
+    }
+
+    > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar(
+  $width: 8px,
+  $track-color: transparent,
+  $thumb-color: var(--md-outline-variant)
+) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+    border-radius: math.div($width, 2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: math.div($width, 2);
+    transition: background-color $duration-normal;
+
+    &:hover {
+      background: var(--md-outline);
+    }
+  }
+
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: $thumb-color $track-color;
+}

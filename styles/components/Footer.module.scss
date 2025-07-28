@@ -1,0 +1,230 @@
+/* Footer component styles with Material Design 3 */
+
+// SCSS Variables
+$footer-padding: 2rem;
+$footer-padding-mobile: 1.5rem;
+$footer-padding-small: 1rem;
+$footer-border-radius: var(--md-sys-shape-corner-large);
+$footer-border-radius-mobile: var(--md-sys-shape-corner-medium);
+
+// SCSS Mixins
+@mixin glass-effect {
+  background: var(--md-surface-container-high);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--md-outline-variant);
+}
+
+@mixin footer-shadow {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.footer {
+  margin-top: auto;
+  padding: $footer-padding;
+  border-radius: $footer-border-radius $footer-border-radius 0 0;
+
+  /* M3 + Morphic Glass Effect */
+  @include glass-effect;
+  @include footer-shadow;
+
+  /* Smooth transitions */
+  transition: all 0.3s var(--md-sys-motion-easing-emphasized);
+  position: relative;
+  overflow: hidden;
+
+  /* Enhanced hover effect */
+  &:hover {
+    background: var(--md-surface-container-highest);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    box-shadow: var(--md-sys-elevation-level3);
+    transform: translateY(-2px);
+  }
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.copyright {
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: var(--md-sys-typescale-body-medium);
+    color: var(--md-on-surface-variant);
+    font-weight: 500;
+    letter-spacing: 0.25px;
+  }
+}
+
+.socialLinks {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-variant);
+  text-decoration: none;
+  transition: all 0.3s var(--md-sys-motion-easing-emphasized);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--md-outline-variant);
+
+  &:hover {
+    background: var(--md-surface-container-high);
+    color: var(--md-on-primary-container);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--md-sys-elevation-level1);
+    border-color: var(--md-outline);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-primary);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: scale(1.1);
+  }
+}
+
+.additionalInfo {
+  text-align: center;
+  margin-top: 0.5rem;
+
+  p {
+    margin: 0;
+    font-size: var(--md-sys-typescale-body-small);
+    color: var(--md-on-surface-variant);
+    font-weight: 400;
+    letter-spacing: 0.4px;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .footer {
+    padding: $footer-padding-mobile;
+    border-radius: $footer-border-radius-mobile $footer-border-radius-mobile 0 0;
+  }
+
+  .footerContent {
+    gap: 0.75rem;
+  }
+
+  .copyright p {
+    font-size: var(--md-sys-typescale-body-small);
+  }
+
+  .socialLinks {
+    gap: 0.75rem;
+  }
+
+  .socialLink {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .additionalInfo p {
+    font-size: var(--md-sys-typescale-label-medium);
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: $footer-padding-small;
+    border-radius: 0;
+  }
+
+  .footerContent {
+    gap: 0.5rem;
+  }
+
+  .socialLinks {
+    gap: 0.5rem;
+  }
+
+  .socialLink {
+    width: 32px;
+    height: 32px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .footer {
+    background: var(--md-surface-container-low);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: var(--md-sys-elevation-level1);
+
+    &:hover {
+      background: var(--md-surface-container);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      box-shadow: var(--md-sys-elevation-level2);
+    }
+  }
+
+  .socialLink {
+    background: var(--md-surface-container-low);
+    border: 1px solid var(--md-outline-variant);
+
+    &:hover {
+      background: var(--md-surface-container);
+      box-shadow: var(--md-sys-elevation-level1);
+    }
+  }
+}
+
+/* Print styles */
+@media print {
+  .footer {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--md-outline-variant) !important;
+  }
+
+  .socialLinks {
+    display: none !important;
+  }
+}
