@@ -1,4 +1,7 @@
 'use client';
+import gsap from 'gsap';
+import { ReactLenis } from 'lenis/react';
+import { useEffect, useRef } from 'react';
 
 import React, { ReactNode, memo } from 'react';
 
@@ -23,14 +26,29 @@ interface ClientLayoutProps {
  * @returns 客户端布局组件
  */
 const ClientLayout = memo<ClientLayoutProps>(({ children }: ClientLayoutProps) => {
+  // 启用全局平滑滚动
+  const lenisRef = useRef<any>(null);
+
+  useEffect(() => {
+    function update(time: number) {
+      lenisRef.current?.lenis?.raf(time * 1000);
+    }
+
+    gsap.ticker.add(update);
+
+    return () => gsap.ticker.remove(update);
+  }, []);
+
   return (
     <>
-      <Scrollbar />
-      <BackgroundCarousel />
-      <Navigation />
-      <main>{children}</main>
-      <ToTop />
-      <Footer />
+      <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
+        <Scrollbar />
+        <BackgroundCarousel />
+        <Navigation />
+        <main>{children}</main>
+        <ToTop />
+        <Footer />
+      </ReactLenis>
     </>
   );
 });
