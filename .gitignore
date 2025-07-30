@@ -183,3 +183,8 @@ out
 yarn.lock
 pnpm-lock.yaml
 package-lock.json
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
