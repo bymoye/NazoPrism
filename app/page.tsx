@@ -1,5 +1,6 @@
 import ArticleIndex from '@/components/ui/ArticleIndex';
 import Cover from '@/components/ui/Cover';
+
 import type { Metadata } from 'next';
 
 /**

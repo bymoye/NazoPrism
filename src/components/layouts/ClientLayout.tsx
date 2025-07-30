@@ -1,9 +1,8 @@
 'use client';
 import gsap from 'gsap';
 import { ReactLenis } from 'lenis/react';
-import { useEffect, useRef } from 'react';
-
 import React, { ReactNode, memo } from 'react';
+import { useEffect, useRef } from 'react';
 
 import BackgroundCarousel from '@/components/ui/BackgroundCarousel';
 import Footer from '@/components/ui/Footer';
