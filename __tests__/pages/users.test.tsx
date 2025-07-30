@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from '../../contexts/ThemeContext';
-import UsersPage from '../../app/users/page';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import UsersPage from '@/app/users/page';
 
 // Mock extract-colors to avoid ES module issues
 jest.mock('extract-colors', () => ({

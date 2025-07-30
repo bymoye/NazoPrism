@@ -2,7 +2,7 @@
  * 测试配置模块的导出
  */
 
-import { SITE_CONFIG, SAMPLE_ARTICLES } from '../../config/site.config';
+import { SITE_CONFIG, SAMPLE_ARTICLES } from '@/config/site.config';
 
 describe('config/site.config', () => {
   test('应该导出配置数据', () => {

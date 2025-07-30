@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import React, { memo } from 'react';
 
-import { SITE_CONFIG } from '../../config/site.config';
-import styles from '../../styles/components/Footer.module.scss';
-import { FooterProps } from '../../types/components';
+import { SITE_CONFIG } from '@/config/site.config';
+import styles from '@/styles/components/Footer.module.css';
+import { FooterProps } from '@/types/components';
 
 /**
  * 网站页脚组件

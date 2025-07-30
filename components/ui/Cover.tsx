@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import React from 'react';
 
-import { SITE_CONFIG } from '../../config/site.config';
-import styles from '../../styles/components/Cover.module.scss';
+import { SITE_CONFIG } from '@/config/site.config';
+import styles from '@/styles/components/Cover.module.css';
 
 /**
  * 网站封面组件
@@ -16,7 +16,6 @@ const Cover: React.FC = () => {
   return (
     <figure className={styles.siteCover}>
       <div className={styles.focusInfo}>
-        {/* 网站头像 - 使用Next.js Image组件进行优化 */}
         <Image
           alt='网站头像'
           className={styles.avatar}

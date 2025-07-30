@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import ErrorPage from '../components/ui/ErrorPage';
+import ErrorPage from '@/components/ui/ErrorPage';
 
 /**
  * 错误页面组件

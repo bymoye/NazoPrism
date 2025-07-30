@@ -2,7 +2,7 @@
  * 测试防抖和节流工具函数
  */
 
-import { debounce } from '../../utils/debounce';
+import { debounce } from '@/utils/debounce';
 
 jest.useFakeTimers();
 

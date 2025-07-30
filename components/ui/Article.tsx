@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useRef, memo } from 'react';
 
-import styles from '../../styles/components/Article.module.scss';
-import { ArticleProps } from '../../types/components';
+import styles from '@/styles/components/Article.module.css';
+import { ArticleProps } from '@/types/components';
 
 /**
  * 文章卡片组件，用于显示单篇文章的信息

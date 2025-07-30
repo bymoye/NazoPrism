@@ -1,4 +1,4 @@
-import styles from '../../styles/pages/users.module.scss';
+import styles from '@/styles/pages/users.module.css';
 
 import type { Metadata } from 'next';
 

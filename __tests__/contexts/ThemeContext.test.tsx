@@ -8,7 +8,7 @@
 import React from 'react';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider, useThemeContext } from '../../contexts/ThemeContext';
+import { ThemeProvider, useThemeContext } from '@/contexts/ThemeContext';
 
 // Mock theme-manager
 jest.mock('../../utils/theme-manager', () => ({

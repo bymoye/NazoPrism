@@ -4,9 +4,9 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
-import { useTheme } from '../../hooks/useTheme';
-import { useThemeContext } from '../../contexts/ThemeContext';
-import { UseThemeReturn } from '../../types/hooks';
+import { useTheme } from '@/hooks/useTheme';
+import { useThemeContext } from '@/contexts/ThemeContext';
+import { UseThemeReturn } from '@/types/hooks';
 
 // Mock ThemeContext
 jest.mock('../../contexts/ThemeContext', () => ({

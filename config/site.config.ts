@@ -3,7 +3,7 @@
  * @description Next.js应用程序站点配置
  */
 
-import { Article, ExtendedArticle } from '../types/content';
+import { Article, ExtendedArticle } from '@/types/content';
 
 /**
  * 站点配置类型定义
@@ -31,7 +31,7 @@ interface SiteConfiguration {
 export const SITE_CONFIG: SiteConfiguration = {
   title: 'NazoPrism',
   description: '沉淪在無盡的深淵中...',
-  author: 'bymoye',
+  author: 'nazo',
   url: 'https://nazo-prism.vercel.app',
 
   // 导航链接

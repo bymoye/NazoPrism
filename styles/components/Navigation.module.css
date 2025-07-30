@@ -1,62 +1,42 @@
-/* M3 + Morphic Glass Navigation - migrated from src/styles/components/Navigation.module.scss */
-
-// SCSS Variables
-$nav-height: 80px;
-$nav-height-mobile: 64px;
-$nav-height-small: 56px;
-$nav-padding: 2rem;
-$nav-padding-mobile: 1rem;
-$nav-padding-small: 0.75rem;
-$nav-border-radius: var(--md-sys-shape-corner-extra-large);
-$nav-transition-duration: 1s;
-$nav-transform-duration: 0.3s;
-
-// SCSS Mixins
-@mixin glass-effect {
-  background: var(--md-surface-container);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  border: 1px solid var(--md-outline-variant);
-}
-
-@mixin nav-shadow {
-  box-shadow: var(--md-sys-elevation-level2);
-}
+/* M3 + Morphic Glass Navigation - converted from SCSS */
 
 .nav {
   position: fixed;
-  height: $nav-height;
+  height: 80px;
   display: flex;
   width: 95%;
   left: 2.5%;
   top: 2.5%;
-  padding: 0 $nav-padding;
+  padding: 0 2rem;
   transition:
-    top $nav-transition-duration ease,
-    left $nav-transition-duration ease,
-    right $nav-transition-duration ease,
-    width $nav-transition-duration ease,
-    border-radius $nav-transition-duration ease,
-    background-color $nav-transition-duration ease,
-    box-shadow $nav-transition-duration ease,
-    transform $nav-transform-duration ease;
+    top 1s ease,
+    left 1s ease,
+    right 1s ease,
+    width 1s ease,
+    border-radius 1s ease,
+    background-color 1s ease,
+    box-shadow 1s ease,
+    transform 0.3s ease;
   justify-content: space-between;
   align-items: center;
-  border-radius: $nav-border-radius;
+  border-radius: var(--md-sys-shape-corner-extra-large);
   z-index: 9999;
 
   /* M3 + Morphic Glass Effect */
-  @include glass-effect;
-  @include nav-shadow;
+  background: var(--md-surface-container);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid var(--md-outline-variant);
+  box-shadow: var(--md-sys-elevation-level2);
+}
 
-  /* Enhanced hover state */
-  &:hover {
-    background: var(--md-surface-container-high);
-    backdrop-filter: blur(24px) saturate(1.6);
-    -webkit-backdrop-filter: blur(24px) saturate(1.6);
-    border: 1px solid var(--md-outline);
-    box-shadow: var(--md-sys-elevation-level3);
-  }
+/* Enhanced hover state */
+.nav:hover {
+  background: var(--md-surface-container-high);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid var(--md-outline);
+  box-shadow: var(--md-sys-elevation-level3);
 }
 
 /* Sticky navigation state */
@@ -88,15 +68,15 @@ $nav-transform-duration: 0.3s;
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s ease;
+}
 
-  &:hover {
-    transform: scale(1.02);
+.logoLink:hover {
+  transform: scale(1.02);
+}
 
-    .logoIcon {
-      background: var(--md-surface-variant);
-      transform: rotate(5deg);
-    }
-  }
+.logoLink:hover .logoIcon {
+  background: var(--md-surface-variant);
+  transform: rotate(5deg);
 }
 
 .logoContainer {
@@ -157,55 +137,55 @@ $nav-transform-duration: 0.3s;
   color: var(--md-on-surface);
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
   overflow: hidden;
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    border-radius: inherit;
-    transition: background-color 0.3s ease;
-  }
+.navLink::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border-radius: inherit;
+  transition: background-color 0.3s ease;
+}
 
-  &:hover {
-    color: var(--md-primary);
-    background: var(--md-surface-container-high);
+.navLink:hover {
+  color: var(--md-primary);
+  background: var(--md-surface-container-high);
+}
 
-    .navLinkIndicator {
-      transform: translateX(-50%) scaleX(1);
+.navLink:hover .navLinkIndicator {
+  transform: translateX(-50%) scaleX(1);
+}
 
-      &::before {
-        transform: translateX(0);
-      }
-    }
-  }
+.navLink:hover .navLinkIndicator::before {
+  transform: translateX(0);
+}
 
-  &:focus-visible {
-    outline: 2px solid var(--md-primary);
-    outline-offset: 2px;
-    border-radius: var(--md-sys-shape-corner-large);
-  }
+.navLink:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-large);
+}
 
-  /* Current page state */
-  &.current {
-    color: var(--md-on-primary-container);
-    background: var(--md-primary-container);
-    font-weight: 600;
+/* Current page state */
+.navLink.current {
+  color: var(--md-on-primary-container);
+  background: var(--md-primary-container);
+  font-weight: 600;
+}
 
-    &::before {
-      background: var(--md-primary);
-      opacity: 0.1;
-    }
+.navLink.current::before {
+  background: var(--md-primary);
+  opacity: 0.1;
+}
 
-    .navLinkIndicator {
-      transform: translateX(-50%) scaleX(1);
-      background: var(--md-primary);
+.navLink.current .navLinkIndicator {
+  transform: translateX(-50%) scaleX(1);
+  background: var(--md-primary);
+}
 
-      &::before {
-        transform: translateX(0);
-      }
-    }
-  }
+.navLink.current .navLinkIndicator::before {
+  transform: translateX(0);
 }
 
 /* Navigation Link Text */
@@ -226,16 +206,16 @@ $nav-transform-duration: 0.3s;
   border-radius: var(--md-sys-shape-corner-medium);
   transition: transform 0.3s var(--md-sys-motion-easing-emphasized);
   overflow: hidden;
+}
 
-  /* 指示器渐变动画层 */
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, var(--md-tertiary), var(--md-secondary));
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-  }
+/* 指示器渐变动画层 */
+.navLinkIndicator::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--md-tertiary), var(--md-secondary));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 /* 关键帧动画 */
@@ -268,8 +248,8 @@ $nav-transform-duration: 0.3s;
     left: 8px;
     right: 8px;
     top: 8px;
-    padding: 0 $nav-padding-mobile;
-    height: $nav-height-mobile;
+    padding: 0 1rem;
+    height: 64px;
   }
 
   .ceilNav {
@@ -301,12 +281,12 @@ $nav-transform-duration: 0.3s;
   .navLink {
     padding: 8px 12px;
     font-size: var(--md-sys-typescale-label-medium);
+  }
 
-    /* Show only icons on mobile - add icons to nav items */
-    &::after {
-      content: attr(data-icon);
-      font-size: 20px;
-    }
+  /* Show only icons on mobile - add icons to nav items */
+  .navLink::after {
+    content: attr(data-icon);
+    font-size: 20px;
   }
 
   .navLinkText {
@@ -317,8 +297,8 @@ $nav-transform-duration: 0.3s;
 /* Extra small screens */
 @media (max-width: 480px) {
   .nav {
-    padding: 0 $nav-padding-small;
-    height: $nav-height-small;
+    padding: 0 0.75rem;
+    height: 56px;
   }
 
   .logoText {
@@ -334,7 +314,7 @@ $nav-transform-duration: 0.3s;
   }
 }
 
-/* Dark mode adjustments - 优化性能，移除过度的backdrop-filter */
+/* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .nav {
     background: var(--md-surface-container-low);
@@ -342,14 +322,14 @@ $nav-transform-duration: 0.3s;
     -webkit-backdrop-filter: blur(16px) saturate(1.6);
     border: 1px solid var(--md-outline-variant);
     box-shadow: var(--md-sys-elevation-level1);
+  }
 
-    &:hover {
-      background: var(--md-surface-container);
-      backdrop-filter: blur(20px) saturate(1.6);
-      -webkit-backdrop-filter: blur(20px) saturate(1.6);
-      border: 1px solid var(--md-outline);
-      box-shadow: var(--md-sys-elevation-level2);
-    }
+  .nav:hover {
+    background: var(--md-surface-container);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid var(--md-outline);
+    box-shadow: var(--md-sys-elevation-level2);
   }
 
   .ceilNav {

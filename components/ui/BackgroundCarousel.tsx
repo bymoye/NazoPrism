@@ -2,9 +2,9 @@
 
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 
-import { SITE_CONFIG } from '../../config/site.config';
-import { useThemeContext } from '../../contexts/ThemeContext';
-import { isArray } from '../../utils/type-guards';
+import { SITE_CONFIG } from '@/config/site.config';
+import { useThemeContext } from '@/contexts/ThemeContext';
+import { isArray } from '@/utils/type-guards';
 
 /**
  * 轮播图配置接口

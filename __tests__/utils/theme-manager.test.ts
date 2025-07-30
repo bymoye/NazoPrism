@@ -3,7 +3,7 @@
  * @description 测试主题管理器
  */
 
-import { themeManager, clearThemeCache } from '../../utils/theme-manager';
+import { themeManager, clearThemeCache } from '@/utils/theme-manager';
 
 // 内联测试数据
 const testData = {
@@ -37,7 +37,7 @@ jest.mock('../../utils/type-guards', () => ({
 
 import { extractColors } from 'extract-colors/lib/worker-wrapper';
 import { makeCSSTheme } from '@poupe/theme-builder';
-import { isObject } from '../../utils/type-guards';
+import { isObject } from '@/utils/type-guards';
 
 // Type assertions for mocked functions
 const mockedExtractColors = extractColors as jest.MockedFunction<any>;

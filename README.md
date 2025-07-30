@@ -85,7 +85,7 @@ NazoPrism/
 │
 │   ├── users/page.tsx              # 👥 用户页
 │   ├── layout.tsx                  # 📐 根布局
-│   └── globals.scss                # 🌍 全局样式
+│   └── globals.css                 # 🌍 全局样式
 │
 ├── 📂 components/                  # React 组件层
 │   ├── layouts/                    # 布局组件
@@ -212,7 +212,7 @@ export const SITE_CONFIG = {
   // 🌐 站点信息
   title: 'NazoPrism',
   description: '现代化博客前端',
-  author: 'NazoPrism Team',
+  author: 'Nazo',
   url: 'https://nazoprism.example.com',
 
   // 🌅 背景轮播
@@ -239,7 +239,7 @@ Next.js 会自动生成路由：`/blog`
 
 ```typescript
 // 1. 创建 React 组件 (components/ui/MyComponent.tsx)
-import styles from './MyComponent.module.scss';
+import styles from './MyComponent.module.css';
 
 interface MyComponentProps {
   title: string;
@@ -253,7 +253,7 @@ export default function MyComponent({ title }: MyComponentProps) {
   );
 }
 
-// 2. 创建样式文件 (components/ui/MyComponent.module.scss)
+// 2. 创建样式文件 (components/ui/MyComponent.module.css)
 .container {
   /* 组件样式 (CSS Modules 自动作用域隔离) */
 }
@@ -267,12 +267,12 @@ export function useMyComponent() {
 ### 🎨 样式开发
 
 ```scss
-/* 全局样式 - app/globals.scss */
+/* 全局样式 - app/globals.css */
 :root {
   --custom-color: rgb(var(--color-primary));
 }
 
-/* 组件样式 - components/ui/Component.module.scss */
+/* 组件样式 - components/ui/Component.module.css */
 .button {
   /* 使用 M3 设计规范 */
   background: rgb(var(--color-primary));

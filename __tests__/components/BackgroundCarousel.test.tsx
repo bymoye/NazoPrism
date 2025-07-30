@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { AppProvider } from '../../contexts/AppContext';
-import { ThemeProvider } from '../../contexts/ThemeContext';
-import BackgroundCarousel from '../../components/ui/BackgroundCarousel';
+import { AppProvider } from '@/contexts/AppContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import BackgroundCarousel from '@/components/ui/BackgroundCarousel';
 
 // Mock extract-colors to avoid ES module issues
 jest.mock('extract-colors', () => ({

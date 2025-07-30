@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useCallback, memo } from 'react';
 
-import styles from '../../styles/components/ToTop.module.scss';
-import { ToTopProps } from '../../types/components';
+import styles from '@/styles/components/ToTop.module.css';
+import { ToTopProps } from '@/types/components';
 
 /**
  * 回到顶部按钮组件

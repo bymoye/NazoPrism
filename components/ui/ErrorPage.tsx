@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '../../styles/components/ErrorPage.module.scss';
+import styles from '@/styles/components/ErrorPage.module.css';
 
 /**
  * 错误页面组件属性接口

@@ -1,6 +1,6 @@
 'use client';
 
-import ErrorPage from '../components/ui/ErrorPage';
+import ErrorPage from '@/components/ui/ErrorPage';
 
 /**
  * 自定义 404 页面组件

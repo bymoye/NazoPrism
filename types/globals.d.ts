@@ -11,7 +11,7 @@ declare module '*.css' {
   export default content;
 }
 
-declare module '*.scss' {
+declare module '*.css' {
   const content: { [className: string]: string };
   export default content;
 }

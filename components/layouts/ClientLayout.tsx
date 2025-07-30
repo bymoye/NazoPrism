@@ -2,11 +2,11 @@
 
 import React, { ReactNode, memo } from 'react';
 
-import BackgroundCarousel from '../ui/BackgroundCarousel';
-import Footer from '../ui/Footer';
-import Navigation from '../ui/Navigation';
-import Scrollbar from '../ui/Scrollbar';
-import ToTop from '../ui/ToTop';
+import BackgroundCarousel from '@/components/ui/BackgroundCarousel';
+import Footer from '@/components/ui/Footer';
+import Navigation from '@/components/ui/Navigation';
+import Scrollbar from '@/components/ui/Scrollbar';
+import ToTop from '@/components/ui/ToTop';
 
 /**
  * 客户端布局组件属性接口

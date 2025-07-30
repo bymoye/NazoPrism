@@ -6,7 +6,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
 import { usePathname, useRouter } from 'next/navigation';
-import { NavigationProvider, useNavigationContext } from '../../contexts/NavigationContext';
+import { NavigationProvider, useNavigationContext } from '@/contexts/NavigationContext';
 
 // Mock Next.js hooks
 jest.mock('next/navigation', () => ({

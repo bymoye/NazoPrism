@@ -9,8 +9,8 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { themeManager } from '../utils/theme-manager';
-import { isError, isArray } from '../utils/type-guards';
+import { themeManager } from '@/utils/theme-manager';
+import { isError, isArray } from '@/utils/type-guards';
 
 /**
  * 主题错误处理辅助函数

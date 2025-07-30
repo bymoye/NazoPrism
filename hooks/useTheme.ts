@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { useThemeContext } from '../contexts/ThemeContext';
-import { UseThemeReturn } from '../types/hooks';
+import { useThemeContext } from '@/contexts/ThemeContext';
+import { UseThemeReturn } from '@/types/hooks';
 
 /**
  * 主题管理 Hook

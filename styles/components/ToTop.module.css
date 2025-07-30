@@ -1,0 +1,150 @@
+/* M3 ToTop Button - converted from SCSS */
+
+/* 按钮主体 */
+.toTopBtn {
+  /* 定位和层级 */
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1000;
+
+  /* M3 FAB 尺寸 */
+  width: 56px;
+  height: 56px;
+  border-radius: var(--md-sys-shape-corner-large);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 重置默认样式 */
+  padding: 0;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  outline: none;
+
+  /* M3 颜色系统 */
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+
+  /* M3 阴影系统 */
+  box-shadow: var(--md-sys-elevation-level3);
+
+  /* 初始状态：隐藏 */
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+
+  /* 性能优化 */
+  will-change: transform, opacity;
+
+  /* M3 过渡动画 */
+  transition:
+    opacity var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+/* 显示状态 */
+.toTopBtn.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* M3 悬停状态 */
+.toTopBtn:hover {
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--md-sys-elevation-level4);
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.toTopBtn:hover .toTopIcon {
+  transform: translateY(-1px);
+}
+
+/* M3 点击状态 */
+.toTopBtn:active {
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--md-sys-elevation-level1);
+  transform: scale(0.95);
+}
+
+/* M3 焦点状态 */
+.toTopBtn:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+/* M3 图标样式 */
+.toTopIcon {
+  width: 24px;
+  height: 24px;
+  color: inherit;
+  transition: transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .toTopBtn {
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .toTopIcon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toTopBtn {
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .toTopIcon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* 无障碍适配 */
+@media (prefers-reduced-motion: reduce) {
+  .toTopBtn,
+  .toTopIcon {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .toTopBtn:hover {
+    transform: scale(1) !important;
+  }
+
+  .toTopBtn:hover .toTopIcon {
+    transform: none !important;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .toTopBtn {
+    background-color: var(--md-primary) !important;
+    border: 2px solid var(--md-outline) !important;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .toTopBtn {
+    display: none !important;
+  }
+}
