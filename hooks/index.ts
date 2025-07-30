@@ -3,6 +3,7 @@
  */
 export { useTheme } from './useTheme';
 export { useIntersectionObserver } from './useIntersectionObserver';
+export { useMobileDetection } from './useMobileDetection';
 
 export type { UseThemeReturn } from '../types/hooks';
 export type { UseIntersectionObserverOptions } from './useIntersectionObserver';

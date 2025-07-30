@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 
 import { SITE_CONFIG } from '@/config/site.config';
 import { useThemeContext } from '@/contexts/ThemeContext';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
+import { httpClient } from '@/utils/http-client';
 import { isArray } from '@/utils/type-guards';
 
 /**
@@ -46,6 +48,7 @@ const BackgroundCarousel = memo(() => {
   const blurAnimationRef = useRef<number | null>(null);
 
   const { updateThemeFromImage } = useThemeContext();
+  const isMobile = useMobileDetection();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -56,16 +59,21 @@ const BackgroundCarousel = memo(() => {
    */
   const fetchBackgrounds = useCallback(async (): Promise<readonly string[]> => {
     try {
-      const response = await fetch('https://api.nmxc.ltd/randimg?number=5&encode=json', {
-        headers: { Accept: 'application/json' },
-        cache: 'no-cache',
-      });
+      // 根据设备类型构建不同的查询参数
+      const queryParams = isMobile
+        ? { number: 1, encode: 'json', platform: 'mobile' }
+        : { number: 5, encode: 'json' };
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      const response = await httpClient.get<{ code: number; url: string[] }>(
+        'https://api.nmxc.ltd/randimg',
+        {
+          queryParams,
+          headers: { Accept: 'application/json' },
+          cache: 'no-cache',
+        },
+      );
 
-      const { code, url } = await response.json();
+      const { code, url } = response.data;
       if (code === 200 && isArray<string>(url)) {
         return url.filter((urlString: string) => {
           try {
@@ -81,7 +89,7 @@ const BackgroundCarousel = memo(() => {
       console.warn('[BackgroundCarousel] 获取失败，使用备用图片:', error);
       return SITE_CONFIG.backgroundApi.fallbackImages;
     }
-  }, []);
+  }, [isMobile]);
 
   // 背景图片状态管理
   const [backgrounds, setBackgrounds] = useState<string[]>([]);
@@ -254,7 +262,8 @@ const BackgroundCarousel = memo(() => {
       isPaused ||
       !currentImageRef.current ||
       !svgRef.current ||
-      animationRef.current
+      animationRef.current ||
+      isMobile // 移动端禁用轮播
     ) {
       return;
     }
@@ -298,11 +307,11 @@ const BackgroundCarousel = memo(() => {
     updateThemeFromImageRef.current(nextImageUrl, preloadImageUrl).catch(error => {
       console.error('[BackgroundCarousel] 主题色提取失败:', error);
     });
-  }, [backgrounds, currentIndex, createImageElement, isPaused]);
+  }, [backgrounds, currentIndex, createImageElement, isPaused, isMobile]);
 
   // 正确的定时器管理 - 使用setTimeout递归调用
   useEffect(() => {
-    if (!backgrounds.length || isPaused) {
+    if (!backgrounds.length || isPaused || isMobile) {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -325,7 +334,7 @@ const BackgroundCarousel = memo(() => {
         timerRef.current = null;
       }
     };
-  }, [backgrounds, isPaused, switchBackground]);
+  }, [backgrounds, isPaused, isMobile, switchBackground]);
 
   // 初始化逻辑 - 恢复预提取功能
   useEffect(() => {
@@ -344,12 +353,12 @@ const BackgroundCarousel = memo(() => {
     currentImageRef.current = initialImg;
     setCurrentIndex(0);
 
-    // 提取初始主题色，如果有多张图片则预提取第二张
-    const secondImageUrl = backgrounds.length > 1 ? backgrounds[1] : undefined;
+    // 提取初始主题色，移动端不预提取第二张图片
+    const secondImageUrl = !isMobile && backgrounds.length > 1 ? backgrounds[1] : undefined;
     updateThemeFromImageRef.current(firstImageUrl, secondImageUrl).catch(error => {
       console.error('[BackgroundCarousel] 初始主题色提取失败:', error);
     });
-  }, [backgrounds, createImageElement]);
+  }, [backgrounds, createImageElement, isMobile]);
 
   // Cleanup on unmount
   useEffect(() => {

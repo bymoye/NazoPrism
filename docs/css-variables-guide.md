@@ -9,6 +9,7 @@
 ## 变量格式说明
 
 所有 CSS 变量的值都遵循以下格式：
+
 ```css
 --variable-name: rgb(255 159 152);
 ```
@@ -24,6 +25,7 @@
 ### 1. 基础颜色系统
 
 #### 主色调 (Primary)
+
 - `--md-primary`: 主要品牌色，用于重要的交互元素
 - `--md-primary-dim`: 主色调的暗化版本
 - `--md-primary-container`: 主色调容器背景
@@ -32,6 +34,7 @@
 - `--md-on-primary-container`: 主色调容器上的文本颜色
 
 #### 次要色调 (Secondary)
+
 - `--md-secondary`: 次要色调，用于辅助元素
 - `--md-secondary-dim`: 次要色调的暗化版本
 - `--md-secondary-container`: 次要色调容器背景
@@ -39,6 +42,7 @@
 - `--md-on-secondary-container`: 次要色调容器上的文本颜色
 
 #### 第三色调 (Tertiary)
+
 - `--md-tertiary`: 第三色调，用于强调和装饰
 - `--md-tertiary-dim`: 第三色调的暗化版本
 - `--md-on-tertiary`: 第三色调上的文本颜色
@@ -46,6 +50,7 @@
 ### 2. 表面颜色系统
 
 #### 基础表面
+
 - `--md-surface`: 基础表面颜色
 - `--md-surface-dim`: 暗化的表面颜色
 - `--md-surface-bright`: 明亮的表面颜色
@@ -53,6 +58,7 @@
 - `--md-inverse-surface`: 反转表面颜色
 
 #### 表面容器层级
+
 - `--md-surface-container-lowest`: 最低层级容器
 - `--md-surface-container-low`: 低层级容器
 - `--md-surface-container`: 标准容器
@@ -62,6 +68,7 @@
 ### 3. 文本颜色系统
 
 #### 表面文本颜色
+
 - `--md-on-surface`: 表面上的主要文本颜色
 - `--md-on-surface-dim`: 表面上的暗化文本颜色
 - `--md-on-surface-bright`: 表面上的明亮文本颜色
@@ -69,6 +76,7 @@
 - `--md-on-inverse-surface`: 反转表面上的文本颜色
 
 #### 容器文本颜色
+
 - `--md-on-surface-container-lowest`: 最低层级容器上的文本
 - `--md-on-surface-container-low`: 低层级容器上的文本
 - `--md-on-surface-container`: 标准容器上的文本
@@ -90,6 +98,7 @@
 ### 6. 形状系统 (Shape System)
 
 #### 圆角半径
+
 - `--md-sys-shape-corner-none`: 0px - 无圆角
 - `--md-sys-shape-corner-extra-small`: 4px - 极小圆角
 - `--md-sys-shape-corner-small`: 8px - 小圆角
@@ -101,6 +110,7 @@
 ### 7. 动画系统 (Motion System)
 
 #### 动画时长
+
 - `--md-sys-motion-duration-short1`: 50ms - 极短动画
 - `--md-sys-motion-duration-short2`: 100ms - 短动画
 - `--md-sys-motion-duration-short3`: 150ms - 短动画
@@ -116,6 +126,7 @@
 - `--md-sys-motion-duration-theme`: 1500ms - 主题切换动画
 
 #### 缓动函数
+
 - `--md-sys-motion-easing-linear`: linear - 线性缓动
 - `--md-sys-motion-easing-standard`: cubic-bezier(0.2, 0, 0, 1) - 标准缓动
 - `--md-sys-motion-easing-emphasized`: cubic-bezier(0.2, 0, 0, 1) - 强调缓动
@@ -125,26 +136,31 @@
 ### 8. 排版系统 (Typography System)
 
 #### 显示文本
+
 - `--md-sys-typescale-display-large`: 57px/64px - 大型显示文本
 - `--md-sys-typescale-display-medium`: 45px/52px - 中型显示文本
 - `--md-sys-typescale-display-small`: 36px/44px - 小型显示文本
 
 #### 标题文本
+
 - `--md-sys-typescale-headline-large`: 32px/40px - 大标题
 - `--md-sys-typescale-headline-medium`: 28px/36px - 中标题
 - `--md-sys-typescale-headline-small`: 24px/32px - 小标题
 
 #### 标题文本
+
 - `--md-sys-typescale-title-large`: 22px/28px - 大标题
 - `--md-sys-typescale-title-medium`: 16px/24px - 中标题
 - `--md-sys-typescale-title-small`: 14px/20px - 小标题
 
 #### 正文文本
+
 - `--md-sys-typescale-body-large`: 16px/24px - 大正文
 - `--md-sys-typescale-body-medium`: 14px/20px - 中正文
 - `--md-sys-typescale-body-small`: 12px/16px - 小正文
 
 #### 标签文本
+
 - `--md-sys-typescale-label-large`: 14px/20px - 大标签
 - `--md-sys-typescale-label-medium`: 12px/16px - 中标签
 - `--md-sys-typescale-label-small`: 11px/16px - 小标签
@@ -163,6 +179,7 @@
 每个主要颜色都有对应的交互状态变量：
 
 #### 主色调交互状态
+
 - `--md-primary-hover`: 悬停状态
 - `--md-primary-focus`: 聚焦状态
 - `--md-primary-pressed`: 按下状态
@@ -170,6 +187,7 @@
 - `--md-primary-disabled`: 禁用状态
 
 #### 次要色调交互状态
+
 - `--md-secondary-hover`: 悬停状态
 - `--md-secondary-focus`: 聚焦状态
 - `--md-secondary-pressed`: 按下状态
@@ -177,6 +195,7 @@
 - `--md-secondary-disabled`: 禁用状态
 
 #### 第三色调交互状态
+
 - `--md-tertiary-hover`: 悬停状态
 - `--md-tertiary-focus`: 聚焦状态
 - `--md-tertiary-pressed`: 按下状态
@@ -184,6 +203,7 @@
 - `--md-tertiary-disabled`: 禁用状态
 
 #### 错误状态交互
+
 - `--md-error-hover`: 悬停状态
 - `--md-error-focus`: 聚焦状态
 - `--md-error-pressed`: 按下状态
@@ -191,6 +211,7 @@
 - `--md-error-disabled`: 禁用状态
 
 #### 表面交互状态
+
 - `--md-surface-hover`: 表面悬停状态
 - `--md-surface-focus`: 表面聚焦状态
 - `--md-surface-pressed`: 表面按下状态
@@ -198,6 +219,7 @@
 - `--md-surface-disabled`: 表面禁用状态
 
 #### 表面变体交互状态
+
 - `--md-surface-variant-hover`: 表面变体悬停状态
 - `--md-surface-variant-focus`: 表面变体聚焦状态
 - `--md-surface-variant-pressed`: 表面变体按下状态
@@ -205,6 +227,7 @@
 - `--md-surface-variant-disabled`: 表面变体禁用状态
 
 #### 容器交互状态
+
 - `--md-primary-container-hover`: 主色调容器悬停状态
 - `--md-primary-container-focus`: 主色调容器聚焦状态
 - `--md-primary-container-pressed`: 主色调容器按下状态
@@ -319,7 +342,7 @@
 
 ```css
 .button {
-  transition: 
+  transition:
     background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
     transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
 }
@@ -381,30 +404,36 @@
 ## 最佳实践
 
 ### 1. 颜色对比度
+
 - 始终使用对应的 `on-*` 变量作为文本颜色
 - 确保足够的对比度以满足可访问性要求
 
 ### 2. 层级关系
+
 - 使用不同的 `surface-container` 层级来创建视觉层次
 - 较高层级的元素应使用较高层级的容器颜色
 
 ### 3. 交互反馈
+
 - 为所有交互元素添加适当的状态变化
 - 使用 CSS 过渡动画来平滑状态变化
 
 ### 4. 语义化使用
+
 - `primary`: 用于主要操作和品牌元素
 - `secondary`: 用于次要操作和辅助元素
 - `tertiary`: 用于强调和装饰元素
 - `error`: 仅用于错误状态和警告
 
 ### 5. 形状系统最佳实践
+
 - 使用一致的圆角半径来创建统一的视觉语言
 - 较小的组件使用较小的圆角，较大的组件使用较大的圆角
 - 按钮和交互元素建议使用 `corner-full` 实现完全圆角
 - 卡片和容器建议使用 `corner-large` 或 `corner-extra-large`
 
 ### 6. 动画系统最佳实践
+
 - 使用标准的动画时长来保持一致性
 - 短动画（50-200ms）用于简单的状态变化
 - 中等动画（250-400ms）用于复杂的过渡效果
@@ -413,6 +442,7 @@
 - 根据动画类型选择合适的缓动函数
 
 ### 7. 排版系统最佳实践
+
 - 建立清晰的信息层次结构
 - 使用 `display` 级别用于页面主标题
 - 使用 `headline` 级别用于章节标题
@@ -421,6 +451,7 @@
 - 使用 `label` 级别用于按钮和标签文本
 
 ### 8. 阴影系统最佳实践
+
 - 使用阴影来表达元素的层级关系
 - Level 0: 平面元素，无阴影
 - Level 1-2: 轻微浮起的元素，如卡片
