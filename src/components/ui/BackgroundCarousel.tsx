@@ -2,9 +2,9 @@
 
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 
-import { SITE_CONFIG } from '@/config/site.config';
 import { useThemeContext } from '@/contexts/ThemeContext';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
+import { SITE_CONFIG } from '@/lib/site.config';
 import { httpClient } from '@/utils/http-client';
 import { isArray } from '@/utils/type-guards';
 

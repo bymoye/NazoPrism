@@ -17,7 +17,7 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   // 测试文件匹配模式
-  testMatch: ['**/__tests__/**/*.(ts|tsx|js|jsx)', '**/*.(test|spec).(ts|tsx|js|jsx)'],
+  testMatch: ['**/tests/**/*.(ts|tsx|js|jsx)', '**/*.(test|spec).(ts|tsx|js|jsx)'],
 
   // 忽略的测试路径
   testPathIgnorePatterns: [
@@ -30,13 +30,13 @@ const customJestConfig = {
   // 模块名称映射
   moduleNameMapper: {
     // 路径别名映射
-    '^@/(.*)$': '<rootDir>/$1',
-    '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/contexts/(.*)$': '<rootDir>/contexts/$1',
-    '^@/hooks/(.*)$': '<rootDir>/hooks/$1',
-    '^@/utils/(.*)$': '<rootDir>/utils/$1',
-    '^@/types/(.*)$': '<rootDir>/types/$1',
-    '^@/styles/(.*)$': '<rootDir>/styles/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/components/(.*)$': '<rootDir>/src/components/$1',
+    '^@/contexts/(.*)$': '<rootDir>/src/contexts/$1',
+    '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
+    '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
+    '^@/types/(.*)$': '<rootDir>/src/types/$1',
+    '^@/styles/(.*)$': '<rootDir>/src/styles/$1',
 
     // 第三方库模拟
     '^@poupe/theme-builder$': '<rootDir>/__mocks__/@poupe/theme-builder.js',
@@ -63,10 +63,10 @@ const customJestConfig = {
 
   // 覆盖率收集配置
   collectCoverageFrom: [
-    'components/**/*.{js,jsx,ts,tsx}',
-    'contexts/**/*.{js,jsx,ts,tsx}',
-    'hooks/**/*.{js,jsx,ts,tsx}',
-    'utils/**/*.{js,jsx,ts,tsx}',
+    'src/components/**/*.{js,jsx,ts,tsx}',
+    'src/contexts/**/*.{js,jsx,ts,tsx}',
+    'src/hooks/**/*.{js,jsx,ts,tsx}',
+    'src/utils/**/*.{js,jsx,ts,tsx}',
     'app/**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',

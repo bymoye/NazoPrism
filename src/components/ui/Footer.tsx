@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import React, { memo } from 'react';
 
-import { SITE_CONFIG } from '@/config/site.config';
+import { SITE_CONFIG } from '@/lib/site.config';
 import styles from '@/styles/components/Footer.module.css';
 import { FooterProps } from '@/types/components';
 

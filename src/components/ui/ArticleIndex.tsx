@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 
-import { SAMPLE_ARTICLES } from '@/config/site.config';
+import { SAMPLE_ARTICLES } from '@/lib/site.config';
 import styles from '@/styles/components/ArticleIndex.module.css';
 import { ArticleIndexProps } from '@/types/components';
 

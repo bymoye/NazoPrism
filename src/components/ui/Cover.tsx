@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import React from 'react';
 
-import { SITE_CONFIG } from '@/config/site.config';
+import { SITE_CONFIG } from '@/lib/site.config';
 import styles from '@/styles/components/Cover.module.css';
 
 /**

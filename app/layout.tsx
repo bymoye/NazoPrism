@@ -3,8 +3,8 @@ import { Providers } from '@/contexts';
 
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import '../styles/globals.css';
-import '../styles/md-sys-variables.css';
+import '@/styles/globals.css';
+import '@/styles/md-sys-variables.css';
 
 /**
  * 视口配置

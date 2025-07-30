@@ -83,7 +83,7 @@ describe('ThemeContext', () => {
   };
 
   beforeAll(async () => {
-    const imported = (await import('../../utils/theme-manager')) as {
+    const imported = (await import('@/utils/theme-manager')) as {
       themeManager: {
         initTheme: jest.MockedFunction<any>;
         updateThemeFromColors: jest.MockedFunction<any>;

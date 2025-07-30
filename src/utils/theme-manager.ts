@@ -3,8 +3,9 @@
  * @description 主题管理工具
  */
 
-import { extractColors } from 'extract-colors/lib/worker-wrapper';
 import { makeCSSTheme, type ThemeColors, type MakeCSSThemeOptions } from '@poupe/theme-builder';
+import { extractColors } from 'extract-colors/lib/worker-wrapper';
+
 import { isObject } from './type-guards';
 
 /** 默认主题颜色数组 */

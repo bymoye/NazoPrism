@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { isMobileDevice } from '@/utils/device-detection';
 
 /**

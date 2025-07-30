@@ -32,28 +32,28 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ],
       "@/components/*": [
-        "./components/*"
+        "./src/components/*"
       ],
       "@/contexts/*": [
-        "./contexts/*"
+        "./src/contexts/*"
       ],
       "@/hooks/*": [
-        "./hooks/*"
+        "./src/hooks/*"
       ],
       "@/styles/*": [
-        "./styles/*"
+        "./src/styles/*"
       ],
       "@/utils/*": [
-        "./utils/*"
+        "./src/utils/*"
       ],
       "@/lib/*": [
-        "./lib/*"
+        "./src/lib/*"
       ],
       "@/types/*": [
-        "./types/*"
+        "./src/types/*"
       ],
       "@/app/*": [
         "./app/*"

@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import React, { useEffect, useState, useCallback, memo } from 'react';
 
-import { SITE_CONFIG } from '@/config/site.config';
 import { useNavigationContext } from '@/contexts/NavigationContext';
+import { SITE_CONFIG } from '@/lib/site.config';
 import styles from '@/styles/components/Navigation.module.css';
 
 /**

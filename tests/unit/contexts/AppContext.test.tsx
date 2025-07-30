@@ -11,7 +11,7 @@ import {
   useAppContext,
   type AppState,
   type AppContextType,
-} from '../../contexts/AppContext';
+} from '@/contexts/AppContext';
 
 describe('AppContext', () => {
   describe('AppProvider', () => {
