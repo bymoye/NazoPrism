@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // 编译目标设置为ES2022，符合用户需求
     "target": "ES2022",
     "lib": ["dom", "dom.iterable", "esnext", "webworker"],
     "allowJs": false,

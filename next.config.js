@@ -13,10 +13,6 @@ const nextConfig = {
     styledComponents: true,
   },
 
-  experimental: {
-    optimizePackageImports: ['react', 'react-dom'],
-  },
-
   // 图像优化配置 (已禁用)
   images: {
     unoptimized: true,

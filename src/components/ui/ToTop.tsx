@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import { useLenis } from 'lenis/react';
+import React, { useState, useCallback, memo } from 'react';
 
 import styles from '@/styles/components/ToTop.module.css';
 import { ToTopProps } from '@/types/components';
@@ -18,72 +19,27 @@ const ToTop = memo<ToTopProps>(
   ({ threshold = 300, smooth = true, className, ...props }: ToTopProps) => {
     const [isVisible, setIsVisible] = useState(false);
 
+    const lenis = useLenis();
+
     /**
      * 滚动到页面顶部
      */
     const scrollToTop = useCallback(() => {
-      if (smooth) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-      } else {
-        window.scrollTo(0, 0);
-      }
-    }, [smooth]);
+      lenis?.scrollTo(0, {
+        duration: smooth ? 1.5 : 0,
+      });
+    }, [lenis, smooth]);
 
     /**
-     * 处理键盘事件
-     *
-     * @param event - 键盘事件对象
+     * 监听滚动事件，更新按钮可见性
      */
-    const handleKeyDown = useCallback(
-      (event: React.KeyboardEvent) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          scrollToTop();
-        }
+    useLenis(
+      ({ scroll }) => {
+        // 使用 Lenis 提供的、最准确的 scroll 值
+        setIsVisible(scroll > threshold);
       },
-      [scrollToTop],
+      [threshold],
     );
-
-    /**
-     * 处理滚动事件以控制按钮可见性
-     */
-    useEffect(() => {
-      /**
-       * 检查滚动位置并更新按钮可见性
-       */
-      const handleScroll = (): void => {
-        const scrolled = window.scrollY > threshold;
-        setIsVisible(scrolled);
-      };
-
-      /**
-       * 节流处理滚动事件
-       */
-      let ticking = false;
-      const throttledHandleScroll = (): void => {
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            handleScroll();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      };
-
-      // 添加滚动事件监听器
-      window.addEventListener('scroll', throttledHandleScroll, { passive: true });
-
-      // 检查初始滚动位置
-      handleScroll();
-
-      // 移除事件监听器
-      return () => {
-        window.removeEventListener('scroll', throttledHandleScroll);
-      };
-    }, [threshold]);
 
     return (
       <button
@@ -92,7 +48,6 @@ const ToTop = memo<ToTopProps>(
         aria-label='回到顶部'
         className={`${styles.toTopBtn} ${isVisible ? styles.show : ''} ${className ?? ''}`}
         onClick={scrollToTop}
-        onKeyDown={handleKeyDown}
         {...props}
       >
         <svg

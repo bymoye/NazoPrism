@@ -1,5 +1,6 @@
 'use client';
 
+import { useLenis } from 'lenis/react';
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 
 import { useThemeContext } from '@/contexts/ThemeContext';
@@ -208,36 +209,16 @@ const BackgroundCarousel = memo(() => {
     blurAnimationRef.current = requestAnimationFrame(animate);
   }, []);
 
-  // 滚动模糊处理，确保状态同步
-  const [isScrolled, setIsScrolled] = useState(false);
-  const scrollThreshold = 100;
+  const isScrolledRef = useRef<boolean>(false);
+  const scrollThreshold = 200;
 
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrolled = window.scrollY > scrollThreshold;
-
-          // 只有当状态真正改变时才执行动画
-          if (scrolled !== isScrolled) {
-            setIsScrolled(scrolled);
-            // 立即执行动画，确保状态同步
-            animateBlur(scrolled ? config.maxBlur : 0);
-          }
-
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isScrolled, animateBlur]);
+  useLenis(({ scroll }) => {
+    const shouldBeScrolled = scroll > scrollThreshold;
+    if (shouldBeScrolled !== isScrolledRef.current) {
+      isScrolledRef.current = shouldBeScrolled;
+      animateBlur(shouldBeScrolled ? config.maxBlur : 0);
+    }
+  });
 
   const [isPaused, setIsPaused] = useState(false);
 

@@ -1,7 +1,8 @@
 'use client';
 
+import { useLenis } from 'lenis/react';
 import Link from 'next/link';
-import React, { useEffect, useState, useCallback, memo } from 'react';
+import React, { useState, memo, useRef } from 'react';
 
 import { useNavigationContext } from '@/contexts/NavigationContext';
 import { SITE_CONFIG } from '@/lib/site.config';
@@ -17,32 +18,14 @@ const Navigation = memo(() => {
   const { isCurrentPath } = useNavigationContext();
   const [isSticky, setIsSticky] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
 
-  /**
-   * 处理滚动事件
-   */
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
+  useLenis(({ scroll }) => {
+    setIsSticky(scroll > 200);
 
-    // 确定导航栏是否应该粘性定位
-    setIsSticky(currentScrollY > 200);
-
-    // 确定导航栏是否应该隐藏（向下滚动时）
-    if (currentScrollY > lastScrollY && currentScrollY > 400) {
-      setIsHidden(true);
-    } else {
-      setIsHidden(false);
-    }
-
-    setLastScrollY(currentScrollY);
-  }, [lastScrollY]);
-
-  // 设置滚动事件监听器
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    setIsHidden(scroll > lastScrollY.current && scroll > 400);
+    lastScrollY.current = scroll;
+  });
 
   return (
     <nav
