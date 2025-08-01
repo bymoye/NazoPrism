@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from '@/contexts/ThemeContext';
 import HomePage from '@/app/page';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 // Mock extract-colors to avoid ES module issues
 jest.mock('extract-colors', () => ({
@@ -8,9 +8,11 @@ jest.mock('extract-colors', () => ({
 }));
 
 // Mock theme-manager
-jest.mock('../../utils/theme-manager', () => ({
+jest.mock('@/utils/theme-manager', () => ({
   themeManager: {
-    initTheme: jest.fn().mockResolvedValue(() => {}),
+    initTheme: jest.fn().mockReturnValue(() => {
+      // Mock cleanup function
+    }),
     updateThemeFromColors: jest.fn(),
     updateThemeFromImage: jest.fn().mockResolvedValue(undefined),
     setDarkMode: jest.fn(),
@@ -19,25 +21,25 @@ jest.mock('../../utils/theme-manager', () => ({
 }));
 
 // Mock the BackgroundCarousel
-jest.mock('../../components/ui/BackgroundCarousel', () => {
+jest.mock('@/components/ui/BackgroundCarousel', () => {
   const MockBackgroundCarousel = () => {
-    return <div data-testid='background-carousel'>Background Carousel</div>;
+    return <div data-testid="background-carousel">Background Carousel</div>;
   };
   return MockBackgroundCarousel;
 });
 
 // Mock the Cover component
-jest.mock('../../components/ui/Cover', () => {
+jest.mock('@/components/ui/Cover', () => {
   const MockCover = () => {
-    return <div data-testid='cover'>Cover Component</div>;
+    return <div data-testid="cover">Cover Component</div>;
   };
   return MockCover;
 });
 
 // Mock the ArticleIndex component
-jest.mock('../../components/ui/ArticleIndex', () => {
+jest.mock('@/components/ui/ArticleIndex', () => {
   const MockArticleIndex = () => {
-    return <div data-testid='article-index'>Article Index</div>;
+    return <div data-testid="article-index">Article Index</div>;
   };
   return MockArticleIndex;
 });

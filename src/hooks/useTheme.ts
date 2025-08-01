@@ -3,7 +3,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { useThemeContext } from '@/contexts/ThemeContext';
-import { UseThemeReturn } from '@/types/hooks';
+import type { UseThemeReturn } from '@/types/hooks';
 
 /**
  * 主题管理 Hook
@@ -30,7 +30,7 @@ export const useTheme = (): UseThemeReturn => {
     async (color: number) => {
       await contextUpdateTheme(color);
     },
-    [contextUpdateTheme],
+    [contextUpdateTheme]
   );
 
   /**
@@ -39,10 +39,10 @@ export const useTheme = (): UseThemeReturn => {
    * @param isDark - 是否为深色模式
    */
   const setDarkMode = useCallback(
-    (isDark: boolean) => {
-      contextSetDarkMode(isDark);
+    (darkMode: boolean) => {
+      contextSetDarkMode(darkMode);
     },
-    [contextSetDarkMode],
+    [contextSetDarkMode]
   );
 
   /**
@@ -59,7 +59,7 @@ export const useTheme = (): UseThemeReturn => {
       isDark,
       cssVariables: {}, // CSS variables handled by theme-manager
     }),
-    [seedColor, isDark],
+    [seedColor, isDark]
   );
 
   /**
@@ -74,6 +74,6 @@ export const useTheme = (): UseThemeReturn => {
       isLoading,
       error,
     }),
-    [theme, updateTheme, setDarkMode, toggleDarkMode, isLoading, error],
+    [theme, updateTheme, setDarkMode, toggleDarkMode, isLoading, error]
   );
 };

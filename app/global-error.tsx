@@ -18,22 +18,20 @@ const GlobalError = ({
   reset: () => void;
 }) => {
   useEffect(() => {
-    // Log error to console and potentially to external service
     console.error('Global error caught:', error);
-
     // You can add error reporting service here
     // Example: reportError(error);
   }, [error]);
 
   return (
-    <html lang='zh-CN'>
+    <html lang="zh-CN">
       <body>
         <ErrorPage
-          title='应用程序出错'
-          message='应用程序遇到了严重错误。请尝试重新加载页面。'
           error={error}
-          showDetails={process.env.NODE_ENV === 'development'}
+          message="应用程序遇到了严重错误。请尝试重新加载页面。"
           onRetry={reset}
+          showDetails={process.env.NODE_ENV === 'development'}
+          title="应用程序出错"
         />
       </body>
     </html>

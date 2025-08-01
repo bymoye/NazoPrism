@@ -1,17 +1,17 @@
 'use client';
 
-import React, {
+import {
   createContext,
-  useContext,
+  type ReactNode,
   useCallback,
+  useContext,
   useEffect,
-  ReactNode,
   useMemo,
   useState,
 } from 'react';
 
 import { themeManager } from '@/utils/theme-manager';
-import { isError, isArray } from '@/utils/type-guards';
+import { isArray, isError } from '@/utils/type-guards';
 
 /**
  * 主题错误处理辅助函数
@@ -21,7 +21,13 @@ import { isError, isArray } from '@/utils/type-guards';
  */
 const handleThemeError = (error: unknown, operation: string) => {
   const errorMessage = isError(error) ? error.message : `${operation}失败`;
-  console.error(`${operation}失败:`, errorMessage);
+  // 记录错误信息用于调试
+  console.error(
+    `主题操作失败 [${operation}]:`,
+    error,
+    '错误信息:',
+    errorMessage
+  );
 };
 
 /**
@@ -52,7 +58,7 @@ interface ThemeContextType {
   updateThemeFromImage: (
     imageUrl: string,
     nextImageUrl?: string,
-    onImageFailed?: (failedImageUrl: string) => void,
+    onImageFailed?: (failedImageUrl: string) => void
   ) => Promise<void>;
 
   /** 切换深色模式的方法 */
@@ -85,7 +91,7 @@ interface ThemeProviderProps {
  * @returns 主题提供者组件
  */
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [seedColor, setSeedColor] = useState(0x6750a4);
+  const [seedColor, setSeedColor] = useState(0x67_50_a4);
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -108,8 +114,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         setSeedColor(colorOrColors);
       }
       setIsDark(themeManager.isDarkMode());
-    } catch (error) {
-      handleThemeError(error, '主题更新');
+    } catch (err) {
+      handleThemeError(err, '主题更新');
       setError('主题更新失败');
     } finally {
       setIsLoading(false);
@@ -127,7 +133,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     async (
       imageUrl: string,
       nextImageUrl?: string,
-      onImageFailed?: (failedImageUrl: string) => void,
+      onImageFailed?: (failedImageUrl: string) => void
     ) => {
       setIsLoading(true);
       setError(null);
@@ -135,15 +141,15 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       try {
         await themeManager.updateThemeFromImage(imageUrl, nextImageUrl);
         setIsDark(themeManager.isDarkMode());
-      } catch (error) {
-        handleThemeError(error, '从图片更新主题');
+      } catch (err) {
+        handleThemeError(err, '从图片更新主题');
         setError('从图片更新主题失败');
         onImageFailed?.(imageUrl);
       } finally {
         setIsLoading(false);
       }
     },
-    [],
+    []
   );
 
   /**
@@ -166,28 +172,11 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   // 初始化主题效果钩子
   useEffect(() => {
-    // 初始化主题管理器的异步函数
-    const initializeTheme = async (): Promise<() => void> => {
-      return themeManager.initTheme();
-    };
-
-    let cleanup: (() => void) | undefined;
-
-    // 在useEffect内部调用异步函数
-    initializeTheme()
-      .then(cleanupFn => {
-        cleanup = cleanupFn;
-      })
-      .catch(error => {
-        console.error('主题初始化失败:', error);
-      });
+    // 直接调用主题管理器的初始化函数，它返回同步的清理函数
+    const cleanup = themeManager.initTheme();
 
     // 返回清理函数
-    return () => {
-      if (cleanup) {
-        cleanup();
-      }
-    };
+    return cleanup;
   }, []);
 
   // 主题上下文值
@@ -211,10 +200,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       updateThemeFromImage,
       toggleDarkMode,
       setDarkMode,
-    ],
+    ]
   );
 
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={contextValue}>
+      {children}
+    </ThemeContext.Provider>
+  );
 };
 
 /**

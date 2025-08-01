@@ -2,11 +2,13 @@
  * 测试导航上下文
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { renderHook } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 import { usePathname, useRouter } from 'next/navigation';
-import { NavigationProvider, useNavigationContext } from '@/contexts/NavigationContext';
+import type React from 'react';
+import {
+  NavigationProvider,
+  useNavigationContext,
+} from '@/contexts/NavigationContext';
 
 // Mock Next.js hooks
 jest.mock('next/navigation', () => ({
@@ -42,8 +44,8 @@ describe('NavigationContext', () => {
       const { currentPath, isMenuOpen } = useNavigationContext();
       return (
         <div>
-          <div data-testid='current-path'>{currentPath}</div>
-          <div data-testid='menu-open'>{isMenuOpen.toString()}</div>
+          <div data-testid="current-path">{currentPath}</div>
+          <div data-testid="menu-open">{isMenuOpen.toString()}</div>
         </div>
       );
     };
@@ -57,7 +59,9 @@ describe('NavigationContext', () => {
   test('应该检查当前路径', () => {
     const TestComponent = () => {
       const { isCurrentPath } = useNavigationContext();
-      return <div data-testid='is-current'>{isCurrentPath('/').toString()}</div>;
+      return (
+        <div data-testid="is-current">{isCurrentPath('/').toString()}</div>
+      );
     };
 
     renderWithProvider(<TestComponent />);

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { SAMPLE_ARTICLES } from '@/lib/site.config';
 import styles from '@/styles/components/ArticleIndex.module.css';
-import { ArticleIndexProps } from '@/types/components';
+import type { ArticleIndexProps } from '@/types/components';
 
 import Article from './Article';
 
@@ -26,16 +26,22 @@ const ArticleIndex = ({
 
   // 排序文章：置顶文章优先，然后按日期排序
   const sortedArticles = useMemo(() => {
-    return articles.toSorted((a: (typeof articles)[0], b: (typeof articles)[0]) => {
-      // 首先按置顶状态排序
-      if (showPinned) {
-        if (a.pinned && !b.pinned) return -1;
-        if (!a.pinned && b.pinned) return 1;
-      }
+    return articles.toSorted(
+      (a: (typeof articles)[0], b: (typeof articles)[0]) => {
+        // 首先按置顶状态排序
+        if (showPinned) {
+          if (a.pinned && !b.pinned) {
+            return -1;
+          }
+          if (!a.pinned && b.pinned) {
+            return 1;
+          }
+        }
 
-      // 然后按日期排序（最新的在前）
-      return +new Date(b.time) - +new Date(a.time);
-    });
+        // 然后按日期排序（最新的在前）
+        return +new Date(b.time) - +new Date(a.time);
+      }
+    );
   }, [articles, showPinned]);
 
   // 分页逻辑
@@ -49,7 +55,7 @@ const ArticleIndex = ({
     ? currentArticles.filter((article: (typeof articles)[0]) => article.pinned)
     : [];
   const regularArticles = currentArticles.filter(
-    (article: (typeof articles)[0]) => !article.pinned,
+    (article: (typeof articles)[0]) => !article.pinned
   );
 
   /**
@@ -69,26 +75,30 @@ const ArticleIndex = ({
    * @returns 分页组件或null
    */
   const renderPagination = () => {
-    if (totalPages <= 1) return null;
+    if (totalPages <= 1) {
+      return null;
+    }
 
     return (
-      <nav className={styles.pagination} aria-label='Article pagination'>
+      <nav aria-label="Article pagination" className={styles.pagination}>
         {currentPage > 1 && (
           <button
-            onClick={() => handlePageChange(currentPage - 1)}
+            aria-label="Previous page"
             className={styles.paginationButton}
-            aria-label='Previous page'
+            onClick={() => handlePageChange(currentPage - 1)}
+            type="button"
           >
             ←
           </button>
         )}
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
+            aria-current={page === currentPage ? 'page' : undefined}
+            className={`${styles.paginationButton} ${page === currentPage ? styles.paginationActive : ''}`}
             key={page}
             onClick={() => handlePageChange(page)}
-            className={`${styles.paginationButton} ${page === currentPage ? styles.paginationActive : ''}`}
-            aria-current={page === currentPage ? 'page' : undefined}
+            type="button"
           >
             {page}
           </button>
@@ -96,9 +106,10 @@ const ArticleIndex = ({
 
         {currentPage < totalPages && (
           <button
-            onClick={() => handlePageChange(currentPage + 1)}
+            aria-label="Next page"
             className={styles.paginationButton}
-            aria-label='Next page'
+            onClick={() => handlePageChange(currentPage + 1)}
+            type="button"
           >
             →
           </button>
@@ -118,11 +129,11 @@ const ArticleIndex = ({
             <h2 className={styles.sectionTitle}>置顶文章</h2>
             {pinnedArticles.map((article: (typeof articles)[0]) => (
               <Article
-                key={article.id}
                 article={article}
+                key={article.id}
                 showExcerpt={true}
-                showTags={true}
                 showReadTime={true}
+                showTags={true}
               />
             ))}
           </section>
@@ -131,14 +142,16 @@ const ArticleIndex = ({
         {/* 普通文章区域 */}
         {regularArticles.length && (
           <section className={styles.articlesSection}>
-            {pinnedArticles.length && <h2 className={styles.sectionTitle}>最新文章</h2>}
+            {pinnedArticles.length && (
+              <h2 className={styles.sectionTitle}>最新文章</h2>
+            )}
             {regularArticles.map((article: (typeof articles)[0]) => (
               <Article
-                key={article.id}
                 article={article}
+                key={article.id}
                 showExcerpt={true}
-                showTags={true}
                 showReadTime={true}
+                showTags={true}
               />
             ))}
           </section>
@@ -149,8 +162,8 @@ const ArticleIndex = ({
 
         {/* 文章数量信息 */}
         <div className={styles.articleInfo}>
-          显示 {startIndex + 1}-{Math.min(endIndex, sortedArticles.length)} 篇， 共{' '}
-          {sortedArticles.length} 篇文章
+          显示 {startIndex + 1}-{Math.min(endIndex, sortedArticles.length)} 篇，
+          共 {sortedArticles.length} 篇文章
         </div>
       </div>
     </div>

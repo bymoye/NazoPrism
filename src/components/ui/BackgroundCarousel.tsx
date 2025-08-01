@@ -1,7 +1,7 @@
 'use client';
 
 import { useLenis } from 'lenis/react';
-import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useThemeContext } from '@/contexts/ThemeContext';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
@@ -30,15 +30,24 @@ interface CarouselConfig {
  */
 const config: CarouselConfig = {
   maxBlur: 5,
-  switchInterval: 10000,
+  switchInterval: 10_000,
   switchDuration: 1500,
   blurDuration: 600,
   scrollMargin: '300px 0px 0px 0px',
 };
 /**
- * 背景轮播图组件，管理带有模糊效果的背景图片轮播
+ * 背景轮播图组件
  *
- * @returns 背景轮播图组件
+ * 提供动态背景图片轮播功能，具有以下特性：
+ * - 自动从API获取背景图片，支持移动端和桌面端不同配置
+ * - 基于滚动位置的动态模糊效果
+ * - 平滑的图片切换动画和主题色提取
+ * - 响应式设计，支持移动端优化
+ * - 自动轮播和暂停控制
+ * - SVG滤镜实现的高性能模糊效果
+ *
+ * @component
+ * @returns 背景轮播图组件JSX元素
  */
 const BackgroundCarousel = memo(() => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -71,7 +80,7 @@ const BackgroundCarousel = memo(() => {
           queryParams,
           headers: { Accept: 'application/json' },
           cache: 'no-cache',
-        },
+        }
       );
 
       const { code, url } = response.data;
@@ -86,8 +95,8 @@ const BackgroundCarousel = memo(() => {
         });
       }
       throw new Error('API返回错误');
-    } catch (error) {
-      console.warn('[BackgroundCarousel] 获取失败，使用备用图片:', error);
+    } catch (_error) {
+      console.warn('[BackgroundCarousel] 获取失败，使用备用图片:', _error);
       return SITE_CONFIG.backgroundApi.fallbackImages;
     }
   }, [isMobile]);
@@ -96,7 +105,7 @@ const BackgroundCarousel = memo(() => {
   const [backgrounds, setBackgrounds] = useState<string[]>([]);
 
   useEffect(() => {
-    fetchBackgrounds().then(urls => setBackgrounds(urls as string[]));
+    fetchBackgrounds().then((urls) => setBackgrounds(urls as string[]));
   }, [fetchBackgrounds]);
 
   // 使用useRef存储updateThemeFromImage函数，避免依赖项变化
@@ -110,7 +119,10 @@ const BackgroundCarousel = memo(() => {
    * @returns SVG图片元素
    */
   const createImageElement = useCallback((href: string): SVGImageElement => {
-    const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    const image = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'image'
+    );
     const attributes = {
       href,
       x: '-5',
@@ -121,7 +133,9 @@ const BackgroundCarousel = memo(() => {
       crossorigin: 'anonymous',
     };
 
-    Object.entries(attributes).forEach(([key, value]) => image.setAttribute(key, value));
+    for (const [key, value] of Object.entries(attributes)) {
+      image.setAttribute(key, value);
+    }
     image.style.filter = 'url(#bg-carousel-blur-filter)';
 
     return image;
@@ -145,8 +159,11 @@ const BackgroundCarousel = memo(() => {
     targetBlurRef.current = targetValue;
 
     // 获取当前实际的模糊值
-    const currentStdDeviation = gaussianBlurRef.current.getAttribute('stdDeviation');
-    const currentBlur = currentStdDeviation ? parseFloat(currentStdDeviation) : 0;
+    const currentStdDeviation =
+      gaussianBlurRef.current.getAttribute('stdDeviation');
+    const currentBlur = currentStdDeviation
+      ? Number.parseFloat(currentStdDeviation)
+      : 0;
 
     // 避免微小变化的动画
     if (Math.abs(targetValue - currentBlur) < 0.1) {
@@ -188,7 +205,9 @@ const BackgroundCarousel = memo(() => {
 
       // 使用easeInOutQuad缓动函数
       const easedProgress =
-        progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+        progress < 0.5
+          ? 2 * progress * progress
+          : -1 + (4 - 2 * progress) * progress;
 
       const newBlur = startBlur + blurDiff * easedProgress;
 
@@ -228,12 +247,13 @@ const BackgroundCarousel = memo(() => {
       const { hidden } = document;
       setIsPaused(hidden);
       document.title = hidden
-        ? '等你回来~ | ' + document.title.replace('等你回来~ | ', '')
+        ? `等你回来~ | ${document.title.replace('等你回来~ | ', '')}`
         : document.title.replace('等你回来~ | ', '');
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   // 背景切换逻辑 - 恢复预提取功能
@@ -262,9 +282,12 @@ const BackgroundCarousel = memo(() => {
     currentImageRef.current = nextImg;
 
     // 淡出动画
-    animationRef.current = currentImg.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: config.switchDuration,
-    });
+    animationRef.current = currentImg.animate(
+      [{ opacity: 1 }, { opacity: 0 }],
+      {
+        duration: config.switchDuration,
+      }
+    );
 
     animationRef.current.finished
       .then(() => {
@@ -272,9 +295,9 @@ const BackgroundCarousel = memo(() => {
           currentImg.remove();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.name !== 'AbortError') {
-          console.error('[BackgroundCarousel] 动画错误:', error);
+          console.error('[BackgroundCarousel] 背景切换动画错误:', error);
         }
       })
       .finally(() => {
@@ -283,11 +306,21 @@ const BackgroundCarousel = memo(() => {
 
     // 更新主题色并预提取下一张图片的主题色
     const preloadIndex = (nextIndex + 1) % backgrounds.length;
-    const preloadImageUrl = backgrounds.length > 1 ? backgrounds[preloadIndex] : undefined;
+    const preloadImageUrl =
+      backgrounds.length > 1 ? backgrounds[preloadIndex] : undefined;
 
-    updateThemeFromImageRef.current(nextImageUrl, preloadImageUrl).catch(error => {
-      console.error('[BackgroundCarousel] 主题色提取失败:', error);
-    });
+    updateThemeFromImageRef
+      .current(nextImageUrl, preloadImageUrl)
+      .catch((error) => {
+        console.error('[BackgroundCarousel] 主题更新失败:', error);
+      });
+
+    // 开发环境下记录背景切换
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        `[BackgroundCarousel] 背景切换: ${currentIndex} -> ${nextIndex}`
+      );
+    }
   }, [backgrounds, currentIndex, createImageElement, isPaused, isMobile]);
 
   // 正确的定时器管理 - 使用setTimeout递归调用
@@ -319,26 +352,38 @@ const BackgroundCarousel = memo(() => {
 
   // 初始化逻辑 - 恢复预提取功能
   useEffect(() => {
-    if (!backgrounds.length || !svgRef.current) return;
+    if (!(backgrounds.length && svgRef.current)) {
+      return;
+    }
 
     // 清理现有图片
-    svgRef.current.querySelectorAll('image').forEach(img => img.remove());
+    for (const img of svgRef.current.querySelectorAll('image')) {
+      img.remove();
+    }
 
     // 创建初始图片
     const firstImageUrl = backgrounds[0];
     if (!firstImageUrl) {
       return;
     }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[BackgroundCarousel] 初始化背景图片: ${firstImageUrl}`);
+    }
+
     const initialImg = createImageElement(firstImageUrl);
     svgRef.current.appendChild(initialImg);
     currentImageRef.current = initialImg;
     setCurrentIndex(0);
 
     // 提取初始主题色，移动端不预提取第二张图片
-    const secondImageUrl = !isMobile && backgrounds.length > 1 ? backgrounds[1] : undefined;
-    updateThemeFromImageRef.current(firstImageUrl, secondImageUrl).catch(error => {
-      console.error('[BackgroundCarousel] 初始主题色提取失败:', error);
-    });
+    const secondImageUrl =
+      !isMobile && backgrounds.length > 1 ? backgrounds[1] : undefined;
+    updateThemeFromImageRef
+      .current(firstImageUrl, secondImageUrl)
+      .catch((_error) => {
+        console.error('[BackgroundCarousel] 初始主题色提取失败:', _error);
+      });
   }, [backgrounds, createImageElement, isMobile]);
 
   // Cleanup on unmount
@@ -358,8 +403,10 @@ const BackgroundCarousel = memo(() => {
 
   return (
     <svg
+      aria-label="背景图"
+      id="bg-carousel-svg"
       ref={svgRef}
-      id='bg-carousel-svg'
+      role="img"
       style={{
         position: 'fixed',
         width: '100%',
@@ -371,12 +418,12 @@ const BackgroundCarousel = memo(() => {
       }}
     >
       <defs>
-        <filter id='bg-carousel-blur-filter'>
+        <filter id="bg-carousel-blur-filter">
           <feGaussianBlur
+            colorInterpolationFilters="sRGB"
+            edgeMode="none"
             ref={gaussianBlurRef}
-            colorInterpolationFilters='sRGB'
-            edgeMode='none'
-            stdDeviation='0'
+            stdDeviation="0"
           />
         </filter>
       </defs>

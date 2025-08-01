@@ -1,10 +1,10 @@
 'use client';
 
 import { useLenis } from 'lenis/react';
-import React, { useState, useCallback, memo } from 'react';
+import { memo, useCallback, useState } from 'react';
 
 import styles from '@/styles/components/ToTop.module.css';
-import { ToTopProps } from '@/types/components';
+import type { ToTopProps } from '@/types/components';
 
 /**
  * 回到顶部按钮组件
@@ -38,33 +38,33 @@ const ToTop = memo<ToTopProps>(
         // 使用 Lenis 提供的、最准确的 scroll 值
         setIsVisible(scroll > threshold);
       },
-      [threshold],
+      [threshold]
     );
 
     return (
       <button
-        id='to-top'
-        type='button'
-        aria-label='回到顶部'
+        aria-label="回到顶部"
         className={`${styles.toTopBtn} ${isVisible ? styles.show : ''} ${className ?? ''}`}
+        id="to-top"
         onClick={scrollToTop}
+        type="button"
         {...props}
       >
         <svg
+          aria-hidden="true"
           className={styles.toTopIcon}
-          fill='none'
-          viewBox='0 0 24 24'
-          xmlns='http://www.w3.org/2000/svg'
-          aria-hidden='true'
+          fill="none"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d='M7.41 15.41L12 10.83L16.59 15.41L18 14L12 8L6 14L7.41 15.41Z'
-            fill='currentColor'
+            d="M7.41 15.41L12 10.83L16.59 15.41L18 14L12 8L6 14L7.41 15.41Z"
+            fill="currentColor"
           />
         </svg>
       </button>
     );
-  },
+  }
 );
 
 ToTop.displayName = 'ToTop';

@@ -3,11 +3,9 @@
  * @description 交叉观察器Hook
  */
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-interface ObserverCallback {
-  (entries: IntersectionObserverEntry[]): void;
-}
+type ObserverCallback = (entries: IntersectionObserverEntry[]) => void;
 
 interface UseIntersectionObserverOptions extends IntersectionObserverInit {
   enabled?: boolean;
@@ -22,9 +20,14 @@ interface UseIntersectionObserverOptions extends IntersectionObserverInit {
  */
 export const useIntersectionObserver = (
   callback: ObserverCallback,
-  options: UseIntersectionObserverOptions = {},
+  options: UseIntersectionObserverOptions = {}
 ) => {
-  const { root = null, rootMargin = '0px', threshold = 0, enabled = true } = options;
+  const {
+    root = null,
+    rootMargin = '0px',
+    threshold = 0,
+    enabled = true,
+  } = options;
   const observerRef = useRef<IntersectionObserver | null>(null);
   const targetsRef = useRef<Set<Element>>(new Set());
 
@@ -36,25 +39,35 @@ export const useIntersectionObserver = (
       return;
     }
 
-    const observer = new IntersectionObserver(callback, { root, rootMargin, threshold });
+    const observer = new IntersectionObserver(callback, {
+      root,
+      rootMargin,
+      threshold,
+    });
     observerRef.current = observer;
 
-    targetsRef.current.forEach(target => observer.observe(target));
+    for (const target of targetsRef.current) {
+      observer.observe(target);
+    }
 
     return () => observer.disconnect();
   }, [enabled, root, rootMargin, threshold, callback]);
 
   const observe = useCallback(
     (target: Element) => {
-      if (!enabled || !target) return;
+      if (!(enabled && target)) {
+        return;
+      }
       targetsRef.current.add(target);
       observerRef.current?.observe(target);
     },
-    [enabled],
+    [enabled]
   );
 
   const unobserve = useCallback((target: Element) => {
-    if (!target) return;
+    if (!target) {
+      return;
+    }
     targetsRef.current.delete(target);
     observerRef.current?.unobserve(target);
   }, []);

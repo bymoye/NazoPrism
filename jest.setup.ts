@@ -11,7 +11,10 @@ import '@testing-library/jest-dom';
   private options: IntersectionObserverInit | undefined;
   private observedElements: Set<Element> = new Set();
 
-  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+  constructor(
+    callback: IntersectionObserverCallback,
+    options?: IntersectionObserverInit
+  ) {
     this.callback = callback;
     this.options = options || undefined;
   }
@@ -35,7 +38,7 @@ import '@testing-library/jest-dom';
           time: Date.now(),
         } as IntersectionObserverEntry,
       ],
-      this as any,
+      this as any
     );
   }
 
@@ -78,10 +81,14 @@ import '@testing-library/jest-dom';
   /**
    * 获取阈值数组
    */
-  get thresholds(): ReadonlyArray<number> {
+  get thresholds(): readonly number[] {
     const threshold = this.options?.threshold;
-    if (Array.isArray(threshold)) return threshold;
-    if (typeof threshold === 'number') return [threshold];
+    if (Array.isArray(threshold)) {
+      return threshold;
+    }
+    if (typeof threshold === 'number') {
+      return [threshold];
+    }
     return [0];
   }
 };
@@ -91,14 +98,6 @@ import '@testing-library/jest-dom';
  * 为测试环境提供ResizeObserver的模拟实现
  */
 (global as any).ResizeObserver = class MockResizeObserver {
-  /**
-   * 构造函数
-   * @param _callback - 回调函数（在mock中不使用）
-   */
-  constructor(_callback?: ResizeObserverCallback) {
-    // Mock implementation
-  }
-
   /**
    * 断开观察器连接
    */
@@ -144,7 +143,7 @@ Object.defineProperty(window, 'matchMedia', {
       }),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
-    }),
+    })
   ),
 });
 
@@ -153,10 +152,10 @@ Object.defineProperty(window, 'matchMedia', {
  * 为测试环境提供Worker的模拟实现，支持颜色提取功能
  */
 (global as any).Worker = class MockWorker {
-  public url: string;
-  public onmessage: ((event: MessageEvent) => void) | null = null;
-  public onerror: ((event: ErrorEvent) => void) | null = null;
-  public onmessageerror: ((event: MessageEvent) => void) | null = null;
+  url: string;
+  onmessage: ((event: MessageEvent) => void) | null = null;
+  onerror: ((event: ErrorEvent) => void) | null = null;
+  onmessageerror: ((event: MessageEvent) => void) | null = null;
 
   /**
    * 构造函数
@@ -182,7 +181,7 @@ Object.defineProperty(window, 'matchMedia', {
             isPalette: data.extractMultiple ?? false,
             ...(data.extractMultiple
               ? {
-                  colors: [0xff0000, 0x00ff00, 0x0000ff], // Mock ARGB colors
+                  colors: [0xff_00_00, 0x00_ff_00, 0x00_00_ff], // Mock ARGB colors
                   rgbColors: [
                     [255, 0, 0],
                     [0, 255, 0],
@@ -190,7 +189,7 @@ Object.defineProperty(window, 'matchMedia', {
                   ], // Mock RGB colors
                 }
               : {
-                  color: 0xff0000, // Mock ARGB color
+                  color: 0xff_00_00, // Mock ARGB color
                   rgb: [255, 0, 0], // Mock RGB color
                 }),
           },
@@ -227,7 +226,7 @@ Object.defineProperty(window, 'matchMedia', {
    * @param type - 事件类型
    * @param listener - 事件监听器
    */
-  removeEventListener(type: string, listener: EventListener): void {
+  removeEventListener(type: string, _listener: EventListener): void {
     if (type === 'message') {
       this.onmessage = null;
     } else if (type === 'error') {
@@ -241,8 +240,8 @@ Object.defineProperty(window, 'matchMedia', {
  * 为Worker环境提供OffscreenCanvas的模拟实现
  */
 (global as any).OffscreenCanvas = class MockOffscreenCanvas {
-  public width: number;
-  public height: number;
+  width: number;
+  height: number;
 
   /**
    * 构造函数
@@ -288,7 +287,7 @@ Object.defineProperty(window, 'matchMedia', {
     width: 100,
     height: 100,
     close: jest.fn(),
-  }),
+  })
 );
 
 /**
@@ -322,14 +321,16 @@ const originalLog = console.log;
  * 重写console.error以过滤测试噪音
  * @param args - 传递给console.error的参数
  */
-console.error = (...args: any[]): void => {
+console.error = (...args: unknown[]): void => {
   const message = args.at(0);
   if (
     typeof message === 'string' &&
     (message.includes('Warning: An update to') ||
       message.includes('not wrapped in act') ||
       message.includes('ReactDOMTestUtils.act') ||
-      message.includes('The current testing environment is not configured to support act') ||
+      message.includes(
+        'The current testing environment is not configured to support act'
+      ) ||
       message.includes('主题更新失败') ||
       message.includes('从图片更新主题失败'))
   ) {
@@ -342,7 +343,7 @@ console.error = (...args: any[]): void => {
  * 重写console.warn以过滤测试噪音
  * @param args - 传递给console.warn的参数
  */
-console.warn = (...args: any[]): void => {
+console.warn = (...args: unknown[]): void => {
   const message = args.at(0);
   if (typeof message === 'string' && message.includes('[BackgroundCarousel]')) {
     return; // 抑制BackgroundCarousel警告
@@ -354,11 +355,12 @@ console.warn = (...args: any[]): void => {
  * 重写console.log以过滤测试噪音
  * @param args - 传递给console.log的参数
  */
-console.log = (...args: any[]): void => {
+console.log = (...args: unknown[]): void => {
   const message = args.at(0);
   if (
     typeof message === 'string' &&
-    (message.includes('[BackgroundCarousel]') || message.includes('Actual seed color value'))
+    (message.includes('[BackgroundCarousel]') ||
+      message.includes('Actual seed color value'))
   ) {
     return; // 抑制BackgroundCarousel日志和测试调试日志
   }

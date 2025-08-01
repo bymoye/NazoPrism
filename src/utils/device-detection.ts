@@ -28,24 +28,17 @@ export const isMobileDevice = (): boolean => {
     'opera mini',
   ];
 
-  const isMobileUserAgent = mobileKeywords.some(keyword => userAgent.includes(keyword));
+  const isMobileUserAgent = mobileKeywords.some((keyword) =>
+    userAgent.includes(keyword)
+  );
 
   // 检查屏幕宽度（移动端通常小于768px）
   const isMobileScreen = window.innerWidth < 768;
 
   // 检查触摸支持
-  const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const hasTouchSupport =
+    'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   // 综合判断：用户代理包含移动设备关键词，或者屏幕宽度小于768px且支持触摸
   return isMobileUserAgent || (isMobileScreen && hasTouchSupport);
-};
-
-/**
- * 创建一个响应式的移动端检测Hook（用于React组件）
- *
- * @returns 当前是否为移动端设备的状态
- */
-export const useMobileDetection = (): boolean => {
-  // 这里只是导出函数，实际的Hook实现会在hooks目录中
-  return isMobileDevice();
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 
 import { SITE_CONFIG } from '@/lib/site.config';
 import styles from '@/styles/components/Cover.module.css';
@@ -17,12 +17,12 @@ const Cover: React.FC = () => {
     <figure className={styles.siteCover}>
       <div className={styles.focusInfo}>
         <Image
-          alt='网站头像'
+          alt="网站头像"
           className={styles.avatar}
-          src={SITE_CONFIG.avatar}
-          width={130}
           height={130}
           priority
+          src={SITE_CONFIG.avatar}
+          width={130}
         />
         {/* 网站描述文字 */}
         <div className={styles.focusInfoText}>{SITE_CONFIG.description}</div>

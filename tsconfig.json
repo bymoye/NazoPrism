@@ -35,8 +35,15 @@
       "@/types/*": ["./src/types/*"],
       "@/app/*": ["./app/*"]
     },
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true
   },
-  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next-env.d.ts", "out/types/**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "out/types/**/*.ts"
+  ],
   "exclude": ["node_modules", ".next", "out", "dist"]
 }

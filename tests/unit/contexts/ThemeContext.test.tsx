@@ -5,15 +5,16 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React from 'react';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider, useThemeContext } from '@/contexts/ThemeContext';
 
 // Mock theme-manager
-jest.mock('../../utils/theme-manager', () => ({
+jest.mock('@/utils/theme-manager', () => ({
   themeManager: {
-    initTheme: jest.fn().mockResolvedValue(() => {}),
+    initTheme: jest.fn().mockReturnValue(() => {
+      // Mock cleanup function
+    }),
     updateThemeFromColors: jest.fn(),
     updateThemeFromImage: jest.fn().mockResolvedValue(undefined),
     setDarkMode: jest.fn(),
@@ -47,25 +48,42 @@ const TestComponent = () => {
 
   return (
     <div>
-      <div data-testid='seed-color'>{seedColor}</div>
-      <div data-testid='is-dark'>{isDark.toString()}</div>
-      <div data-testid='is-loading'>{isLoading.toString()}</div>
-      <div data-testid='error'>{error || 'no-error'}</div>
-      <button data-testid='toggle-dark-mode' onClick={toggleDarkMode}>
+      <div data-testid="seed-color">{seedColor}</div>
+      <div data-testid="is-dark">{isDark.toString()}</div>
+      <div data-testid="is-loading">{isLoading.toString()}</div>
+      <div data-testid="error">{error || 'no-error'}</div>
+      <button
+        data-testid="toggle-dark-mode"
+        onClick={toggleDarkMode}
+        type="button"
+      >
         Toggle Dark Mode
       </button>
-      <button data-testid='set-dark-mode' onClick={() => setDarkMode(true)}>
+      <button
+        data-testid="set-dark-mode"
+        onClick={() => setDarkMode(true)}
+        type="button"
+      >
         Set Dark Mode
       </button>
-      <button data-testid='set-light-mode' onClick={() => setDarkMode(false)}>
+      <button
+        data-testid="set-light-mode"
+        onClick={() => setDarkMode(false)}
+        type="button"
+      >
         Set Light Mode
       </button>
-      <button data-testid='update-theme' onClick={() => updateTheme(0xff5722)}>
+      <button
+        data-testid="update-theme"
+        onClick={() => updateTheme(0xff_57_22)}
+        type="button"
+      >
         Update Theme
       </button>
       <button
-        data-testid='update-theme-from-image'
+        data-testid="update-theme-from-image"
         onClick={() => updateThemeFromImage('test-image.jpg')}
+        type="button"
       >
         Update Theme From Image
       </button>
@@ -75,24 +93,20 @@ const TestComponent = () => {
 
 describe('ThemeContext', () => {
   let themeManager: {
-    initTheme: jest.MockedFunction<any>;
-    updateThemeFromColors: jest.MockedFunction<any>;
-    updateThemeFromImage: jest.MockedFunction<any>;
-    setDarkMode: jest.MockedFunction<any>;
-    isDarkMode: jest.MockedFunction<any>;
+    initTheme: jest.MockedFunction<() => () => void>;
+    updateThemeFromColors: jest.MockedFunction<
+      (colors: string[]) => Promise<void>
+    >;
+    updateThemeFromImage: jest.MockedFunction<
+      (imageUrl: string, nextImageUrl?: string) => Promise<void>
+    >;
+    setDarkMode: jest.MockedFunction<(isDark: boolean) => void>;
+    isDarkMode: jest.MockedFunction<() => boolean>;
   };
 
   beforeAll(async () => {
-    const imported = (await import('@/utils/theme-manager')) as {
-      themeManager: {
-        initTheme: jest.MockedFunction<any>;
-        updateThemeFromColors: jest.MockedFunction<any>;
-        updateThemeFromImage: jest.MockedFunction<any>;
-        setDarkMode: jest.MockedFunction<any>;
-        isDarkMode: jest.MockedFunction<any>;
-      };
-    };
-    themeManager = imported.themeManager;
+    const imported = await import('@/utils/theme-manager');
+    themeManager = imported.themeManager as any;
   });
 
   beforeEach(() => {
@@ -105,7 +119,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     await waitFor(() => {
@@ -123,7 +137,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     const toggleButton = screen.getByTestId('toggle-dark-mode');
@@ -141,7 +155,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     const setDarkButton = screen.getByTestId('set-dark-mode');
@@ -159,7 +173,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     const updateButton = screen.getByTestId('update-theme');
@@ -168,7 +182,9 @@ describe('ThemeContext', () => {
       await user.click(updateButton);
     });
 
-    expect(themeManager.updateThemeFromColors).toHaveBeenCalledWith(['#ff5722']);
+    expect(themeManager.updateThemeFromColors).toHaveBeenCalledWith([
+      '#ff5722',
+    ]);
   });
 
   test('应该能够从图片更新主题', async () => {
@@ -177,7 +193,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     const updateFromImageButton = screen.getByTestId('update-theme-from-image');
@@ -185,10 +201,13 @@ describe('ThemeContext', () => {
     await act(async () => {
       await user.click(updateFromImageButton);
       // 等待异步操作完成
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     });
 
-    expect(themeManager.updateThemeFromImage).toHaveBeenCalledWith('test-image.jpg', undefined);
+    expect(themeManager.updateThemeFromImage).toHaveBeenCalledWith(
+      'test-image.jpg',
+      undefined
+    );
   });
 
   test('应该处理主题更新错误', async () => {
@@ -200,7 +219,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     const updateButton = screen.getByTestId('update-theme');
@@ -208,7 +227,7 @@ describe('ThemeContext', () => {
     await act(async () => {
       await user.click(updateButton);
       // 等待状态更新完成
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     await waitFor(() => {
@@ -218,12 +237,14 @@ describe('ThemeContext', () => {
 
   test('应该处理从图片更新主题的错误', async () => {
     const user = userEvent.setup();
-    themeManager.updateThemeFromImage.mockRejectedValue(new Error('图片加载失败'));
+    themeManager.updateThemeFromImage.mockRejectedValue(
+      new Error('图片加载失败')
+    );
 
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     const updateFromImageButton = screen.getByTestId('update-theme-from-image');
@@ -231,11 +252,13 @@ describe('ThemeContext', () => {
     await act(async () => {
       await user.click(updateFromImageButton);
       // 等待异步操作和状态更新完成
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId('error')).toHaveTextContent('从图片更新主题失败');
+      expect(screen.getByTestId('error')).toHaveTextContent(
+        '从图片更新主题失败'
+      );
     });
   });
 
@@ -243,7 +266,7 @@ describe('ThemeContext', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>,
+      </ThemeProvider>
     );
 
     await waitFor(() => {

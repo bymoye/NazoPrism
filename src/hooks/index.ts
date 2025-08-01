@@ -1,9 +1,9 @@
 /**
  * 自定义Hooks导出
  */
-export { useTheme } from './useTheme';
-export { useIntersectionObserver } from './useIntersectionObserver';
-export { useMobileDetection } from './useMobileDetection';
 
 export type { UseThemeReturn } from '../types/hooks';
 export type { UseIntersectionObserverOptions } from './useIntersectionObserver';
+export { useIntersectionObserver } from './useIntersectionObserver';
+export { useMobileDetection } from './useMobileDetection';
+export { useTheme } from './useTheme';

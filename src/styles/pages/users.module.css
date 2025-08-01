@@ -7,7 +7,8 @@
   border-radius: 16px;
   border: 1px solid var(--md-outline-variant);
   box-shadow: var(--md-sys-elevation-level3);
-  transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  transition: all var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
 }
 
 .pageContent:hover {

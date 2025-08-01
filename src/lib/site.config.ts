@@ -3,7 +3,7 @@
  * @description Next.js应用程序站点配置
  */
 
-import { Article, ExtendedArticle } from '@/types/content';
+import type { ExtendedArticle } from '@/types/content';
 
 /**
  * 站点配置类型定义
@@ -64,7 +64,7 @@ export const SITE_CONFIG: SiteConfiguration = {
 /**
  * 重新导出类型以保持向后兼容性
  */
-export type { Article, ExtendedArticle };
+export type { Article, ExtendedArticle } from '@/types/content';
 
 /**
  * 示例文章数据

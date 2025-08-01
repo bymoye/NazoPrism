@@ -1,8 +1,7 @@
-import ClientLayout from '@/components/layouts/ClientLayout';
-import { Providers } from '@/contexts';
-
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import ClientLayout from '@/components/layouts/ClientLayout';
+import { Providers } from '@/contexts';
 import '@/styles/globals.css';
 import '@/styles/md-sys-variables.css';
 
@@ -57,18 +56,18 @@ export const metadata: Metadata = {
  */
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <html lang='zh-CN' data-scroll-behavior='smooth'>
+    <html data-scroll-behavior="smooth" lang="zh-CN">
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               if (!CSS.supports('animation-timeline: scroll()')) {
-                var script = document.createElement('script');
-                script.src = 'https://static.nazo.run/scroll-timeline/scroll-timeline.js';
-                script.onerror = function(err) {
+                var polyfillScript = document.createElement('script');
+                polyfillScript.src = 'https://static.nazo.run/scroll-timeline/scroll-timeline.js';
+                polyfillScript.onerror = function(err) {
                   console.error('加载 scroll-timeline Polyfill 失败：', err);
                 };
-                document.head.appendChild(script);
+                document.head.appendChild(polyfillScript);
               }
             `,
           }}

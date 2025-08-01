@@ -30,7 +30,8 @@
   border-radius: var(--md-sys-shape-corner-full);
   border: 2px solid var(--md-primary-container);
   transform: rotate(0);
-  transition: all var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized);
+  transition: all var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-emphasized);
 }
 
 .avatar:hover {
@@ -55,7 +56,8 @@
   border-radius: var(--md-sys-shape-corner-large);
   box-sizing: border-box;
   white-space: nowrap;
-  transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  transition: all var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
   font-weight: 500;
 }
 

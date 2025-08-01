@@ -3,7 +3,7 @@
  * @description 移动端检测React Hook
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { isMobileDevice } from '@/utils/device-detection';
 

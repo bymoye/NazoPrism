@@ -3,8 +3,6 @@
  * @description Hook相关的类型定义
  */
 
-import { RefObject } from 'react';
-
 /**
  * useTheme hook返回类型
  */

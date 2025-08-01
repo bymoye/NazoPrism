@@ -1,19 +1,26 @@
-import React from 'react';
 import { render } from '@testing-library/react';
+import type React from 'react';
 import '@testing-library/jest-dom';
+import BackgroundCarousel from '@/components/ui/BackgroundCarousel';
 import { AppProvider } from '@/contexts/AppContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import BackgroundCarousel from '@/components/ui/BackgroundCarousel';
 
 // Mock extract-colors to avoid ES module issues
 jest.mock('extract-colors', () => ({
   extractColors: jest.fn(),
 }));
 
+// Mock lenis/react
+jest.mock('lenis/react', () => ({
+  useLenis: jest.fn(),
+}));
+
 // Mock theme-manager
-jest.mock('../../utils/theme-manager', () => ({
+jest.mock('@/utils/theme-manager', () => ({
   themeManager: {
-    initTheme: jest.fn().mockResolvedValue(() => {}),
+    initTheme: jest.fn().mockReturnValue(() => {
+      // Mock cleanup function
+    }),
     updateThemeFromColors: jest.fn(),
     updateThemeFromImage: jest.fn().mockResolvedValue(undefined),
     setDarkMode: jest.fn(),
@@ -22,7 +29,7 @@ jest.mock('../../utils/theme-manager', () => ({
 }));
 
 // Mock the SITE_CONFIG
-jest.mock('../../config/site.config', () => ({
+jest.mock('@/lib/site.config', () => ({
   SITE_CONFIG: {
     backgroundApi: {
       endpoint: 'https://api.nmxc.ltd/randimg?number=5&encode=json',
@@ -38,7 +45,7 @@ const renderWithProviders = (component: React.ReactElement) => {
   return render(
     <AppProvider>
       <ThemeProvider>{component}</ThemeProvider>
-    </AppProvider>,
+    </AppProvider>
   );
 };
 
@@ -46,27 +53,16 @@ const renderWithProviders = (component: React.ReactElement) => {
 jest.useFakeTimers();
 
 describe('BackgroundCarousel', () => {
-  // Mock console.log to avoid test output
-  const originalConsoleLog = console.log;
-  const originalConsoleWarn = console.warn;
-
-  beforeAll(() => {
-    console.log = jest.fn();
-    console.warn = jest.fn();
-  });
-
-  afterAll(() => {
-    console.log = originalConsoleLog;
-    console.warn = originalConsoleWarn;
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({
         code: 200,
-        url: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'],
+        url: [
+          'https://example.com/image1.jpg',
+          'https://example.com/image2.jpg',
+        ],
       }),
     });
   });
@@ -123,6 +119,8 @@ describe('BackgroundCarousel', () => {
     const { unmount } = renderWithProviders(<BackgroundCarousel />);
 
     // Component should unmount without errors
-    expect(() => unmount()).not.toThrow();
+    unmount();
+    // If we reach this point, unmount was successful
+    expect(true).toBe(true);
   });
 });

@@ -17,7 +17,10 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   // 测试文件匹配模式
-  testMatch: ['**/tests/**/*.(ts|tsx|js|jsx)', '**/*.(test|spec).(ts|tsx|js|jsx)'],
+  testMatch: [
+    '**/tests/**/*.(ts|tsx|js|jsx)',
+    '**/*.(test|spec).(ts|tsx|js|jsx)',
+  ],
 
   // 忽略的测试路径
   testPathIgnorePatterns: [
@@ -40,6 +43,8 @@ const customJestConfig = {
 
     // 第三方库模拟
     '^@poupe/theme-builder$': '<rootDir>/__mocks__/@poupe/theme-builder.js',
+    '^lenis$': '<rootDir>/__mocks__/lenis.js',
+    '^lenis/dist/lenis-react.mjs$': '<rootDir>/__mocks__/lenis.js',
 
     // CSS和静态资源模拟
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -48,7 +53,9 @@ const customJestConfig = {
   },
 
   // 转换忽略模式
-  transformIgnorePatterns: ['node_modules/(?!(extract-colors|@poupe\\/theme-builder|@next|next)/)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(extract-colors|@poupe\\/theme-builder|@next|next|lenis)/)',
+  ],
 
   // ESM支持
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
@@ -90,7 +97,7 @@ const customJestConfig = {
   coverageReporters: ['text', 'lcov', 'html'],
 
   // 测试超时设置
-  testTimeout: 10000,
+  testTimeout: 10_000,
 
   // 详细输出
   verbose: true,

@@ -1,7 +1,13 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import React, { createContext, useContext, useCallback, ReactNode, useState } from 'react';
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 
 /**
  * 导航项接口
@@ -33,7 +39,9 @@ interface NavigationContextType {
   isCurrentPath: (path: string) => boolean;
 }
 
-const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
+const NavigationContext = createContext<NavigationContextType | undefined>(
+  undefined
+);
 
 /**
  * 导航提供者组件属性接口
@@ -67,15 +75,17 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
       setIsMenuOpen(false);
       router.push(path);
     },
-    [router],
+    [router]
   );
 
   const isCurrentPath = useCallback(
     (path: string) => {
-      if (!pathname) return false;
+      if (!pathname) {
+        return false;
+      }
       return pathname === path || (path !== '/' && pathname.startsWith(path));
     },
-    [pathname],
+    [pathname]
   );
 
   return (
@@ -103,7 +113,9 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
 export const useNavigationContext = () => {
   const context = useContext(NavigationContext);
   if (context === undefined) {
-    throw new Error('useNavigationContext must be used within a NavigationProvider');
+    throw new Error(
+      'useNavigationContext must be used within a NavigationProvider'
+    );
   }
   return context;
 };

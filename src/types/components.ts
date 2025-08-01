@@ -3,9 +3,9 @@
  * @description 组件特定的类型定义
  */
 
-import { ReactNode, HTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
-import { Article } from './content';
+import type { Article } from './content';
 
 /**
  * 基础组件属性接口

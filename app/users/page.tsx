@@ -1,6 +1,5 @@
-import styles from '@/styles/pages/users.module.css';
-
 import type { Metadata } from 'next';
+import styles from '@/styles/pages/users.module.css';
 
 /**
  * 用户页面元数据配置

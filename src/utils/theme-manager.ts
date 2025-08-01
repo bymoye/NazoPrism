@@ -3,7 +3,11 @@
  * @description 主题管理工具
  */
 
-import { makeCSSTheme, type ThemeColors, type MakeCSSThemeOptions } from '@poupe/theme-builder';
+import {
+  type MakeCSSThemeOptions,
+  makeCSSTheme,
+  type ThemeColors,
+} from '@poupe/theme-builder';
 import { extractColors } from 'extract-colors/lib/worker-wrapper';
 
 import { isObject } from './type-guards';
@@ -28,12 +32,12 @@ let currentTheme: ReturnType<typeof makeCSSTheme> | null = null;
 const themeColorCache = new Map<string, string[]>();
 
 /**
- * 生成主题对象
+ * 生成主题
  *
- * @param colors - 颜色数组，用于生成主题的各个颜色变量
+ * @param colors - 颜色数组，用于生成主题
  * @returns 生成的主题对象
  */
-const generateTheme = async (colors: string[]): Promise<ReturnType<typeof makeCSSTheme>> => {
+const generateTheme = (colors: string[]): ReturnType<typeof makeCSSTheme> => {
   const themeColors = colors.slice(0, THEME_KEYS.length).reduce(
     (acc, color, index) => {
       const themeKey = THEME_KEYS[index];
@@ -42,7 +46,7 @@ const generateTheme = async (colors: string[]): Promise<ReturnType<typeof makeCS
       }
       return acc;
     },
-    {} as Record<string, string>,
+    {} as Record<string, string>
   ) as ThemeColors<never>;
 
   const options: Partial<MakeCSSThemeOptions> = {
@@ -92,16 +96,21 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
     document.head.append(styleElement);
   }
 
-  if (!theme?.styles?.length || !isObject(theme.styles.at(0))) {
-    console.error('主题格式错误');
+  if (!(theme?.styles?.length && isObject(theme.styles.at(0)))) {
     styleElement.textContent = '';
     return;
   }
 
-  const rulesObject = theme.styles.at(0)!;
+  const rulesObject = theme.styles.at(0);
+  if (!rulesObject) {
+    styleElement.textContent = '';
+    return;
+  }
   const cssContent = Object.entries(rulesObject)
     .map(([selector, rules]) => {
-      if (!isObject(rules)) return '';
+      if (!isObject(rules)) {
+        return '';
+      }
       const varsString = Object.entries(rules)
         .map(([property, value]) => `  ${property}: ${value};`)
         .join('\n');
@@ -122,23 +131,29 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
 const extractColorsFromImage = async (imageUrl: string): Promise<string[]> => {
   // 检查缓存
   if (themeColorCache.has(imageUrl)) {
-    return themeColorCache.get(imageUrl)!;
+    const cachedColors = themeColorCache.get(imageUrl);
+    if (cachedColors) {
+      return cachedColors;
+    }
   }
 
   try {
     const colors = await extractColors(imageUrl, {
-      pixels: 10000,
+      pixels: 10_000,
       distance: 0.22,
       colorValidator: (_r, _g, _b, a = 255) => a > 250,
     });
     const extractedColors = colors?.map(({ hex }) => hex);
-    const finalColors = extractedColors?.length ? extractedColors : DEFAULT_COLORS;
+    const finalColors = extractedColors?.length
+      ? extractedColors
+      : DEFAULT_COLORS;
 
     // 缓存提取的颜色
     themeColorCache.set(imageUrl, finalColors);
     return finalColors;
   } catch (error) {
-    console.warn('颜色提取失败:', error);
+    // 记录错误信息用于调试
+    console.error('从图片提取颜色失败:', error, '图片URL:', imageUrl);
     // 即使失败也缓存默认颜色，避免重复请求
     themeColorCache.set(imageUrl, DEFAULT_COLORS);
     return DEFAULT_COLORS;
@@ -158,7 +173,8 @@ const preloadImageTheme = async (imageUrl: string): Promise<void> => {
   try {
     await extractColorsFromImage(imageUrl);
   } catch (error) {
-    console.warn(`[ThemeManager] 预载失败: ${imageUrl}`, error);
+    // 预载失败不影响主流程，记录错误用于调试
+    console.error('预载图片主题色失败:', error, '图片URL:', imageUrl);
   }
 };
 
@@ -178,9 +194,9 @@ const toggleDarkMode = (forceDark?: boolean): void => {
  *
  * @param colors - 颜色数组，用于生成主题
  */
-const updateThemeFromColors = async (colors: string[]): Promise<void> => {
+const updateThemeFromColors = (colors: string[]): void => {
   const validColors = colors.length ? colors : DEFAULT_COLORS;
-  currentTheme = await generateTheme(validColors);
+  currentTheme = generateTheme(validColors);
   applyTheme(currentTheme);
 };
 
@@ -190,15 +206,21 @@ const updateThemeFromColors = async (colors: string[]): Promise<void> => {
  * @param imageUrl - 当前图片URL
  * @param nextImageUrl - 可选，下一张图片URL，用于预载
  */
-const updateThemeFromImage = async (imageUrl: string, nextImageUrl?: string): Promise<void> => {
+const updateThemeFromImage = async (
+  imageUrl: string,
+  nextImageUrl?: string
+): Promise<void> => {
   const colors = await extractColorsFromImage(imageUrl);
-  await updateThemeFromColors(colors);
+  updateThemeFromColors(colors);
 
   // 预载下一张图片的主题色
   if (nextImageUrl && nextImageUrl !== imageUrl) {
     // 异步预载，不阻塞当前主题更新
-    preloadImageTheme(nextImageUrl).catch(error => {
-      console.warn(`[ThemeManager] 预载下一张图片失败: ${nextImageUrl}`, error);
+    preloadImageTheme(nextImageUrl).catch((error) => {
+      // 预载失败不影响主流程，记录错误用于调试
+      console.error(
+        `异步预载下一张图片主题色失败: ${error} 图片URL: ${nextImageUrl}`
+      );
     });
   }
 };
@@ -206,16 +228,18 @@ const updateThemeFromImage = async (imageUrl: string, nextImageUrl?: string): Pr
 /**
  * 初始化主题系统
  *
- * @returns Promise<() => void> 返回清理函数，用于移除事件监听器
+ * @returns 返回清理函数，用于移除事件监听器
  */
-const initTheme = async (): Promise<() => void> => {
+const initTheme = (): (() => void) => {
   if (!document.documentElement.dataset.theme) {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
     document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
   }
 
   if (!currentTheme) {
-    await updateThemeFromColors(DEFAULT_COLORS);
+    updateThemeFromColors(DEFAULT_COLORS);
   }
 
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');

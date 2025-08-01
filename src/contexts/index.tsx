@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { AppProvider } from './AppContext';
 import { NavigationProvider } from './NavigationContext';
@@ -30,12 +30,14 @@ export const Providers = ({ children }: ProvidersProps) => {
   );
 };
 
+// 重新导出类型
+export type { AppContextType, AppState } from './AppContext';
 // 重新导出所有上下文和Hook以便使用
 export { AppProvider, useAppContext } from './AppContext';
-export { ThemeProvider, useThemeContext } from './ThemeContext';
+export type {
+  NavigationContextType,
+  NavigationItem,
+} from './NavigationContext';
 export { NavigationProvider, useNavigationContext } from './NavigationContext';
-
-// 重新导出类型
-export type { AppState, AppContextType } from './AppContext';
 export type { ThemeContextType } from './ThemeContext';
-export type { NavigationContextType, NavigationItem } from './NavigationContext';
+export { ThemeProvider, useThemeContext } from './ThemeContext';

@@ -20,7 +20,8 @@
  * }
  * ```
  */
-export const isString = (value: unknown): value is string => typeof value === 'string';
+export const isString = (value: unknown): value is string =>
+  typeof value === 'string';
 
 /**
  * 检查值是否为对象（非null，非数组）
@@ -53,7 +54,8 @@ export const isObject = (value: unknown): value is Record<string, unknown> =>
  * }
  * ```
  */
-export const isArray = <T>(value: unknown): value is T[] => Array.isArray(value);
+export const isArray = <T>(value: unknown): value is T[] =>
+  Array.isArray(value);
 
 /**
  * 检查值是否为Error对象
@@ -72,4 +74,5 @@ export const isArray = <T>(value: unknown): value is T[] => Array.isArray(value)
  * }
  * ```
  */
-export const isError = (value: unknown): value is Error => value instanceof Error;
+export const isError = (value: unknown): value is Error =>
+  value instanceof Error;

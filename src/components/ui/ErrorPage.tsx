@@ -46,7 +46,7 @@ const ErrorPage = ({
     if (onGoHome) {
       onGoHome();
     } else {
-      window.location.href = '/';
+      window.location.assign('/');
     }
   };
 
@@ -54,10 +54,18 @@ const ErrorPage = ({
     <div className={styles.errorPage}>
       <div className={styles.errorContainer}>
         <div className={styles.errorIcon}>
-          <svg width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='currentColor'>
-            <circle cx='12' cy='12' r='10' />
-            <line x1='15' y1='9' x2='9' y2='15' />
-            <line x1='9' y1='9' x2='15' y2='15' />
+          <svg
+            aria-label="错误图标"
+            fill="none"
+            height="64"
+            role="img"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            width="64"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" x2="9" y1="9" y2="15" />
+            <line x1="9" x2="15" y1="9" y2="15" />
           </svg>
         </div>
 
@@ -81,10 +89,18 @@ const ErrorPage = ({
         )}
 
         <div className={styles.errorActions}>
-          <button onClick={handleRetry} className={`${styles.button} ${styles.primaryButton}`}>
+          <button
+            className={`${styles.button} ${styles.primaryButton}`}
+            onClick={handleRetry}
+            type="button"
+          >
             重新加载
           </button>
-          <button onClick={handleGoHome} className={`${styles.button} ${styles.secondaryButton}`}>
+          <button
+            className={`${styles.button} ${styles.secondaryButton}`}
+            onClick={handleGoHome}
+            type="button"
+          >
             返回首页
           </button>
         </div>

@@ -33,7 +33,7 @@
 
 /* Subtle gradient overlay for depth */
 .content::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: var(--md-surface-dim);
@@ -78,7 +78,7 @@
 }
 
 .sectionTitle::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -2px;
   left: 0;
