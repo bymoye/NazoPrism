@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import styles from '@/styles/pages/page.module.css';
 
 /**
  * 关于页面元数据配置
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
  */
 const AboutPage = () => {
   return (
-    <div className={styles.pageContent}>
+    <div>
       <h1>关于我们</h1>
       <p>这里是关于页面的内容。</p>
     </div>

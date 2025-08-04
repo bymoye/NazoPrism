@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import styles from '@/styles/pages/users.module.css';
-
 /**
  * 用户页面元数据配置
  */
@@ -16,7 +14,7 @@ export const metadata: Metadata = {
  */
 const UsersPage = () => {
   return (
-    <div className={styles.pageContent}>
+    <div>
       <h1>用户</h1>
       <p>这里是用户页面的内容。</p>
     </div>
