@@ -1,123 +1,105 @@
 /**
- * Material Design 3 系统变量定义
- * 这个文件定义了项目中使用的所有 --md-sys 开头的CSS变量
- * 包括形状、动画、排版、阴影等系统变量
+ * Material Design 3 系统变量
  */
 
 :root {
-  /* ===== 形状系统 (Shape System) ===== */
-
-  /* 圆角半径 */
-  --md-sys-shape-corner-none: 0px;
-  --md-sys-shape-corner-extra-small: 4px;
-  --md-sys-shape-corner-small: 8px;
-  --md-sys-shape-corner-medium: 12px;
-  --md-sys-shape-corner-large: 16px;
-  --md-sys-shape-corner-extra-large: 28px;
+  /* 形状系统 */
+  --md-sys-shape-corner-small: clamp(0.5rem, 1vw, 0.75rem);
+  --md-sys-shape-corner-medium: clamp(0.75rem, 1.5vw, 1rem);
+  --md-sys-shape-corner-large: clamp(1rem, 2vw, 1.25rem);
+  --md-sys-shape-corner-extra-large: clamp(1.75rem, 3vw, 2rem);
   --md-sys-shape-corner-full: 50%;
 
-  /* ===== 动画系统 (Motion System) ===== */
-
-  /* 动画时长 */
-  --md-sys-motion-duration-short1: 50ms;
-  --md-sys-motion-duration-short2: 100ms;
-  --md-sys-motion-duration-short3: 150ms;
-  --md-sys-motion-duration-short4: 200ms;
-  --md-sys-motion-duration-medium1: 250ms;
-  --md-sys-motion-duration-medium2: 300ms;
-  --md-sys-motion-duration-medium3: 350ms;
-  --md-sys-motion-duration-medium4: 400ms;
-  --md-sys-motion-duration-long1: 450ms;
-  --md-sys-motion-duration-long2: 500ms;
-  --md-sys-motion-duration-long3: 550ms;
-  --md-sys-motion-duration-long4: 600ms;
-  --md-sys-motion-duration-theme: 1500ms;
+  /* 动画系统 */
+  --md-sys-motion-duration-medium1: 0.25s;
+  --md-sys-motion-duration-medium2: 0.3s;
+  --md-sys-motion-duration-long1: 0.45s;
+  --md-sys-motion-duration-long2: 0.5s;
+  --md-sys-motion-duration-theme: 1.5s;
 
   /* 缓动函数 */
-  --md-sys-motion-easing-linear: linear;
   --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
-  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
-  --md-sys-motion-easing-decelerated: cubic-bezier(0, 0, 0.2, 1);
-  --md-sys-motion-easing-accelerated: cubic-bezier(0.4, 0, 1, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* ===== 排版系统 (Typography System) ===== */
+  /* 排版系统 */
+  --md-sys-typescale-display-small: clamp(1.4rem, 2.5vw, 1.75rem);
+  --md-sys-typescale-headline-large: clamp(1.25rem, 2vw, 1.5rem);
+  --md-sys-typescale-headline-medium: clamp(1.1rem, 1.5vw, 1.25rem);
+  --md-sys-typescale-headline-small: clamp(1rem, 1.25vw, 1.1rem);
+  --md-sys-typescale-title-large: clamp(0.9rem, 1vw, 1rem);
+  --md-sys-typescale-title-medium: clamp(0.8rem, 0.75vw, 0.9rem);
+  --md-sys-typescale-title-small: clamp(0.75rem, 0.5vw, 0.8rem);
+  --md-sys-typescale-body-medium: clamp(0.8rem, 0.5vw, 0.9rem);
+  --md-sys-typescale-body-small: clamp(0.75rem, 0.25vw, 0.8rem);
+  --md-sys-typescale-label-large: clamp(0.8rem, 0.5vw, 0.9rem);
+  --md-sys-typescale-label-medium: clamp(0.75rem, 0.25vw, 0.8rem);
+  --md-sys-typescale-label-small: clamp(0.7rem, 0.125vw, 0.75rem);
 
-  /* 显示文本 - 字体大小 */
-  --md-sys-typescale-display-large: 57px;
-  --md-sys-typescale-display-medium: 45px;
-  --md-sys-typescale-display-small: 36px;
+  /* 行高系统 */
+  --md-sys-typescale-line-height-tight: 1.25;
+  --md-sys-typescale-line-height-normal: 1.5;
+  --md-sys-typescale-line-height-relaxed: 1.75;
 
-  /* 标题文本 - 字体大小 */
-  --md-sys-typescale-headline-large: 32px;
-  --md-sys-typescale-headline-medium: 28px;
-  --md-sys-typescale-headline-small: 24px;
-
-  /* 标题文本 - 字体大小 */
-  --md-sys-typescale-title-large: 22px;
-  --md-sys-typescale-title-medium: 16px;
-  --md-sys-typescale-title-small: 14px;
-
-  /* 正文文本 - 字体大小 */
-  --md-sys-typescale-body-large: 16px;
-  --md-sys-typescale-body-medium: 14px;
-  --md-sys-typescale-body-small: 12px;
-
-  /* 标签文本 - 字体大小 */
-  --md-sys-typescale-label-large: 14px;
-  --md-sys-typescale-label-medium: 12px;
-  --md-sys-typescale-label-small: 11px;
-
-  /* ===== 阴影系统 (Elevation System) ===== */
-
-  --md-sys-elevation-level0: none;
+  /* 阴影系统 */
   --md-sys-elevation-level1:
-    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+    0 1px 2px 0 oklch(0% 0 0deg / 30%), 0 1px 3px 1px oklch(0% 0 0deg / 15%);
   --md-sys-elevation-level2:
-    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+    0 1px 2px 0 oklch(0% 0 0deg / 30%), 0 2px 6px 2px oklch(0% 0 0deg / 15%);
   --md-sys-elevation-level3:
-    0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    0 4px 8px 3px oklch(0% 0 0deg / 15%), 0 1px 3px 0 oklch(0% 0 0deg / 30%);
   --md-sys-elevation-level4:
-    0 6px 10px 4px rgba(0, 0, 0, 0.15), 0 2px 3px 0 rgba(0, 0, 0, 0.3);
-  --md-sys-elevation-level5:
-    0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+    0 6px 10px 4px oklch(0% 0 0deg / 15%), 0 2px 3px 0 oklch(0% 0 0deg / 30%);
+
+  /* 彩色阴影 */
+  --md-sys-elevation-colored-2: 0 4px 8px
+    color-mix(in oklch, var(--md-primary) 15%, transparent);
+  --md-sys-elevation-colored-3: 0 8px 16px
+    color-mix(in oklch, var(--md-primary) 12%, transparent);
 }
 
-/* ===== 暗色主题适配 ===== */
-[data-theme="dark"] {
-  /* 暗色主题下的阴影调整 */
-  --md-sys-elevation-level1:
-    0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 3px 1px rgba(0, 0, 0, 0.25);
-  --md-sys-elevation-level2:
-    0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 2px 6px 2px rgba(0, 0, 0, 0.25);
-  --md-sys-elevation-level3:
-    0 4px 8px 3px rgba(0, 0, 0, 0.25), 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  --md-sys-elevation-level4:
-    0 6px 10px 4px rgba(0, 0, 0, 0.25), 0 2px 3px 0 rgba(0, 0, 0, 0.5);
-  --md-sys-elevation-level5:
-    0 8px 12px 6px rgba(0, 0, 0, 0.25), 0 4px 4px 0 rgba(0, 0, 0, 0.5);
-}
-
-/* ===== 响应式排版调整 ===== */
-@media (max-width: 768px) {
+/* 暗色主题 */
+@media (prefers-color-scheme: dark) {
   :root {
-    /* 移动端字体大小调整 */
-    --md-sys-typescale-display-large: 48px;
-    --md-sys-typescale-display-medium: 36px;
-    --md-sys-typescale-display-small: 28px;
-    --md-sys-typescale-headline-large: 28px;
-    --md-sys-typescale-headline-medium: 24px;
-    --md-sys-typescale-headline-small: 20px;
+    --md-sys-elevation-level1:
+      0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 1px 3px 1px oklch(0% 0 0deg / 30%);
+    --md-sys-elevation-level2:
+      0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 2px 6px 2px oklch(0% 0 0deg / 30%);
+    --md-sys-elevation-level3:
+      0 4px 8px 3px oklch(0% 0 0deg / 30%), 0 1px 3px 0 oklch(0% 0 0deg / 60%);
+    --md-sys-elevation-level4:
+      0 6px 10px 4px oklch(0% 0 0deg / 30%), 0 2px 3px 0 oklch(0% 0 0deg / 60%);
+    --md-sys-elevation-level5:
+      0 8px 12px 6px oklch(0% 0 0deg / 30%), 0 4px 4px 0 oklch(0% 0 0deg / 60%);
+    --md-sys-elevation-colored-1: 0 2px 4px
+      color-mix(in oklch, var(--md-primary) 30%, transparent);
+    --md-sys-elevation-colored-2: 0 4px 8px
+      color-mix(in oklch, var(--md-primary) 25%, transparent);
+    --md-sys-elevation-colored-3: 0 8px 16px
+      color-mix(in oklch, var(--md-primary) 20%, transparent);
   }
 }
 
-@media (max-width: 480px) {
+[data-theme="dark"] {
+  --md-sys-elevation-level1:
+    0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 1px 3px 1px oklch(0% 0 0deg / 30%);
+  --md-sys-elevation-level2:
+    0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 2px 6px 2px oklch(0% 0 0deg / 30%);
+  --md-sys-elevation-level3:
+    0 4px 8px 3px oklch(0% 0 0deg / 30%), 0 1px 3px 0 oklch(0% 0 0deg / 60%);
+  --md-sys-elevation-level4:
+    0 6px 10px 4px oklch(0% 0 0deg / 30%), 0 2px 3px 0 oklch(0% 0 0deg / 60%);
+  --md-sys-elevation-level5:
+    0 8px 12px 6px oklch(0% 0 0deg / 30%), 0 4px 4px 0 oklch(0% 0 0deg / 60%);
+}
+
+/* 性能优化 */
+@media (prefers-reduced-motion: reduce) {
   :root {
-    /* 小屏幕设备字体大小进一步调整 */
-    --md-sys-typescale-display-large: 40px;
-    --md-sys-typescale-display-medium: 32px;
-    --md-sys-typescale-display-small: 24px;
-    --md-sys-typescale-headline-large: 24px;
-    --md-sys-typescale-headline-medium: 20px;
-    --md-sys-typescale-headline-small: 18px;
+    --md-sys-motion-duration-medium1: 0.01s;
+    --md-sys-motion-duration-medium2: 0.01s;
+    --md-sys-motion-duration-long1: 0.01s;
+    --md-sys-motion-duration-long2: 0.01s;
+    --md-sys-motion-duration-theme: 0.01s;
   }
 }

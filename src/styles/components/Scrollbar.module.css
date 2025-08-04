@@ -1,22 +1,27 @@
 /* Scrollbar component styles - converted from SCSS */
 
 .scrollbar {
-  display: block;
-  height: 3px;
-  background-color: var(--md-primary);
-  animation-name: scaleExpand;
-  animation-duration: var(--md-sys-motion-duration-theme);
-  animation-timeline: scroll();
-  animation-fill-mode: both;
   position: sticky;
-  transform-origin: left;
-  top: 0;
   z-index: 99999;
+  top: 0;
+  transform-origin: left;
+
+  display: block;
+
+  height: 3px;
+
+  background-color: var(--md-primary);
+
   transition: background-color var(--md-sys-motion-duration-theme)
     var(--md-sys-motion-easing-emphasized);
+  animation-name: scale-expand;
+  animation-duration: var(--md-sys-motion-duration-theme);
+  animation-fill-mode: both;
+  /* stylelint-disable-next-line plugin/browser-compat */
+  animation-timeline: scroll();
 }
 
-@keyframes scaleExpand {
+@keyframes scale-expand {
   from {
     scale: 0 1;
   }

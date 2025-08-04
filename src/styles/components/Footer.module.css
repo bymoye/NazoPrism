@@ -1,42 +1,70 @@
-/* Footer component styles with Material Design 3 - converted from SCSS */
+/* Footer component styles with Material Design 3 - Modern CSS */
 
 .footer {
-  margin-top: auto;
-  padding: 2rem;
-  border-radius: var(--md-sys-shape-corner-large)
-    var(--md-sys-shape-corner-large) 0 0;
+  will-change: transform, background-color, box-shadow;
+
+  position: relative;
+
+  container-name: footer;
+  container-type: inline-size;
+  overflow: hidden;
+
+  margin-block-start: auto;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
+  border-start-start-radius: var(--md-sys-shape-corner-large);
+  border-start-end-radius: var(--md-sys-shape-corner-large);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
 
   /* M3 + Morphic Glass Effect */
-  background: var(--md-surface-container-high);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid var(--md-outline-variant);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 90%,
+    transparent
+  );
+  backdrop-filter: blur(clamp(14px, 2vw, 16px)) saturate(1.4);
   box-shadow: var(--md-sys-elevation-level2);
 
   /* Smooth transitions */
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-  position: relative;
-  overflow: hidden;
 }
 
 /* Enhanced hover effect */
 .footer:hover {
-  background: var(--md-surface-container-highest);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  transform: translateY(clamp(-1px, -0.25vw, -2px));
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-highest) 95%,
+    transparent
+  );
+  backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
   box-shadow: var(--md-sys-elevation-level3);
-  transform: translateY(-2px);
+}
+
+/* Touch device interactions */
+@media (hover: none) and (pointer: coarse) {
+  .footer:active {
+    transform: scale(0.995);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-highest) 95%,
+      transparent
+    );
+  }
 }
 
 .footerContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
   position: relative;
   z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  align-items: center;
+
+  max-inline-size: clamp(800px, 75vw, 1200px);
+  margin-inline: auto;
 }
 
 .copyright {
@@ -45,84 +73,117 @@
 
 .copyright p {
   margin: 0;
+
   font-size: var(--md-sys-typescale-body-medium);
-  color: var(--md-on-surface-variant);
   font-weight: 500;
-  letter-spacing: 0.25px;
+  color: var(--md-on-surface-variant);
+  text-wrap: balance;
+  letter-spacing: clamp(0.15px, 0.25px, 0.35px);
 }
 
 .socialLinks {
   display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
   align-items: center;
-  gap: 1rem;
 }
 
 .socialLink {
+  will-change: transform, background-color, box-shadow;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+
+  aspect-ratio: 1;
+  inline-size: clamp(32px, 5vw, 40px);
+  block-size: clamp(32px, 5vw, 40px);
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
   border-radius: var(--md-sys-shape-corner-medium);
-  background: var(--md-surface-container);
+
   color: var(--md-on-surface-variant);
   text-decoration: none;
+
+  background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
+  backdrop-filter: blur(clamp(6px, 1vw, 8px));
+
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--md-outline-variant);
 }
 
 .socialLink:hover {
-  background: var(--md-surface-container-high);
-  color: var(--md-on-primary-container);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: var(--md-sys-elevation-level1);
+  transform: translateY(clamp(-1px, -0.25vw, -2px))
+    scale(clamp(1.02, 1.05, 1.08));
+
   border-color: var(--md-outline);
+
+  color: var(--md-on-primary-container);
+
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 90%,
+    transparent
+  );
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 .socialLink:active {
-  transform: translateY(0) scale(0.95);
+  transform: translateY(0) scale(clamp(0.92, 0.95, 0.98));
 }
 
 .socialLink:focus-visible {
-  outline: 2px solid var(--md-primary);
-  outline-offset: 2px;
+  outline: clamp(2px, 0.2vw, 3px) solid var(--md-primary);
+  outline-offset: clamp(1px, 0.2vw, 2px);
+}
+
+/* Touch device interactions */
+@media (hover: none) and (pointer: coarse) {
+  .socialLink:active {
+    transform: scale(0.95);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-high) 90%,
+      transparent
+    );
+  }
 }
 
 .socialLink svg {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.3s ease;
+  will-change: transform;
+  inline-size: clamp(16px, 2.5vw, 20px);
+  block-size: clamp(16px, 2.5vw, 20px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .socialLink:hover svg {
-  transform: scale(1.1);
+  transform: scale(clamp(1.05, 1.1, 1.15));
 }
 
 .additionalInfo {
-  text-align: center;
   margin-top: 0.5rem;
+  text-align: center;
 }
 
 .additionalInfo p {
   margin: 0;
+
   font-size: var(--md-sys-typescale-body-small);
-  color: var(--md-on-surface-variant);
   font-weight: 400;
-  letter-spacing: 0.4px;
+  color: var(--md-on-surface-variant);
+  text-wrap: balance;
+  letter-spacing: clamp(0.3px, 0.4px, 0.5px);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Container-based responsive design */
+@container footer (max-width: 768px) {
   .footer {
-    padding: 1.5rem;
-    border-radius: var(--md-sys-shape-corner-medium)
-      var(--md-sys-shape-corner-medium) 0 0;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border-start-start-radius: var(--md-sys-shape-corner-medium);
+    border-start-end-radius: var(--md-sys-shape-corner-medium);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
   }
 
   .footerContent {
-    gap: 0.75rem;
+    gap: clamp(0.5rem, 1vw, 0.75rem);
   }
 
   .copyright p {
@@ -130,17 +191,17 @@
   }
 
   .socialLinks {
-    gap: 0.75rem;
+    gap: clamp(0.5rem, 1vw, 0.75rem);
   }
 
   .socialLink {
-    width: 36px;
-    height: 36px;
+    inline-size: clamp(28px, 4.5vw, 36px);
+    block-size: clamp(28px, 4.5vw, 36px);
   }
 
   .socialLink svg {
-    width: 18px;
-    height: 18px;
+    inline-size: clamp(14px, 2.25vw, 18px);
+    block-size: clamp(14px, 2.25vw, 18px);
   }
 
   .additionalInfo p {
@@ -148,10 +209,70 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Fallback media query for older browsers */
+@media (width <= 768px) {
+  .footer {
+    padding: 1.5rem;
+    border-start-start-radius: var(--md-sys-shape-corner-medium);
+    border-start-end-radius: var(--md-sys-shape-corner-medium);
+  }
+
+  .footerContent {
+    gap: 0.75rem;
+  }
+
+  .socialLinks {
+    gap: 0.75rem;
+  }
+
+  .socialLink {
+    inline-size: 36px;
+    block-size: 36px;
+  }
+
+  .socialLink svg {
+    inline-size: 18px;
+    block-size: 18px;
+  }
+}
+
+/* Container-based extra small screens */
+@container footer (max-width: 480px) {
+  .footer {
+    padding: clamp(0.75rem, 2vw, 1rem);
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .footerContent {
+    gap: clamp(0.4rem, 0.75vw, 0.5rem);
+  }
+
+  .socialLinks {
+    gap: clamp(0.4rem, 0.75vw, 0.5rem);
+  }
+
+  .socialLink {
+    inline-size: clamp(24px, 4vw, 32px);
+    block-size: clamp(24px, 4vw, 32px);
+  }
+
+  .socialLink svg {
+    inline-size: clamp(12px, 2vw, 16px);
+    block-size: clamp(12px, 2vw, 16px);
+  }
+}
+
+/* Fallback media query for extra small screens */
+@media (width <= 480px) {
   .footer {
     padding: 1rem;
-    border-radius: 0;
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
   }
 
   .footerContent {
@@ -163,51 +284,119 @@
   }
 
   .socialLink {
-    width: 32px;
-    height: 32px;
+    inline-size: 32px;
+    block-size: 32px;
   }
 
   .socialLink svg {
-    width: 16px;
-    height: 16px;
+    inline-size: 16px;
+    block-size: 16px;
   }
 }
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .footer {
-    background: var(--md-surface-container-low);
-    backdrop-filter: blur(20px) saturate(1.2);
-    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-low) 85%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.2);
     box-shadow: var(--md-sys-elevation-level1);
   }
 
   .footer:hover {
-    background: var(--md-surface-container);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline) 80%, transparent);
+    background: color-mix(in srgb, var(--md-surface-container) 90%, transparent);
+    backdrop-filter: blur(clamp(22px, 3vw, 24px)) saturate(1.4);
     box-shadow: var(--md-sys-elevation-level2);
   }
 
   .socialLink {
-    background: var(--md-surface-container-low);
-    border: 1px solid var(--md-outline-variant);
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-low) 80%,
+      transparent
+    );
+    box-shadow: inset 0 1px 0
+      color-mix(in srgb, var(--md-primary) 10%, transparent);
   }
 
   .socialLink:hover {
-    background: var(--md-surface-container);
-    box-shadow: var(--md-sys-elevation-level1);
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline) 80%, transparent);
+    background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
+    box-shadow:
+      var(--md-sys-elevation-level1),
+      inset 0 1px 0 color-mix(in srgb, var(--md-primary) 20%, transparent),
+      0 0 clamp(6px, 1vw, 10px)
+      color-mix(in srgb, var(--md-primary) 10%, transparent);
   }
+
+  /* Enhanced dark mode copyright text */
+  .copyright p {
+    color: color-mix(in srgb, var(--md-on-surface-variant) 90%, transparent);
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--md-shadow) 20%, transparent);
+  }
+
+  .additionalInfo p {
+    color: color-mix(in srgb, var(--md-on-surface-variant) 85%, transparent);
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--md-shadow) 15%, transparent);
+  }
+}
+
+/* Manual dark theme selector as fallback */
+[data-theme="dark"] .footer,
+.dark .footer {
+  border: clamp(1px, 0.1vw, 2px) solid
+    color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-low) 85%,
+    transparent
+  );
+  backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.2);
+}
+
+[data-theme="dark"] .footer:hover,
+.dark .footer:hover {
+  border: clamp(1px, 0.1vw, 2px) solid
+    color-mix(in srgb, var(--md-outline) 80%, transparent);
+  background: color-mix(in srgb, var(--md-surface-container) 90%, transparent);
+  backdrop-filter: blur(clamp(22px, 3vw, 24px)) saturate(1.4);
+}
+
+[data-theme="dark"] .socialLink,
+.dark .socialLink {
+  border: clamp(1px, 0.1vw, 2px) solid
+    color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-low) 80%,
+    transparent
+  );
+}
+
+[data-theme="dark"] .socialLink:hover,
+.dark .socialLink:hover {
+  border: clamp(1px, 0.1vw, 2px) solid
+    color-mix(in srgb, var(--md-outline) 80%, transparent);
+  background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
 }
 
 /* Print styles */
 @media print {
   .footer {
+    border: 1px solid var(--md-outline-variant);
     background: transparent;
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     box-shadow: none;
-    border: 1px solid var(--md-outline-variant);
   }
 
   .socialLinks {

@@ -1,124 +1,273 @@
-/* M3 + Morphic Glass Navigation - converted from SCSS */
+/* 导航栏样式 */
+
+/* 暗色模式 */
+@media (prefers-color-scheme: dark) {
+  .nav {
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-low) 80%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(14px, 2vw, 16px)) saturate(1.6);
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .nav:hover {
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline) 80%, transparent);
+    background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
+    backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  .ceilNav {
+    border-block-end: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-high) 90%,
+      transparent
+    );
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .logoIcon {
+    background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
+    box-shadow: inset 0 1px 0
+      color-mix(in srgb, var(--md-primary) 20%, transparent);
+  }
+
+  .logoContainer .logoIcon {
+    background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
+    box-shadow: inset 0 1px 0
+      color-mix(in srgb, var(--md-primary) 20%, transparent);
+  }
+
+  .logoLink:hover .logoIcon {
+    background: color-mix(in srgb, var(--md-surface-variant) 85%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--md-primary) 30%, transparent),
+      0 0 clamp(8px, 1vw, 12px)
+      color-mix(in srgb, var(--md-primary) 15%, transparent);
+  }
+
+  .navLink:hover {
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-high) 75%,
+      transparent
+    );
+    box-shadow: inset 0 1px 0
+      color-mix(in srgb, var(--md-primary) 20%, transparent);
+  }
+
+  .navLink.current {
+    background: color-mix(in srgb, var(--md-primary-container) 80%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--md-primary) 25%, transparent),
+      0 0 clamp(6px, 0.8vw, 10px)
+      color-mix(in srgb, var(--md-primary) 10%, transparent);
+  }
+}
 
 .nav {
+  will-change: transform, background-color, box-shadow;
+
   position: fixed;
-  height: 80px;
-  display: flex;
-  width: 95%;
-  left: 2.5%;
-  top: 2.5%;
-  padding: 0 2rem;
-  transition:
-    top 1s ease,
-    left 1s ease,
-    right 1s ease,
-    width 1s ease,
-    border-radius 1s ease,
-    background-color 1s ease,
-    box-shadow 1s ease,
-    transform 0.3s ease;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: var(--md-sys-shape-corner-extra-large);
   z-index: 9999;
+  inset-block-start: clamp(8px, 2.5%, 16px);
+  inset-inline-start: clamp(1%, 2.5%, 5%);
 
-  /* M3 + Morphic Glass Effect */
-  background: var(--md-surface-container);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  border: 1px solid var(--md-outline-variant);
+  container-name: navigation;
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  inline-size: clamp(90%, 95%, 98%);
+  block-size: clamp(56px, 5vw, 80px);
+  padding-inline: clamp(0.75rem, 2vw, 2rem);
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+
+  /* Glass效果 */
+  background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
+  backdrop-filter: blur(clamp(16px, 2vw, 20px)) saturate(1.6);
   box-shadow: var(--md-sys-elevation-level2);
+
+  transition:
+    inset-block-start 1s cubic-bezier(0.4, 0, 0.2, 1),
+    inset-inline-start 1s cubic-bezier(0.4, 0, 0.2, 1),
+    inset-inline-end 1s cubic-bezier(0.4, 0, 0.2, 1),
+    inline-size 1s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 1s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 1s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 1s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 悬停状态 */
+  &:hover {
+    transform: scale(1.005);
+
+    border: clamp(1px, 0.1vw, 2px) solid var(--md-outline);
+
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-high) 90%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(20px, 2.5vw, 24px)) saturate(1.6);
+    box-shadow: var(--md-sys-elevation-level3);
+  }
+
+  /* 触摸设备交互 */
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.995);
+      background: color-mix(
+        in srgb,
+        var(--md-surface-container-high) 90%,
+        transparent
+      );
+    }
+  }
 }
 
-/* Enhanced hover state */
-.nav:hover {
-  background: var(--md-surface-container-high);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  border: 1px solid var(--md-outline);
-  box-shadow: var(--md-sys-elevation-level3);
+/* 手动暗色主题 */
+[data-theme="dark"] .nav,
+.dark .nav {
+  border: clamp(1px, 0.1vw, 2px) solid
+    color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-low) 80%,
+    transparent
+  );
+  backdrop-filter: blur(clamp(14px, 2vw, 16px)) saturate(1.6);
+  box-shadow: var(--md-sys-elevation-level1);
+
+  &:hover {
+    border: clamp(1px, 0.1vw, 2px) solid
+      color-mix(in srgb, var(--md-outline) 80%, transparent);
+    background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
+    backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  &:has(.navLink:hover) {
+    backdrop-filter: blur(clamp(22px, 3vw, 26px)) saturate(1.8);
+  }
+
+  &:has(.navLink.current) {
+    box-shadow: var(--md-sys-elevation-level3);
+  }
 }
 
-/* Sticky navigation state */
+/* 固定导航状态 */
 .ceilNav {
-  top: 0;
-  left: 0;
-  width: 100vw;
-  border-radius: 0;
-  background: var(--md-surface-container);
+  inset-block-start: 0;
+  inset-inline-start: 0;
+
+  inline-size: 100vi;
   border: none;
-  border-bottom: 1px solid var(--md-outline-variant);
+  border-block-end: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
+  border-radius: 0;
+
+  background: color-mix(in srgb, var(--md-surface-container) 95%, transparent);
   box-shadow: var(--md-sys-elevation-level3);
 }
 
-/* Hidden navigation state */
+/* 隐藏导航状态 */
 .hidden {
   transform: translateY(-100%);
   transition: transform var(--md-sys-motion-duration-medium2)
     var(--md-sys-motion-easing-emphasized);
 }
 
-/* Logo Section */
+/* Logo区域 */
 .navLogo {
   display: flex;
-  align-items: center;
   flex-shrink: 0;
+  align-items: center;
+}
+
+/* Logo图标 */
+.logoIcon {
+  will-change: transform, background-color;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  aspect-ratio: 1;
+  inline-size: clamp(32px, 5vw, 40px);
+  block-size: clamp(32px, 5vw, 40px);
+  border-radius: var(--md-sys-shape-corner-medium);
+
+  color: var(--md-primary);
+
+  background: color-mix(in srgb, var(--md-surface-dim) 90%, transparent);
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logoLink {
-  text-decoration: none;
+  will-change: transform;
   color: inherit;
-  transition: transform 0.2s ease;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logoLink:hover {
-  transform: scale(1.02);
+  transform: scale(clamp(1.01, 1.02, 1.03));
+}
+
+[data-theme="dark"] .logoIcon,
+.dark .logoIcon {
+  background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--md-primary) 20%, transparent);
+}
+
+.logoLink:hover .logoIcon {
+  transform: rotate(clamp(3deg, 5deg, 7deg)) scale(1.05);
+  background: color-mix(in srgb, var(--md-surface-variant) 95%, transparent);
 }
 
 .logoContainer {
   display: flex;
+  gap: clamp(8px, 1.5vw, 12px);
   align-items: center;
-  gap: 12px;
-}
-
-.logoIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--md-sys-shape-corner-medium);
-  background: var(--md-surface-dim);
-  color: var(--md-primary);
-  transition: all 0.3s ease;
-}
-
-.logoLink:hover .logoIcon {
-  background: var(--md-surface-variant);
-  transform: rotate(5deg);
 }
 
 .logoText {
-  font-size: var(--md-sys-typescale-title-large);
+  font-size: var(--md-sys-typescale-title-medium);
   font-weight: 600;
   color: var(--md-on-surface);
-  letter-spacing: -0.5px;
+  text-wrap: nowrap;
+  letter-spacing: clamp(-0.75px, -0.5px, -0.25px);
 }
 
 /* Navigation Menu */
 .navMenu {
+  container-name: nav-menu;
+  container-type: inline-size;
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  flex: 1;
 }
 
 .navList {
   display: flex;
+  gap: clamp(4px, 1vw, 8px);
   align-items: center;
-  gap: 8px;
+
   margin: 0;
   padding: 0;
+
   list-style: none;
 }
 
@@ -127,49 +276,150 @@
 }
 
 .navLink {
+  will-change: transform, background-color, color;
+
   position: relative;
+
+  overflow: hidden;
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+
+  padding-block: clamp(8px, 1.5vw, 12px);
+  padding-inline: clamp(12px, 2.5vw, 20px);
   border-radius: var(--md-sys-shape-corner-large);
-  text-decoration: none;
-  font-size: var(--md-sys-typescale-label-large);
+
   font-weight: 500;
   color: var(--md-on-surface);
+  text-decoration: none;
+  text-wrap: nowrap;
+
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-  overflow: hidden;
 }
 
 .navLink::before {
   content: "";
+
   position: absolute;
   inset: 0;
-  background: transparent;
+
   border-radius: inherit;
-  transition: background-color 0.3s ease;
+
+  background: transparent;
+
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navLink:hover {
+  transform: translateY(clamp(-1px, -0.5px, 0px)) scale(1.02);
   color: var(--md-primary);
-  background: var(--md-surface-container-high);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 85%,
+    transparent
+  );
+}
+
+/* Navigation Link Indicator */
+.navLinkIndicator {
+  will-change: transform;
+
+  position: absolute;
+  inset-block-end: clamp(6px, 1vw, 8px);
+  inset-inline-start: 50%;
+  transform: translateX(-50%) scaleX(0);
+
+  overflow: hidden;
+
+  inline-size: calc(100% - clamp(16px, 3vw, 24px));
+  block-size: clamp(2px, 0.3vw, 3px);
+  border-radius: var(--md-sys-shape-corner-medium);
+
+  background: var(--md-primary);
+
+  transition: transform 0.3s var(--md-sys-motion-easing-emphasized);
+}
+
+.navLinkIndicator::before {
+  will-change: transform;
+  content: "";
+
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--md-tertiary) 80%, transparent),
+    color-mix(in srgb, var(--md-secondary) 80%, transparent)
+  );
+
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navLink:hover .navLinkIndicator {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.navLink:hover .navLinkIndicator::before {
+  transform: translateX(0);
 }
 
 .navLink:focus-visible {
-  outline: 2px solid var(--md-primary);
-  outline-offset: 2px;
   border-radius: var(--md-sys-shape-corner-large);
+  outline: clamp(2px, 0.2vw, 3px) solid var(--md-primary);
+  outline-offset: clamp(1px, 0.2vw, 2px);
+}
+
+/* Touch device interactions */
+@media (hover: none) and (pointer: coarse) {
+  .navLink:active {
+    transform: scale(0.98);
+    background: color-mix(
+      in srgb,
+      var(--md-surface-container-high) 85%,
+      transparent
+    );
+  }
 }
 
 /* Current page state */
 .navLink.current {
-  color: var(--md-on-primary-container);
-  background: var(--md-primary-container);
+  transform: scale(1.05);
   font-weight: 600;
+  color: var(--md-on-primary-container);
+  background: color-mix(in srgb, var(--md-primary-container) 90%, transparent);
 }
 
 .navLink.current::before {
-  background: var(--md-primary);
-  opacity: 0.1;
+  background: color-mix(in srgb, var(--md-primary) 10%, transparent);
+}
+
+.navLink.current .navLinkIndicator {
+  transform: translateX(-50%) scaleX(1);
+  background: color-mix(in srgb, var(--md-primary) 100%, transparent);
+}
+
+.navLink.current .navLinkIndicator::before {
+  transform: translateX(0);
+}
+
+/* 使用容器查询优化导航链接 */
+@container navigation (max-width: 600px) {
+  .navLink {
+    font-size: var(--md-sys-typescale-label-small);
+  }
+}
+
+@container navigation (min-width: 600px) and (max-width: 999px) {
+  .navLink {
+    font-size: var(--md-sys-typescale-label-medium);
+  }
+}
+
+@container navigation (min-width: 1000px) {
+  .navLink {
+    font-size: var(--md-sys-typescale-label-large);
+  }
 }
 
 /* Navigation Link Text */
@@ -178,164 +428,204 @@
   z-index: 1;
 }
 
-/* Navigation Link Indicator */
-.navLinkIndicator {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  height: 3px;
-  width: calc(100% - 24px);
-  background: var(--md-primary);
-  border-radius: var(--md-sys-shape-corner-medium);
-  transition: transform 0.3s var(--md-sys-motion-easing-emphasized);
-  overflow: hidden;
-}
-
-.navLink.current .navLinkIndicator {
-  transform: translateX(-50%) scaleX(1);
-  background: var(--md-primary);
-}
-
-.navLink:hover .navLinkIndicator {
-  transform: translateX(-50%) scaleX(1);
-}
-
-/* 指示器渐变动画层 */
-.navLinkIndicator::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, var(--md-tertiary), var(--md-secondary));
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.navLink.current .navLinkIndicator::before {
-  transform: translateX(0);
-}
-
-.navLink:hover .navLinkIndicator::before {
-  transform: translateX(0);
-}
-
 /* 关键帧动画 */
-@keyframes gradientShift {
+@keyframes gradient-shift {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
 
-@keyframes pulseGlow {
+@keyframes pulse-glow {
   0%,
   100% {
     box-shadow: var(--md-sys-elevation-level1);
   }
+
   50% {
     box-shadow: var(--md-sys-elevation-level2);
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+@keyframes slide-in {
+  from {
+    transform: translateY(clamp(-8px, -1vw, -4px)) scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Container-based responsive adjustments */
+@container navigation (max-width: 768px) {
   .nav {
-    width: calc(100% - 16px);
-    left: 8px;
-    right: 8px;
-    top: 8px;
-    padding: 0 1rem;
-    height: 64px;
+    inset-block-start: clamp(6px, 1vw, 8px);
+    inset-inline: clamp(6px, 1vw, 8px);
+
+    inline-size: calc(100% - clamp(12px, 2vw, 16px));
+    block-size: clamp(56px, 8vw, 64px);
+    padding-inline: clamp(0.75rem, 1.5vw, 1rem);
   }
 
-  .ceilNav {
-    width: 100%;
-    left: 0;
-    right: 0;
-    top: 0;
+  .nav.ceilNav {
+    inset-block-start: 0;
+    inset-inline: 0;
+    inline-size: 100%;
   }
 
-  /* Logo adjustments */
+  .nav .logoContainer {
+    gap: clamp(6px, 1vw, 8px);
+  }
+
+  .nav .logoIcon {
+    inline-size: clamp(28px, 4.5vw, 36px);
+    block-size: clamp(28px, 4.5vw, 36px);
+  }
+
+  .nav .logoText {
+    font-size: var(--md-sys-typescale-title-small);
+  }
+
+  .nav .navList {
+    gap: clamp(2px, 0.5vw, 4px);
+  }
+
+  .nav .navLink {
+    padding-block: clamp(6px, 1vw, 8px);
+    padding-inline: clamp(8px, 1.5vw, 12px);
+  }
+
+  /* Show only icons on mobile - add icons to nav items */
+  .nav .navLink::after {
+    content: attr(data-icon);
+    font-size: clamp(18px, 2.5vw, 20px);
+  }
+
+  .nav .navLinkText {
+    display: none;
+  }
+}
+
+/* Fallback media query for older browsers */
+@media (width <= 768px) {
+  .nav {
+    inset-block-start: 8px;
+    inset-inline: 8px;
+
+    inline-size: calc(100% - 16px);
+    block-size: 64px;
+    padding-inline: 1rem;
+  }
+
+  .logoIcon {
+    inline-size: 36px;
+    block-size: 36px;
+  }
+
   .logoContainer {
     gap: 8px;
   }
 
-  .logoIcon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .logoText {
-    font-size: var(--md-sys-typescale-title-medium);
-  }
-
-  /* Navigation menu adjustments */
   .navList {
     gap: 4px;
   }
 
   .navLink {
-    padding: 8px 12px;
-    font-size: var(--md-sys-typescale-label-medium);
-  }
-
-  /* Show only icons on mobile - add icons to nav items */
-  .navLink::after {
-    content: attr(data-icon);
-    font-size: 20px;
-  }
-
-  .navLinkText {
-    display: none;
+    padding-block: 8px;
+    padding-inline: 12px;
   }
 }
 
-/* Extra small screens */
-@media (max-width: 480px) {
+/* Container-based extra small screens */
+@container navigation (max-width: 480px) {
   .nav {
-    padding: 0 0.75rem;
-    height: 56px;
+    block-size: clamp(48px, 7vw, 56px);
+    padding-inline: clamp(0.5rem, 1vw, 0.75rem);
+  }
+
+  .nav .logoText {
+    display: none;
+  }
+
+  .nav .navLink {
+    padding-inline: clamp(6px, 1vw, 8px);
+  }
+}
+
+/* Fallback for extra small screens */
+@media (width <= 480px) {
+  .nav {
+    block-size: 56px;
+    padding-inline: 0.75rem;
   }
 
   .logoText {
     display: none;
   }
 
-  .navList {
-    gap: 2px;
-  }
-
   .navLink {
-    padding: 6px 8px;
+    padding-inline: 8px;
   }
 }
 
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-  .nav {
-    background: var(--md-surface-container-low);
-    backdrop-filter: blur(16px) saturate(1.6);
-    -webkit-backdrop-filter: blur(16px) saturate(1.6);
-    border: 1px solid var(--md-outline-variant);
-    box-shadow: var(--md-sys-elevation-level1);
-  }
+/* Additional dark mode styles moved to top media query */
 
-  .nav:hover {
-    background: var(--md-surface-container);
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
-    border: 1px solid var(--md-outline);
-    box-shadow: var(--md-sys-elevation-level2);
-  }
+/* Manual dark theme selector as fallback - moved to top */
 
-  .ceilNav {
-    background: var(--md-surface-container-high);
-    border-bottom: 1px solid var(--md-outline-variant);
-    box-shadow: var(--md-sys-elevation-level1);
-  }
+[data-theme="dark"] .ceilNav,
+.dark .ceilNav {
+  border-block-end: clamp(1px, 0.1vw, 2px) solid
+    color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 90%,
+    transparent
+  );
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+[data-theme="dark"] .logoContainer .logoIcon,
+.dark .logoContainer .logoIcon {
+  background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--md-primary) 20%, transparent);
+}
+
+[data-theme="dark"] .logoLink:hover .logoIcon,
+.dark .logoLink:hover .logoIcon {
+  background: color-mix(in srgb, var(--md-surface-variant) 85%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--md-primary) 30%, transparent),
+    0 0 clamp(8px, 1vw, 12px)
+    color-mix(in srgb, var(--md-primary) 15%, transparent);
+}
+
+[data-theme="dark"] .navLink:hover,
+.dark .navLink:hover {
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 75%,
+    transparent
+  );
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--md-primary) 20%, transparent);
+}
+
+[data-theme="dark"] .navLink.current,
+.dark .navLink.current {
+  background: color-mix(in srgb, var(--md-primary-container) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--md-primary) 25%, transparent),
+    0 0 clamp(6px, 0.8vw, 10px)
+    color-mix(in srgb, var(--md-primary) 10%, transparent);
 }

@@ -2,28 +2,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   min-height: 100vh;
   padding: 2rem;
-  background: var(--md-surface);
+
   color: var(--md-on-surface);
+
+  background: var(--md-surface);
 }
 
 .errorContainer {
   max-width: 600px;
-  text-align: center;
   padding: 3rem 2rem;
   border: 1px solid var(--md-outline-variant);
   border-radius: var(--md-sys-shape-corner-large);
-  background: var(--md-surface-container-high);
+
   color: var(--md-on-surface-container-high);
+  text-align: center;
+
+  background: var(--md-surface-container-high);
   box-shadow: var(--md-sys-elevation-level1);
+
   transition: all var(--md-sys-motion-duration-medium2)
     var(--md-sys-motion-easing-standard);
 }
 
 .errorContainer:hover {
-  border-color: var(--md-outline);
   transform: translateY(-2px);
+  border-color: var(--md-outline);
   box-shadow: var(--md-sys-elevation-level2);
 }
 
@@ -35,37 +41,43 @@
 .errorIcon svg {
   width: 64px;
   height: 64px;
-  stroke-width: 1.5;
   filter: drop-shadow(0 2px 8px var(--md-surface-dim));
+  stroke-width: 1.5;
 }
 
 .errorTitle {
+  margin-bottom: 1rem;
   font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 1rem;
   color: var(--md-error);
 }
 
 .errorMessage {
-  font-size: 1.125rem;
-  line-height: 1.6;
   margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .errorDetails {
+  overflow: hidden;
+
   margin: 2rem 0;
-  text-align: left;
   border: 1px solid var(--md-outline-variant);
   border-radius: var(--md-sys-shape-corner-medium);
-  overflow: hidden;
+
+  text-align: left;
 }
 
 .errorDetails summary {
   cursor: pointer;
+
   padding: 1rem;
-  background: var(--md-surface-container);
-  color: var(--md-on-surface-container);
+
   font-weight: 500;
+  color: var(--md-on-surface-container);
+
+  background: var(--md-surface-container);
+
   transition: all var(--md-sys-motion-duration-short4)
     var(--md-sys-motion-easing-standard);
 }
@@ -76,14 +88,15 @@
 
 .errorInfo {
   padding: 1rem;
-  background: var(--md-surface-container-low);
   color: var(--md-on-surface-container-low);
+  background: var(--md-surface-container-low);
 }
 
 .errorInfo h3 {
-  font-size: 0.875rem;
+  margin: 1rem 0 0.5rem;
+
+  font-size: 0.9rem;
   font-weight: 600;
-  margin: 1rem 0 0.5rem 0;
   color: var(--md-on-surface-variant);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -94,36 +107,42 @@
 }
 
 .errorInfo pre {
-  background: var(--md-surface-container);
-  color: var(--md-on-surface-container);
-  padding: 1rem;
-  border-radius: var(--md-sys-shape-corner-small);
   overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.4;
-  margin: 0.5rem 0 1rem 0;
+
+  margin: 0.5rem 0 1rem;
+  padding: 1rem;
   border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sys-shape-corner-small);
+
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--md-on-surface-container);
+  overflow-wrap: break-word;
   white-space: pre-wrap;
-  word-break: break-word;
+
+  background: var(--md-surface-container);
 }
 
 .errorActions {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 .button {
+  cursor: pointer;
+
+  min-width: 120px;
   padding: 0.75rem 2rem;
   border: none;
   border-radius: var(--md-sys-shape-corner-small);
+
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
+
   transition: all var(--md-sys-motion-duration-short4)
     var(--md-sys-motion-easing-standard);
-  min-width: 120px;
 }
 
 .button:active {
@@ -131,15 +150,15 @@
 }
 
 .primaryButton {
-  background: var(--md-primary);
   color: var(--md-on-primary);
+  background: var(--md-primary);
 }
 
 .primaryButton:hover {
-  background: var(--md-primary);
   transform: translateY(-1px);
-  box-shadow: var(--md-sys-elevation-level2);
+  background: var(--md-primary);
   filter: brightness(1.1);
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .primaryButton:focus {
@@ -149,21 +168,21 @@
 }
 
 .primaryButton:active {
-  background: var(--md-primary);
   transform: translateY(0);
+  background: var(--md-primary);
   filter: brightness(0.9);
 }
 
 .secondaryButton {
-  background: transparent;
-  color: var(--md-on-surface);
   border: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface);
+  background: transparent;
 }
 
 .secondaryButton:hover {
-  background: var(--md-surface-container-high);
-  border-color: var(--md-outline);
   transform: translateY(-1px);
+  border-color: var(--md-outline);
+  background: var(--md-surface-container-high);
 }
 
 .secondaryButton:focus {
@@ -173,6 +192,6 @@
 }
 
 .secondaryButton:active {
-  background: var(--md-surface-container-low);
   transform: translateY(0);
+  background: var(--md-surface-container-low);
 }

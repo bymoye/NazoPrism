@@ -1,69 +1,201 @@
+/* ===== 基础选择器部分 - 特异性 (0, 1, 0) ===== */
+
+/* 头像样式 */
+.avatar {
+  will-change: transform;
+
+  transform: rotate(0deg);
+
+  aspect-ratio: 1;
+  inline-size: clamp(6rem, 15vw, 8.1rem);
+  block-size: clamp(6rem, 15vw, 8.1rem);
+  padding: clamp(0.25rem, 0.5vw, 0.4rem);
+  border: clamp(1px, 0.2vw, 2px) solid var(--md-primary-container);
+  border-radius: var(--md-sys-shape-corner-full);
+
+  opacity: 1;
+  box-shadow: var(--md-sys-elevation-level2);
+
+  transition:
+    transform var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-spring),
+    box-shadow var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
+
+  /* 悬停效果 */
+  &:hover {
+    transform: rotate(360deg) scale(1.05);
+    border-color: var(--md-primary);
+    box-shadow: var(--md-sys-elevation-colored-2);
+  }
+
+  /* 触摸设备交互 */
+  @media (hover: none) {
+    &:active {
+      transform: rotate(180deg) scale(0.95);
+      box-shadow: var(--md-sys-elevation-level1);
+    }
+  }
+}
+
+/* 焦点信息文本 */
+.focusInfoText {
+  will-change: transform;
+
+  box-sizing: border-box;
+  margin-block-start: clamp(1rem, 3vw, 1.5rem);
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+
+  font-size: var(--md-sys-typescale-body-medium);
+  font-weight: 500;
+  line-height: var(--md-sys-typescale-line-height-relaxed);
+  color: var(--md-on-surface-container-highest);
+  letter-spacing: 0.025em;
+
+  background: color-mix(
+    in oklch,
+    var(--md-surface-container-highest) 90%,
+    transparent
+  );
+  backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem)) saturate(1.8);
+
+  transition:
+    background-color var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
+
+  /* 悬停效果 */
+  &:hover {
+    transform: translateY(clamp(-0.12rem, -0.5vw, -0.25rem));
+    border-color: var(--md-outline);
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container-highest) 95%,
+      var(--md-primary) 5%
+    );
+    box-shadow: var(--md-sys-elevation-colored-1);
+  }
+
+  /* 触摸设备交互 */
+  @media (hover: none) {
+    &:active {
+      transform: scale(0.98);
+      background: color-mix(
+        in oklch,
+        var(--md-surface-container-highest) 85%,
+        var(--md-primary) 10%
+      );
+    }
+  }
+}
+
+/* ===== 特异性更高的选择器部分 ===== */
+
+/* 网站封面容器 */
 .siteCover {
+  z-index: -1;
+
+  container-name: site-cover;
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  block-size: 100dvh;
   margin: 0;
   padding: 0;
-  z-index: -1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+
+  /* 交互增强 */
+  &:has(.avatar:hover) {
+    .focusInfoText {
+      transform: translateY(clamp(-0.06rem, -0.25vw, -0.12rem));
+      background: color-mix(
+        in oklch,
+        var(--md-surface-container-highest) 95%,
+        var(--md-secondary) 5%
+      );
+    }
+  }
+
+  &:has(.focusInfoText:hover) {
+    .avatar {
+      transform: rotate(clamp(15deg, 30deg, 45deg)) scale(1.02);
+      box-shadow: var(--md-sys-elevation-level3);
+    }
+  }
 }
 
+/* 焦点信息容器 */
 .focusInfo {
-  padding: 0 10px;
-  min-width: 200px;
-  width: 800px;
-  text-align: center;
   z-index: 99;
-  transition: all ease 0.4s;
+
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  align-items: center;
+  justify-content: center;
+
+  inline-size: clamp(20rem, 80vw, 50rem); /* 响应式宽度 */
+  min-inline-size: clamp(12.5rem, 30vw, 25rem); /* 响应式最小宽度 */
+  margin-inline: auto; /* 确保水平居中 */
+  padding-inline: clamp(0.6rem, 2vw, 1.25rem); /* 响应式内边距 */
+
+  text-align: center;
+
+  transition: all var(--md-sys-motion-easing-emphasized)
+    var(--md-sys-motion-duration-medium2);
 }
 
-.avatar {
-  box-shadow: var(--md-sys-elevation-level2);
-  padding: 5px;
-  opacity: 1;
-  width: 130px;
-  height: 130px;
-  border-radius: var(--md-sys-shape-corner-full);
-  border: 2px solid var(--md-primary-container);
-  transform: rotate(0);
-  transition: all var(--md-sys-motion-duration-theme)
-    var(--md-sys-motion-easing-emphasized);
+/* 使用容器查询优化头像大小 */
+@container site-cover (max-width: 30rem) {
+  .avatar {
+    inline-size: clamp(4rem, 20vw, 6rem);
+    block-size: clamp(4rem, 20vw, 6rem);
+  }
 }
 
-.avatar:hover {
-  transform: rotate(360deg);
-  box-shadow: var(--md-sys-elevation-level3);
-  border-color: var(--md-primary);
+/* 使用容器查询优化文本显示 */
+@container site-cover (max-width: 30rem) {
+  .focusInfoText {
+    inline-size: 90%;
+    margin-inline: auto; /* 确保水平居中 */
+    text-align: center; /* 移动端保持居中对齐 */
+    white-space: normal;
+  }
 }
 
-.focusInfoText {
-  width: 63%;
-  margin: auto;
-  font-size: var(--md-sys-typescale-body-large);
-  color: var(--md-on-surface-container-highest);
-  background: var(--md-surface-container-highest);
-  backdrop-filter: blur(16px) saturate(1.8);
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  border: 1px solid var(--md-outline-variant);
-  padding: 24px;
-  margin-top: 24px;
-  letter-spacing: 0.025em;
-  line-height: 1.6;
-  border-radius: var(--md-sys-shape-corner-large);
-  box-sizing: border-box;
-  white-space: nowrap;
-  transition: all var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
-  font-weight: 500;
+@container site-cover (min-width: 30.1rem) and (max-width: 48rem) {
+  .focusInfoText {
+    inline-size: clamp(70%, 75vw, 85%);
+    margin-inline: auto; /* 确保水平居中 */
+    text-align: center; /* 平板端居中对齐 */
+    white-space: normal; /* 小容器允许换行 */
+  }
 }
 
-.focusInfoText:hover {
-  background: var(--md-surface-container-highest);
-  border-color: var(--md-outline);
-  transform: translateY(-2px);
-  box-shadow: var(--md-sys-elevation-level3);
+@container site-cover (min-width: 48.1rem) {
+  .focusInfoText {
+    inline-size: clamp(60%, 70vw, 80%);
+    margin-inline: auto; /* 确保水平居中 */
+    text-align: center; /* 大容器居中对齐 */
+    white-space: nowrap; /* 大容器保持单行 */
+  }
+}
+
+/* 容器查询优化 */
+@container site-cover (max-width: 48rem) {
+  .focusInfo {
+    align-items: center; /* 小容器居中对齐 */
+    justify-content: center; /* 确保内容水平居中 */
+  }
 }

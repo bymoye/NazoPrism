@@ -1,381 +1,834 @@
-/* Enhanced M3 + Morphic Glass Article Card - converted from SCSS */
+/* 文章卡片 */
 
 .postListThumb {
+  will-change: transform, opacity;
+
   position: relative;
+  transform: translateY(clamp(2rem, 8vw, 3.75rem)); /* 响应式初始位移 */
+
+  container-name: article-card;
+  container-type: inline-size; /* 启用容器查询 */
+  overflow: hidden;
   display: flex;
   align-items: stretch;
-  margin: 32px 0;
+
+  margin-block: clamp(1rem, 4vw, 2rem); /* 响应式外边距 */
+  margin-inline: 0;
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline);
   border-radius: var(--md-sys-shape-corner-extra-large);
-  overflow: hidden;
-  will-change: transform, opacity;
-  transform: translateY(60px);
+
   opacity: 0;
-  transition: all 0.6s var(--md-sys-motion-easing-emphasized);
 
-  /* Enhanced M3 + Morphic Glass Effect */
-  background: var(--md-surface-container-high);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  border: 1px solid var(--md-outline);
-  box-shadow: var(--md-sys-elevation-level3);
-}
-
-/* Subtle gradient overlay for depth */
-.postListThumb::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgb(from var(--md-surface) r g b / 0.02) 0%,
-    rgb(from var(--md-surface) r g b / 0.01) 50%,
-    rgb(from var(--md-surface) r g b / 0.02) 100%
+  /* Glass效果 */
+  background: color-mix(
+    in oklch,
+    var(--md-surface-container-high) 85%,
+    transparent
   );
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 1;
+  backdrop-filter: blur(clamp(1rem, 3vw, 1.25rem)) saturate(1.6);
+  box-shadow: var(--md-sys-elevation-level3);
+
+  transition:
+    transform var(--md-sys-motion-duration-long2)
+    var(--md-sys-motion-easing-emphasized),
+    opacity var(--md-sys-motion-duration-long1)
+    var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
+
+  /* 渐变叠加层 */
+  &::before {
+    pointer-events: none;
+    content: "";
+
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+
+    border-radius: inherit;
+
+    opacity: 0;
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--md-surface) 2%, transparent) 0%,
+      color-mix(in oklch, var(--md-surface) 1%, transparent) 50%,
+      color-mix(in oklch, var(--md-surface) 2%, transparent) 100%
+    );
+
+    transition: opacity var(--md-sys-motion-duration-medium1)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  /* 悬停效果 */
+  &:hover {
+    transform: translateY(clamp(-0.5rem, -2vw, -0.75rem))
+      scale(clamp(1.01, 1.02, 1.03));
+
+    border-color: color-mix(
+      in oklch,
+      var(--md-outline) 80%,
+      var(--md-primary) 20%
+    );
+
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container-highest) 90%,
+      var(--md-primary) 2%
+    );
+    backdrop-filter: blur(clamp(1.25rem, 4vw, 1.5rem)) saturate(2);
+    box-shadow: var(--md-sys-elevation-colored-2);
+
+    &::before {
+      opacity: 1;
+    }
+
+    /* 使用:has()选择器增强交互样式将在基础样式之后定义 */
+  }
+
+  /* 支持触摸设备的交互 */
+  @media (hover: none) {
+    &:active {
+      transform: scale(0.98);
+      background: color-mix(
+        in oklch,
+        var(--md-surface-container-high) 90%,
+        var(--md-primary) 5%
+      );
+    }
+  }
 }
 
-/* Enhanced hover effects */
-.postListThumb:hover {
-  transform: translateY(-12px) scale(1.02);
-  background: var(--md-surface-container-highest);
-  backdrop-filter: blur(24px) saturate(2);
-  -webkit-backdrop-filter: blur(24px) saturate(2);
-  box-shadow: var(--md-sys-elevation-level4);
-  border: 1px solid var(--md-outline);
-}
-
-.postListThumb:hover::before {
-  opacity: 1;
-}
-
-/* Show state */
+/* 显示状态 */
 .postListShow {
-  opacity: 1;
-  transform: translateY(0);
   will-change: auto;
+  transform: translateY(0);
+  opacity: 1;
 }
 
-/* Image container */
+/* 图片容器 */
 .postThumb {
   position: relative;
-  width: 55%;
+
+  container-name: post-thumb;
+  container-type: inline-size;
   flex-shrink: 0;
+
+  inline-size: clamp(45%, 55%, 60%); /* 响应式宽度 */
 }
 
 .imageA {
-  display: block;
-  width: 100%;
-  height: 320px;
   position: relative;
+
   overflow: hidden;
+  display: block;
+
+  inline-size: 100%;
+  block-size: clamp(12rem, 25vw, 20rem); /* 响应式高度 */
+  border-radius: var(--md-sys-shape-corner-medium) 0 0
+    var(--md-sys-shape-corner-medium);
+
   background-color: var(--md-surface-variant);
 }
 
+/* 图片样式 */
 .postThumbImg {
-  width: 100%;
-  height: 100%;
+  will-change: transform, filter;
+
+  inline-size: 100%;
+  block-size: 100%;
+
   object-fit: cover;
-  transition: all var(--md-sys-motion-duration-long2)
-    var(--md-sys-motion-easing-emphasized);
-  filter: saturate(0.8) brightness(0.95);
+  object-position: center;
+  filter: saturate(0.95) brightness(0.98) contrast(1.05);
+
+  transition:
+    transform var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-emphasized),
+    filter var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard);
 }
 
+/* 容器查询优化图片显示 */
+@container post-thumb (max-width: 200px) {
+  .postThumbImg {
+    object-position: center top;
+  }
+}
+
+@container post-thumb (min-width: 400px) {
+  .postThumbImg {
+    object-position: center center;
+    filter: saturate(1) brightness(1) contrast(1.02);
+  }
+}
+
+/* 悬停状态的图片样式 - 放在基础样式之后以保持正确的特异性顺序 */
 .postListThumb:hover .postThumbImg {
-  filter: saturate(1) brightness(1);
-  transform: scale(1.05);
+  transform: scale(clamp(1.03, 1.05, 1.08));
+  filter: saturate(1.1) brightness(1.05) contrast(1.1);
 }
 
-/* Content wrapper with enhanced readability */
+/* ===== 基础选择器部分 - 特异性 (0, 1, 0) ===== */
+
+/* 内容包装器 */
 .postContentWrap {
-  flex: 1;
-  padding: 32px 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   position: relative;
   z-index: 2;
-  background: var(--md-surface-container);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding-block: clamp(1.25rem, 4vw, 2rem);
+  padding-inline: clamp(1.25rem, 4vw, 2rem);
+
+  background: color-mix(
+    in oklch,
+    var(--md-surface-container-low) 95%,
+    transparent
+  );
+  backdrop-filter: blur(clamp(0.5rem, 1vw, 0.75rem));
+
+  transition:
+    background-color var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard),
+    backdrop-filter var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
+
+  /* 使用CSS嵌套语法 */
+  &::before {
+    pointer-events: none;
+    content: "";
+
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+
+    opacity: 0;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--md-surface) 1%, transparent) 0%,
+      transparent 50%,
+      color-mix(in oklch, var(--md-surface) 2%, transparent) 100%
+    );
+
+    transition: opacity var(--md-sys-motion-duration-medium1)
+      var(--md-sys-motion-easing-standard);
+  }
 }
 
-/* Enhanced Typography with better contrast */
+/* 交互样式 */
+.postListThumb:has(.postThumbImg:hover) {
+  .postContentWrap {
+    background: color-mix(in oklch, var(--md-surface-variant) 95%, transparent);
+  }
+}
+
+.postListThumb:has(.category:hover) {
+  .postContentWrap {
+    backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
+  }
+}
+
+/* 标题样式 */
 .title {
-  font-size: var(--md-sys-typescale-headline-medium);
-  line-height: 1.29;
-  font-weight: 600;
-  color: var(--md-on-surface);
-  margin-bottom: 12px;
+  overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0 1px 2px var(--md-surface-dim);
-  transition: color 0.3s ease;
-}
+  line-clamp: 2;
 
-.postListThumb:hover .title {
-  color: var(--md-primary);
-}
+  margin-block-end: clamp(0.5rem, 2vw, 0.75rem);
 
-.time {
-  font-size: var(--md-sys-typescale-label-medium);
-  line-height: 1.33;
-  letter-spacing: 0.5px;
-  color: var(--md-on-surface-variant);
-  margin-bottom: 16px;
-  font-weight: 500;
-  text-shadow: 0 1px 2px var(--md-surface-dim);
-}
-
-.content {
-  font-size: var(--md-sys-typescale-body-large);
-  line-height: 1.6;
-  letter-spacing: 0.25px;
+  font-size: var(--md-sys-typescale-headline-small);
+  font-weight: 600;
+  line-height: var(--md-sys-typescale-line-height-tight);
   color: var(--md-on-surface);
-  margin-bottom: 20px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  text-decoration: none;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 2px var(--md-surface-dim);
+  text-shadow: 0 1px 3px
+    color-mix(in oklch, var(--md-surface-dim) 25%, transparent);
+  text-wrap: balance;
+
+  transition:
+    color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-emphasized),
+    text-shadow var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard);
+
+  /* 使用CSS嵌套语法 */
+  &:hover {
+    color: color-mix(in oklch, var(--md-primary) 85%, var(--md-on-surface) 15%);
+    text-shadow: 0 2px 4px
+      color-mix(in oklch, var(--md-primary) 20%, transparent);
+  }
 }
 
+/* 分类标签 */
 .category {
+  will-change: transform;
+
   position: relative;
+
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding: 0 20px;
+
+  block-size: clamp(1.5rem, 3vw, 1.75rem);
+  margin-block-end: clamp(0.75rem, 2vw, 1rem);
+  padding-inline: clamp(0.6rem, 1.5vw, 0.9rem);
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+
   font-size: var(--md-sys-typescale-label-small);
   font-weight: 600;
-  letter-spacing: 0.5px;
   color: var(--md-on-secondary-container);
-  background: var(--md-secondary-container);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--md-sys-shape-corner-large);
-  margin-bottom: 16px;
-  width: fit-content;
-  box-shadow: var(--md-sys-elevation-level1);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    background-color 0.3s ease;
-  text-shadow: 0 1px 2px var(--md-surface-dim);
-  overflow: hidden;
-}
-
-.postListThumb:hover .category {
-  transform: translateY(-1px);
-  box-shadow: var(--md-sys-elevation-level2);
-  background: rgb(from var(--md-surface-container) r g b / 0.9);
-}
-
-.postListThumb:hover .category::before {
-  opacity: 1;
-}
-
-.category:hover {
-  background: var(--md-secondary);
-  color: var(--md-on-secondary);
-  border-color: var(--md-secondary);
-}
-
-.category > * {
-  position: relative;
-  z-index: 1;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 12px;
-  font-size: var(--md-sys-typescale-label-small);
-  font-weight: 500;
-  color: var(--md-on-tertiary-container);
-  background: var(--md-tertiary-container);
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--md-sys-shape-corner-medium);
-  transition: all 0.3s ease;
-}
-
-.tag:hover {
-  background: var(--md-tertiary);
-  color: var(--md-on-tertiary);
-  border-color: var(--md-tertiary);
-  transform: translateY(-1px);
-}
-
-.url {
-  font-size: var(--md-sys-typescale-label-medium);
-  color: var(--md-primary);
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  padding: 8px 0;
-  border-radius: var(--md-sys-shape-corner-small);
-  transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-  text-shadow: 0 1px 2px var(--md-surface-dim);
-}
 
-.url:hover {
-  color: var(--md-tertiary);
-  transform: translateX(4px);
-}
+  background: color-mix(
+    in oklch,
+    var(--md-secondary-container) 90%,
+    transparent
+  );
+  box-shadow: var(--md-sys-elevation-level1);
 
-.url::after {
-  content: "→";
-  font-size: 14px;
-  transition: transform 0.3s ease;
-}
+  transition:
+    transform var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard);
 
-.url:hover::after {
-  transform: translateX(2px);
-}
+  /* 使用CSS嵌套语法 */
+  &::before {
+    content: "";
 
-/* Enhanced Responsive design */
-@media (max-width: 768px) {
-  .postListThumb {
-    flex-direction: column;
-    margin: 24px 0;
-    border-radius: var(--md-sys-shape-corner-large);
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+
+    opacity: 0;
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--md-secondary) 10%, transparent) 0%,
+      transparent 50%,
+      color-mix(in oklch, var(--md-secondary) 5%, transparent) 100%
+    );
+
+    transition: opacity var(--md-sys-motion-duration-medium1)
+      var(--md-sys-motion-easing-standard);
   }
 
-  .postThumb {
-    width: 100%;
-    height: 220px;
-  }
+  &:hover {
+    transform: translateY(clamp(-0.06rem, -0.2vw, -0.12rem)) scale(1.02);
 
-  .imageA {
-    height: 100%;
-  }
+    border-color: var(--md-secondary);
 
-  .postContentWrap {
-    padding: 24px;
-    background: var(--md-surface-container-high);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
+    color: var(--md-on-secondary);
 
+    background: color-mix(
+      in oklch,
+      var(--md-secondary) 85%,
+      var(--md-primary) 15%
+    );
+    box-shadow: var(--md-sys-elevation-level2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+/* ===== 特异性更高的选择器部分 ===== */
+
+/* 容器查询优化标题和分类 */
+@container article-card (max-width: 600px) {
   .title {
-    font-size: var(--md-sys-typescale-headline-small);
-    margin-bottom: 8px;
-  }
-
-  .content {
-    -webkit-line-clamp: 2;
-    margin-bottom: 16px;
+    color: color-mix(in oklch, var(--md-on-surface) 85%, var(--md-primary) 15%);
   }
 
   .category {
-    height: 32px;
-    padding: 0 16px;
-    margin-bottom: 12px;
-  }
+    transform: translateY(clamp(-0.06rem, -0.2vw, -0.12rem));
 
-  .tag {
-    height: 24px;
-    padding: 0 10px;
+    block-size: clamp(1.5rem, 4vw, 1.75rem);
+    padding-inline: clamp(0.5rem, 1.5vw, 0.75rem);
+
+    font-size: var(--md-sys-typescale-label-small);
+
+    box-shadow: var(--md-sys-elevation-level2);
   }
 }
 
-@media (max-width: 480px) {
+@container article-card (min-width: 800px) {
+  .category {
+    block-size: clamp(2rem, 5vw, 2.25rem);
+    padding-inline: clamp(0.9rem, 2.5vw, 1.1rem);
+    font-size: var(--md-sys-typescale-label-large);
+  }
+}
+
+/* 容器查询优化内容布局 */
+@container article-card (max-width: 600px) {
+  .postContentWrap {
+    padding-block: clamp(0.75rem, 2vw, 1rem);
+    padding-inline: clamp(0.9rem, 2.5vw, 1.1rem);
+  }
+}
+
+@container article-card (min-width: 900px) {
+  .postContentWrap {
+    padding-block: clamp(1.25rem, 3vw, 1.5rem);
+    padding-inline: clamp(1.5rem, 4vw, 2rem);
+  }
+}
+
+/* 容器查询优化标题大小 */
+@container article-card (max-width: 400px) {
+  .title {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    font-size: var(--md-sys-typescale-title-large);
+  }
+}
+
+@container article-card (min-width: 800px) {
+  .title {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    font-size: var(--md-sys-typescale-headline-large);
+  }
+}
+
+/* 时间样式 */
+.time {
+  margin-block-end: clamp(0.75rem, 2vw, 1rem);
+
+  font-size: var(--md-sys-typescale-label-small);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums; /* 等宽数字 */
+  line-height: var(--md-sys-typescale-line-height-normal);
+  color: var(--md-on-surface-variant);
+  text-shadow: 0 1px 2px
+    color-mix(in oklch, var(--md-surface-dim) 30%, transparent);
+  letter-spacing: 0.0313em; /* 使用 em 单位 */
+}
+
+/* 内容样式 */
+.content {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3; /* 标准属性，提供更好的浏览器兼容性 */
+
+  margin-block-end: clamp(1rem, 3vw, 1.25rem);
+
+  font-size: var(--md-sys-typescale-body-medium);
+  line-height: var(--md-sys-typescale-line-height-relaxed);
+  color: var(--md-on-surface);
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px
+    color-mix(in oklch, var(--md-surface-dim) 20%, transparent);
+  text-wrap: pretty;
+  letter-spacing: 0.0156em; /* 使用 em 单位 */
+}
+
+/* 标签容器 */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.4rem, 1vw, 0.5rem);
+  margin-block-end: clamp(0.75rem, 2vw, 1rem);
+}
+
+/* 标签样式 */
+.tag {
+  will-change: transform;
+
+  display: inline-flex;
+  align-items: center;
+
+  block-size: clamp(1.5rem, 4vw, 1.75rem);
+  padding-inline: clamp(0.5rem, 2vw, 0.75rem);
+  border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+
+  font-size: var(--md-sys-typescale-label-small);
+  font-weight: 500;
+  color: var(--md-on-tertiary-container);
+
+  background: color-mix(in oklch, var(--md-tertiary-container) 85%, transparent);
+
+  transition:
+    transform var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-standard);
+
+  /* 使用CSS嵌套语法 */
+  &:hover {
+    transform: translateY(clamp(-0.06rem, -0.2vw, -0.12rem)) scale(1.05);
+    border-color: var(--md-tertiary);
+    color: var(--md-on-tertiary);
+    background: color-mix(
+      in oklch,
+      var(--md-tertiary) 90%,
+      var(--md-primary) 10%
+    );
+  }
+}
+
+/* 链接样式 */
+.url {
+  will-change: transform;
+
+  display: inline-flex;
+  gap: clamp(0.25rem, 1vw, 0.4rem);
+  align-items: center;
+
+  padding-block: clamp(0.4rem, 1vw, 0.5rem);
+  padding-inline: 0;
+  border-radius: var(--md-sys-shape-corner-small);
+
+  font-size: var(--md-sys-typescale-label-small);
+  font-weight: 500;
+  color: var(--md-primary);
+  text-decoration: none;
+  text-decoration-thickness: 0.0625em;
+  text-underline-offset: 0.25em;
+  text-shadow: 0 1px 2px
+    color-mix(in oklch, var(--md-surface-dim) 20%, transparent);
+
+  transition:
+    color var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-emphasized),
+    transform var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-spring);
+
+  /* 使用CSS嵌套语法 */
+  &:hover {
+    transform: translateX(clamp(0.12rem, 0.5vw, 0.25rem));
+    color: color-mix(in oklch, var(--md-tertiary) 85%, var(--md-primary) 15%);
+    text-decoration: underline;
+    text-decoration-color: currentcolor;
+  }
+}
+
+.url::after {
+  will-change: transform;
+  content: "→";
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  transition: transform var(--md-sys-motion-duration-medium1)
+    var(--md-sys-motion-easing-spring);
+}
+
+.url:hover::after {
+  transform: translateX(clamp(0.06rem, 0.25vw, 0.12rem));
+}
+
+/* 响应式设计 */
+@container article-card (max-width: 48rem) {
   .postListThumb {
-    margin: 16px 0;
+    flex-direction: column;
+    border-radius: var(--md-sys-shape-corner-large);
+
+    /* 使用CSS嵌套语法优化容器查询内的样式 */
+    .postThumb {
+      inline-size: 100%;
+      block-size: clamp(10rem, 30vw, 13.8rem);
+    }
+
+    .imageA {
+      block-size: 100%;
+      border-radius: var(--md-sys-shape-corner-medium)
+        var(--md-sys-shape-corner-medium) 0 0;
+    }
+
+    .postListThumb:has(.postThumbImg) .postContentWrap {
+      padding-block: clamp(1rem, 3vw, 1.5rem);
+      padding-inline: clamp(1rem, 3vw, 1.5rem);
+      background: color-mix(
+        in oklch,
+        var(--md-surface-container-high) 90%,
+        transparent
+      );
+      backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
+    }
+
+    .title {
+      margin-block-end: clamp(0.4rem, 1vw, 0.5rem);
+      font-size: var(--md-sys-typescale-headline-small);
+    }
+
+    .content {
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      margin-block-end: clamp(0.75rem, 2vw, 1rem);
+    }
+
+    .category {
+      block-size: clamp(1.75rem, 4vw, 2rem);
+      margin-block-end: clamp(0.5rem, 1vw, 0.75rem);
+      padding-inline: clamp(0.75rem, 2vw, 1rem);
+    }
+
+    .tag {
+      block-size: clamp(1.25rem, 3vw, 1.5rem);
+      padding-inline: clamp(0.4rem, 1vw, 0.6rem);
+    }
+  }
+}
+
+@container article-card (max-width: 30rem) {
+  .postListThumb {
+    margin-block: clamp(0.75rem, 2vw, 1rem);
     border-radius: var(--md-sys-shape-corner-medium);
   }
 
   .postThumb {
-    height: 180px;
+    block-size: clamp(8rem, 25vw, 11.25rem);
   }
 
-  .postContentWrap {
-    padding: 16px;
+  .postListThumb:has(.postThumbImg) .postContentWrap {
+    padding-block: clamp(0.75rem, 2vw, 1rem);
+    padding-inline: clamp(0.75rem, 2vw, 1rem);
   }
 
-  .title {
+  .postCard .title {
     font-size: var(--md-sys-typescale-title-large);
   }
 
-  .category {
-    height: 28px;
-    padding: 0 12px;
+  .postCard .category {
+    block-size: clamp(1.5rem, 3vw, 1.75rem);
+    padding-inline: clamp(0.5rem, 1vw, 0.75rem);
     font-size: var(--md-sys-typescale-label-small);
   }
 
   .tag {
-    height: 22px;
-    padding: 0 8px;
+    block-size: clamp(1.1rem, 2vw, 1.4rem);
+    padding-inline: clamp(0.25rem, 0.5vw, 0.5rem);
   }
 }
 
-/* Dark mode enhancements */
+/* 媒体查询作为容器查询的后备 */
+@media (width <= 768px) {
+  .postListThumb {
+    flex-direction: column;
+    margin-block: clamp(1rem, 3vw, 1.5rem);
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .postThumb {
+    inline-size: 100%;
+    block-size: clamp(10rem, 30vw, 13.75rem);
+  }
+
+  .imageA {
+    block-size: 100%;
+    border-radius: var(--md-sys-shape-corner-medium)
+      var(--md-sys-shape-corner-medium) 0 0;
+  }
+}
+
+@media (width <= 480px) {
+  .postListThumb {
+    margin-block: clamp(0.75rem, 2vw, 1rem);
+    border-radius: var(--md-sys-shape-corner-medium);
+  }
+
+  .postThumb {
+    block-size: clamp(8rem, 25vw, 11.25rem);
+  }
+}
+
+/* 暗色模式 */
 @media (prefers-color-scheme: dark) {
   .postListThumb {
-    background: var(--md-surface-container-low);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    border: 1px solid var(--md-outline-variant);
+    border-color: color-mix(
+      in oklch,
+      var(--md-outline-variant) 70%,
+      transparent
+    );
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container-low) 80%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(1.25rem, 4vw, 1.5rem)) saturate(1.4);
     box-shadow: var(--md-sys-elevation-level4);
   }
 
   .postListThumb:hover {
-    background: var(--md-surface-container);
-    backdrop-filter: blur(28px) saturate(1.8);
-    -webkit-backdrop-filter: blur(28px) saturate(1.8);
-    box-shadow: var(--md-sys-elevation-level5);
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container) 85%,
+      var(--md-primary) 3%
+    );
+    backdrop-filter: blur(clamp(1.5rem, 5vw, 1.75rem)) saturate(1.8);
+    box-shadow: var(--md-sys-elevation-colored-3);
   }
 
   .postListThumb::before {
-    background: var(--md-surface-dim);
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--md-surface-dim) 3%, transparent) 0%,
+      color-mix(in oklch, var(--md-surface-dim) 1%, transparent) 50%,
+      color-mix(in oklch, var(--md-surface-dim) 3%, transparent) 100%
+    );
   }
 
-  .postContentWrap {
-    background: var(--md-surface-container-low);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  .postListThumb:has(.postThumbImg) .postContentWrap {
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container-low) 70%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
   }
 
-  .category {
-    background: var(--md-secondary-container);
+  .postListThumb .category {
+    border-color: color-mix(in oklch, var(--md-outline) 60%, transparent);
     color: var(--md-on-secondary-container);
-    border: 1px solid var(--md-outline);
+    background: color-mix(
+      in oklch,
+      var(--md-secondary-container) 85%,
+      transparent
+    );
     box-shadow: var(--md-sys-elevation-level1);
   }
 
-  .category:hover {
-    background: var(--md-secondary);
-    color: var(--md-on-secondary);
+  .postListThumb .category:hover {
     border-color: var(--md-secondary);
+    color: var(--md-on-secondary);
+    background: color-mix(
+      in oklch,
+      var(--md-secondary) 90%,
+      var(--md-primary) 10%
+    );
   }
 
   .tag {
-    background: var(--md-tertiary-container);
+    border-color: color-mix(
+      in oklch,
+      var(--md-outline-variant) 50%,
+      transparent
+    );
     color: var(--md-on-tertiary-container);
-    border: 1px solid var(--md-outline-variant);
+    background: color-mix(
+      in oklch,
+      var(--md-tertiary-container) 80%,
+      transparent
+    );
   }
 
   .tag:hover {
-    background: var(--md-tertiary);
-    color: var(--md-on-tertiary);
     border-color: var(--md-tertiary);
+    color: var(--md-on-tertiary);
+    background: color-mix(
+      in oklch,
+      var(--md-tertiary) 85%,
+      var(--md-primary) 15%
+    );
+  }
+}
+
+/* 手动暗色主题选择器 */
+[data-theme="dark"] {
+  .postListThumb {
+    border-color: color-mix(
+      in oklch,
+      var(--md-outline-variant) 70%,
+      transparent
+    );
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container-low) 80%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(1.25rem, 4vw, 1.5rem)) saturate(1.4);
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+
+  .postListThumb:hover {
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container) 85%,
+      var(--md-primary) 3%
+    );
+    backdrop-filter: blur(clamp(1.5rem, 5vw, 1.75rem)) saturate(1.8);
+    box-shadow: var(--md-sys-elevation-colored-3);
+  }
+
+  .postListThumb::before {
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--md-surface-dim) 3%, transparent) 0%,
+      color-mix(in oklch, var(--md-surface-dim) 1%, transparent) 50%,
+      color-mix(in oklch, var(--md-surface-dim) 3%, transparent) 100%
+    );
+  }
+
+  .postListThumb:has(.postThumbImg) .postContentWrap {
+    background: color-mix(
+      in oklch,
+      var(--md-surface-container-low) 70%,
+      transparent
+    );
+    backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
+  }
+
+  .postListThumb .category {
+    border-color: color-mix(in oklch, var(--md-outline) 60%, transparent);
+    color: var(--md-on-secondary-container);
+    background: color-mix(
+      in oklch,
+      var(--md-secondary-container) 85%,
+      transparent
+    );
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .postListThumb .category:hover {
+    border-color: var(--md-secondary);
+    color: var(--md-on-secondary);
+    background: color-mix(
+      in oklch,
+      var(--md-secondary) 90%,
+      var(--md-primary) 10%
+    );
+  }
+
+  .tag {
+    border-color: color-mix(
+      in oklch,
+      var(--md-outline-variant) 50%,
+      transparent
+    );
+    color: var(--md-on-tertiary-container);
+    background: color-mix(
+      in oklch,
+      var(--md-tertiary-container) 80%,
+      transparent
+    );
+  }
+
+  .tag:hover {
+    border-color: var(--md-tertiary);
+    color: var(--md-on-tertiary);
+    background: color-mix(
+      in oklch,
+      var(--md-tertiary) 85%,
+      var(--md-primary) 15%
+    );
   }
 }

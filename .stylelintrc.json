@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-css-modules",
+    "stylelint-config-clean-order"
+  ],
+  "plugins": ["stylelint-browser-compat"],
+  "rules": {
+    "selector-class-pattern": "^[a-z][a-zA-Z0-9]+$",
+    "plugin/browser-compat": [
+      true,
+      {
+        "browserslist": [
+          "last 2 Chrome versions",
+          "last 2 Firefox versions",
+          "last 2 Safari versions",
+          "last 2 Edge versions"
+        ]
+      }
+    ]
+  }
+}
