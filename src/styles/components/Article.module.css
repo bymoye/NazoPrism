@@ -63,8 +63,10 @@
 
   /* 悬停效果 */
   &:hover {
+    --scale-factor: clamp(1.01, 1.02, 1.03);
+
     transform: translateY(clamp(-0.5rem, -2vw, -0.75rem))
-      scale(clamp(1.01, 1.02, 1.03));
+      scale(var(--scale-factor));
 
     border-color: color-mix(
       in oklch,
@@ -166,7 +168,9 @@
 
 /* 悬停状态的图片样式 - 放在基础样式之后以保持正确的特异性顺序 */
 .postListThumb:hover .postThumbImg {
-  transform: scale(clamp(1.03, 1.05, 1.08));
+  --clamp-factor: clamp(1.03, 1.05, 1.08);
+
+  transform: scale(var(--clamp-factor));
   filter: saturate(1.1) brightness(1.05) contrast(1.1);
 }
 
@@ -743,7 +747,7 @@
 }
 
 /* 手动暗色主题选择器 */
-[data-theme="dark"] {
+:global([data-theme="dark"]) {
   .postListThumb {
     border-color: color-mix(
       in oklch,

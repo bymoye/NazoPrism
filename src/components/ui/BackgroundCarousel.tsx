@@ -231,8 +231,8 @@ const BackgroundCarousel = memo(() => {
   const isScrolledRef = useRef<boolean>(false);
   const scrollThreshold = 200;
 
-  useLenis(({ scroll }) => {
-    const shouldBeScrolled = scroll > scrollThreshold;
+  useLenis(({ actualScroll }) => {
+    const shouldBeScrolled = actualScroll > scrollThreshold;
     if (shouldBeScrolled !== isScrolledRef.current) {
       isScrolledRef.current = shouldBeScrolled;
       animateBlur(shouldBeScrolled ? config.maxBlur : 0);

@@ -34,9 +34,8 @@ const ToTop = memo<ToTopProps>(
      * 监听滚动事件，更新按钮可见性
      */
     useLenis(
-      ({ scroll }) => {
-        // 使用 Lenis 提供的、最准确的 scroll 值
-        setIsVisible(scroll > threshold);
+      ({ actualScroll }) => {
+        setIsVisible(actualScroll > threshold);
       },
       [threshold]
     );

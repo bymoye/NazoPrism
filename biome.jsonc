@@ -1,6 +1,11 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
   "extends": ["ultracite"],
+  "css": {
+    "parser": {
+      "cssModules": true
+    }
+  },
   "javascript": {
     "globals": [
       "jest",

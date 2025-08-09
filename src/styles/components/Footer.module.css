@@ -110,8 +110,9 @@
 }
 
 .socialLink:hover {
-  transform: translateY(clamp(-1px, -0.25vw, -2px))
-    scale(clamp(1.02, 1.05, 1.08));
+  --scale-factor: clamp(1.02, 1.05, 1.08);
+
+  transform: translateY(clamp(-1px, -0.25vw, -2px)) scale(var(--scale-factor));
 
   border-color: var(--md-outline);
 
@@ -126,7 +127,9 @@
 }
 
 .socialLink:active {
-  transform: translateY(0) scale(clamp(0.92, 0.95, 0.98));
+  --scale-factor: clamp(0.92, 0.95, 0.98);
+
+  transform: translateY(0) scale(var(--scale-factor));
 }
 
 .socialLink:focus-visible {
@@ -154,7 +157,9 @@
 }
 
 .socialLink:hover svg {
-  transform: scale(clamp(1.05, 1.1, 1.15));
+  --scale-factor: clamp(1.05, 1.1, 1.15);
+
+  transform: scale(var(--scale-factor));
 }
 
 .additionalInfo {

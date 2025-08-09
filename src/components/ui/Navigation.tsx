@@ -85,14 +85,13 @@ const Navigation = memo(() => {
   const lastScrollY = useRef(0);
 
   // --- 滚动隐藏逻辑 ---
-  const lenis = useLenis(({ scroll }) => {
-    // 如果抽屉菜单打开，导航栏永远不会被隐藏
+  const lenis = useLenis(({ actualScroll }) => {
     setIsHidden(
-      scroll > SCROLL_HIDE_THRESHOLD &&
-        scroll > lastScrollY.current &&
+      actualScroll > SCROLL_HIDE_THRESHOLD &&
+        actualScroll >= lastScrollY.current &&
         !isDrawerOpen
     );
-    lastScrollY.current = scroll;
+    lastScrollY.current = actualScroll;
   });
 
   /// 播放动画, 单独封装

@@ -114,7 +114,9 @@
 }
 
 .logoLink:hover {
-  transform: scale(clamp(1.01, 1.02, 1.03));
+  --scale-factor: clamp(1.01, 1.02, 1.03);
+
+  transform: scale(var(--scale-factor));
 }
 
 .logoLink:hover .logoIcon {
