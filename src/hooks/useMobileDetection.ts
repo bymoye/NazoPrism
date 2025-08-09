@@ -14,12 +14,19 @@ import { isMobileDevice } from '@/utils/device-detection';
  * @returns 当前是否为移动端设备的状态
  */
 export const useMobileDetection = (): boolean => {
+  // 直接在初始化时检测移动端状态，适用于SSG场景
   const [isMobile, setIsMobile] = useState<boolean>(() => {
-    // 初始化时检测移动端
+    // 在SSG场景下，window对象在构建时不存在，但在客户端运行时存在
+    if (typeof window === 'undefined') {
+      return false; // SSG构建时默认为桌面端
+    }
     return isMobileDevice();
   });
 
   useEffect(() => {
+    // 确保在客户端运行时进行正确的移动端检测
+    setIsMobile(isMobileDevice());
+
     /**
      * 处理窗口大小变化的回调函数
      */

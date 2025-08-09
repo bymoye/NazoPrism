@@ -4,6 +4,7 @@ import ClientLayout from '@/components/layouts/ClientLayout';
 import { Providers } from '@/contexts';
 import '@/styles/globals.css';
 import '@/styles/md-sys-variables.css';
+import Script from 'next/script';
 
 /**
  * 视口配置
@@ -11,6 +12,9 @@ import '@/styles/md-sys-variables.css';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1.0,
+  maximumScale: 1.0,
+  minimumScale: 1.0,
+  userScalable: false,
 };
 
 /**
@@ -58,20 +62,16 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html data-scroll-behavior="smooth" lang="zh-CN">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (!CSS.supports('animation-timeline: scroll()')) {
-                var polyfillScript = document.createElement('script');
-                polyfillScript.src = 'https://static.nazo.run/scroll-timeline/scroll-timeline.js';
-                polyfillScript.onerror = function(err) {
-                  console.error('加载 scroll-timeline Polyfill 失败：', err);
-                };
-                document.head.appendChild(polyfillScript);
-              }
-            `,
-          }}
-        />
+        <Script id="scroll-timeline-polyfill" strategy="beforeInteractive">{`
+          if (!CSS.supports('animation-timeline: scroll()')) {
+            let polyfillScript = document.createElement('script');
+            polyfillScript.src = 'https://static.nazo.run/scroll-timeline/scroll-timeline.js';
+            polyfillScript.onerror = function(err) {
+              console.error('加载 scroll-timeline Polyfill 失败：', err);
+            };
+            document.head.appendChild(polyfillScript);
+          }
+        `}</Script>
       </head>
       <body>
         <Providers>

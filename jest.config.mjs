@@ -28,6 +28,7 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/out/',
     '<rootDir>/dist/',
+    '<rootDir>/tests/e2e/',
   ],
 
   // 模块名称映射

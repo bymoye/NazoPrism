@@ -1,8 +1,9 @@
-/* 全局样式定义 */
+/* 现代化全局样式 */
 
-@layer base, components, utilities;
+@layer tokens, reset, base, components, utilities;
 
-@layer base {
+/* 设计令牌层 - 定义所有设计系统变量 */
+@layer tokens {
   :root {
     /* 响应式断点 */
     --breakpoint-mobile: 48rem;
@@ -10,7 +11,7 @@
     --breakpoint-desktop: 75rem;
     --breakpoint-wide: 90rem;
 
-    /* 动画时长 */
+    /* 动画系统 */
     --duration-instant: 0ms;
     --duration-fast: clamp(100ms, 0.15s, 200ms);
     --duration-normal: clamp(200ms, 0.3s, 400ms);
@@ -34,7 +35,7 @@
       "JetBrains Mono Variable", "Roboto Mono", "Fira Code", "Cascadia Code",
       "Consolas", monospace;
 
-    /* 字重 */
+    /* 字重系统 */
     --font-weight-thin: 100;
     --font-weight-light: 300;
     --font-weight-regular: 400;
@@ -43,7 +44,7 @@
     --font-weight-bold: 700;
     --font-weight-black: 900;
 
-    /* 行高 */
+    /* 行高系统 */
     --line-height-tight: clamp(1.1, 1.2, 1.3);
     --line-height-normal: clamp(1.4, 1.5, 1.6);
     --line-height-relaxed: clamp(1.5, 1.6, 1.8);
@@ -72,7 +73,7 @@
     --radius-3xl: clamp(2rem, 2.5vw, 2.5rem);
     --radius-full: 50%;
 
-    /* Z-index scale */
+    /* 层级系统 */
     --z-dropdown: 1000;
     --z-sticky: 1020;
     --z-fixed: 1030;
@@ -82,31 +83,35 @@
     --z-tooltip: 1070;
     --z-toast: 1080;
 
-    /* 容器最大宽度 */
+    /* 布局系统 */
     --container-xl: 1280px;
-
-    /* 组件尺寸 */
     --nav-height: clamp(3.5rem, 5vw, 5rem);
 
-    /* 字体大小 */
-    --font-size-base: clamp(0.9rem, 0.75vw, 0.95rem);
+    /* 字体大小系统 */
+    --font-size-base: clamp(0.95rem, 0.75vw, 1rem);
   }
 
-  /* 全局重置 */
-  *,
-  *::before,
-  *::after {
+  /* 响应式字体优化 */
+  @media (width >= 768px) {
+    :root {
+      --font-size-base: clamp(0.875rem, 0.5vw, 0.9rem);
+    }
+  }
+}
+
+/* 重置层 - 现代化重置样式 */
+@layer reset {
+  :where(*, *::before, *::after) {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
 
-  /* HTML根元素 */
-  html {
+  :where(html) {
     scroll-behavior: smooth;
 
     font-family: var(--font-family-base);
-    font-size: clamp(14px, 0.5rem + 1vw, 18px);
+    font-size: clamp(16px, 0.5rem + 1vw, 18px);
     font-feature-settings:
       "kern" 1,
       "liga" 1,
@@ -119,9 +124,15 @@
 
     color-scheme: light dark;
   }
+}
 
-  /* Body样式 */
-  body {
+/* 响应式字体大小 */
+@media (width >= 768px) {
+  :where(html) {
+    font-size: clamp(14px, 0.25rem + 0.75vw, 16px);
+  }
+
+  :where(body) {
     overflow-x: hidden;
     overscroll-behavior: none;
 
@@ -132,16 +143,17 @@
     line-height: var(--line-height-normal);
     color: var(--md-on-surface);
 
-    accent-color: var(--md-primary);
     background: var(--md-surface);
 
     transition:
       background-color var(--duration-theme) var(--ease-emphasized),
       color var(--duration-theme) var(--ease-emphasized);
   }
+}
 
-  /* 主内容容器 */
-  main {
+/* 基础层 - 语义化元素样式 */
+@layer base {
+  :where(main) {
     position: relative;
 
     container-name: main-content;
@@ -152,15 +164,15 @@
   }
 }
 
-/* 工具类层 */
+/* 工具类层 - 实用工具类 */
 @layer utilities {
-  .srOnly {
+  .screenReaderOnly {
     position: absolute;
 
     overflow: hidden;
 
-    width: 1px;
-    height: 1px;
+    inline-size: 1px;
+    block-size: 1px;
     margin: -1px;
     padding: 0;
     border: 0;
@@ -170,7 +182,6 @@
     clip-path: inset(50%);
   }
 
-  /* 容器样式 */
   .container {
     inline-size: 100%;
     max-inline-size: var(--container-xl);
@@ -184,7 +195,7 @@
     white-space: nowrap;
   }
 
-  /* 容器查询 */
+  /* 容器查询响应式 */
   @container main-content (max-width: 48rem) {
     .container {
       padding-inline: var(--spacing-sm);
@@ -194,9 +205,7 @@
 
 /* 无障碍支持 */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  :where(*, *::before, *::after) {
     scroll-behavior: auto;
     transition-duration: 0.01ms;
     animation-duration: 0.01ms;
@@ -204,7 +213,7 @@
   }
 }
 
-/* 高对比度模式支持 */
+/* 高对比度模式 */
 @media (prefers-contrast: more) {
   :root {
     --md-outline: CanvasText;
@@ -212,16 +221,16 @@
   }
 }
 
-/* 强制颜色模式支持 */
+/* 强制颜色模式 */
 @media (forced-colors: active) {
-  * {
+  :where(*) {
     border-color: CanvasText;
     color: CanvasText;
     background: Canvas;
   }
 }
 
-/* 显示偏好 */
+/* 颜色方案偏好 */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
@@ -234,9 +243,9 @@
   }
 }
 
-/* Print styles */
+/* 打印样式 */
 @media print {
-  * {
+  :where(*) {
     color: black;
     text-shadow: none;
     background: transparent;

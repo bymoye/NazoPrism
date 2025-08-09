@@ -331,8 +331,11 @@ console.error = (...args: unknown[]): void => {
       message.includes(
         'The current testing environment is not configured to support act'
       ) ||
+      message.includes('You seem to have overlapping act() calls') ||
       message.includes('主题更新失败') ||
-      message.includes('从图片更新主题失败'))
+      message.includes('从图片更新主题失败') ||
+      message.includes('从图片提取颜色失败') ||
+      message.includes('主题操作失败'))
   ) {
     return; // 抑制React act警告和主题错误
   }

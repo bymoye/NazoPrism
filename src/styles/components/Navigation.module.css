@@ -1,84 +1,13 @@
-/* 导航栏样式 */
-
-/* 暗色模式 */
-@media (prefers-color-scheme: dark) {
-  .nav {
-    border: clamp(1px, 0.1vw, 2px) solid
-      color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
-    background: color-mix(
-      in srgb,
-      var(--md-surface-container-low) 80%,
-      transparent
-    );
-    backdrop-filter: blur(clamp(14px, 2vw, 16px)) saturate(1.6);
-    box-shadow: var(--md-sys-elevation-level1);
-  }
-
-  .nav:hover {
-    border: clamp(1px, 0.1vw, 2px) solid
-      color-mix(in srgb, var(--md-outline) 80%, transparent);
-    background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
-    backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
-    box-shadow: var(--md-sys-elevation-level2);
-  }
-
-  .ceilNav {
-    border-block-end: clamp(1px, 0.1vw, 2px) solid
-      color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
-    background: color-mix(
-      in srgb,
-      var(--md-surface-container-high) 90%,
-      transparent
-    );
-    box-shadow: var(--md-sys-elevation-level1);
-  }
-
-  .logoIcon {
-    background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
-    box-shadow: inset 0 1px 0
-      color-mix(in srgb, var(--md-primary) 20%, transparent);
-  }
-
-  .logoContainer .logoIcon {
-    background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
-    box-shadow: inset 0 1px 0
-      color-mix(in srgb, var(--md-primary) 20%, transparent);
-  }
-
-  .logoLink:hover .logoIcon {
-    background: color-mix(in srgb, var(--md-surface-variant) 85%, transparent);
-    box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--md-primary) 30%, transparent),
-      0 0 clamp(8px, 1vw, 12px)
-      color-mix(in srgb, var(--md-primary) 15%, transparent);
-  }
-
-  .navLink:hover {
-    background: color-mix(
-      in srgb,
-      var(--md-surface-container-high) 75%,
-      transparent
-    );
-    box-shadow: inset 0 1px 0
-      color-mix(in srgb, var(--md-primary) 20%, transparent);
-  }
-
-  .navLink.current {
-    background: color-mix(in srgb, var(--md-primary-container) 80%, transparent);
-    box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--md-primary) 25%, transparent),
-      0 0 clamp(6px, 0.8vw, 10px)
-      color-mix(in srgb, var(--md-primary) 10%, transparent);
-  }
-}
+/* 导航栏组件 */
 
 .nav {
   will-change: transform, background-color, box-shadow;
 
   position: fixed;
-  z-index: 9999;
-  inset-block-start: clamp(8px, 2.5%, 16px);
-  inset-inline-start: clamp(1%, 2.5%, 5%);
+  z-index: var(--z-fixed);
+  left: 50%;
+  inset-block-start: clamp(0.5rem, 2.5%, 1rem);
+  transform: translateX(-50%) translateY(0);
 
   container-name: navigation;
   container-type: inline-size;
@@ -86,104 +15,67 @@
   align-items: center;
   justify-content: space-between;
 
-  inline-size: clamp(90%, 95%, 98%);
-  block-size: clamp(56px, 5vw, 80px);
+  inline-size: clamp(40%, 50%, 80%);
+  block-size: clamp(3.5rem, 5vw, 5rem);
   padding-inline: clamp(0.75rem, 2vw, 2rem);
   border: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
   border-radius: var(--md-sys-shape-corner-extra-large);
 
-  /* Glass效果 */
-  background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
-  backdrop-filter: blur(clamp(16px, 2vw, 20px)) saturate(1.6);
+  background: color-mix(in oklch, var(--md-surface-container) 85%, transparent);
+  backdrop-filter: blur(clamp(1rem, 2vw, 1.25rem)) saturate(1.6);
   box-shadow: var(--md-sys-elevation-level2);
 
   transition:
-    inset-block-start 1s cubic-bezier(0.4, 0, 0.2, 1),
-    inset-inline-start 1s cubic-bezier(0.4, 0, 0.2, 1),
-    inset-inline-end 1s cubic-bezier(0.4, 0, 0.2, 1),
-    inline-size 1s cubic-bezier(0.4, 0, 0.2, 1),
-    border-radius 1s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 1s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 1s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    inset-block-start var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-standard),
+    inline-size var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-theme)
+    var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard),
+    display var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
 
-  /* 悬停状态 */
-  &:hover {
-    transform: scale(1.005);
-
-    border: clamp(1px, 0.1vw, 2px) solid var(--md-outline);
-
-    background: color-mix(
-      in srgb,
-      var(--md-surface-container-high) 90%,
-      transparent
-    );
-    backdrop-filter: blur(clamp(20px, 2.5vw, 24px)) saturate(1.6);
-    box-shadow: var(--md-sys-elevation-level3);
-  }
-
-  /* 触摸设备交互 */
-  @media (hover: none) and (pointer: coarse) {
-    &:active {
-      transform: scale(0.995);
-      background: color-mix(
-        in srgb,
-        var(--md-surface-container-high) 90%,
-        transparent
-      );
-    }
-  }
+  transition-behavior: allow-discrete;
 }
 
-/* 手动暗色主题 */
-[data-theme="dark"] .nav,
-.dark .nav {
-  border: clamp(1px, 0.1vw, 2px) solid
-    color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
+.nav:hover {
+  border-color: var(--md-outline);
   background: color-mix(
-    in srgb,
-    var(--md-surface-container-low) 80%,
+    in oklch,
+    var(--md-surface-container-high) 90%,
     transparent
   );
-  backdrop-filter: blur(clamp(14px, 2vw, 16px)) saturate(1.6);
-  box-shadow: var(--md-sys-elevation-level1);
-
-  &:hover {
-    border: clamp(1px, 0.1vw, 2px) solid
-      color-mix(in srgb, var(--md-outline) 80%, transparent);
-    background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
-    backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
-    box-shadow: var(--md-sys-elevation-level2);
-  }
-
-  &:has(.navLink:hover) {
-    backdrop-filter: blur(clamp(22px, 3vw, 26px)) saturate(1.8);
-  }
-
-  &:has(.navLink.current) {
-    box-shadow: var(--md-sys-elevation-level3);
-  }
-}
-
-/* 固定导航状态 */
-.ceilNav {
-  inset-block-start: 0;
-  inset-inline-start: 0;
-
-  inline-size: 100vi;
-  border: none;
-  border-block-end: clamp(1px, 0.1vw, 2px) solid var(--md-outline-variant);
-  border-radius: 0;
-
-  background: color-mix(in srgb, var(--md-surface-container) 95%, transparent);
+  backdrop-filter: blur(clamp(1.25rem, 2.5vw, 1.5rem)) saturate(1.6);
   box-shadow: var(--md-sys-elevation-level3);
 }
 
-/* 隐藏导航状态 */
-.hidden {
-  transform: translateY(-100%);
-  transition: transform var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-emphasized);
+@starting-style {
+  .nav {
+    transform: translateX(-50%) translateY(-120%);
+  }
+
+  .nav.mobile {
+    transform: translateX(-50%) translateY(-120%);
+  }
+
+  .mobileDrawer {
+    transform: translateX(-50%) translateY(-100%);
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+.nav.hidden {
+  transform: translateX(-50%) translateY(-120%);
+  display: none;
+
+  transition-behavior: allow-discrete;
 }
 
 /* Logo区域 */
@@ -193,7 +85,6 @@
   align-items: center;
 }
 
-/* Logo图标 */
 .logoIcon {
   will-change: transform, background-color;
 
@@ -202,33 +93,28 @@
   justify-content: center;
 
   aspect-ratio: 1;
-  inline-size: clamp(32px, 5vw, 40px);
-  block-size: clamp(32px, 5vw, 40px);
+  inline-size: clamp(2rem, 5vw, 2.5rem);
+  block-size: clamp(2rem, 5vw, 2.5rem);
   border-radius: var(--md-sys-shape-corner-medium);
 
   color: var(--md-primary);
 
-  background: color-mix(in srgb, var(--md-surface-dim) 90%, transparent);
+  background: color-mix(in oklch, var(--md-surface-dim) 90%, transparent);
 
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
 }
 
 .logoLink {
   will-change: transform;
   color: inherit;
   text-decoration: none;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform var(--md-sys-motion-duration-short4)
+    var(--md-sys-motion-easing-standard);
 }
 
 .logoLink:hover {
   transform: scale(clamp(1.01, 1.02, 1.03));
-}
-
-[data-theme="dark"] .logoIcon,
-.dark .logoIcon {
-  background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
-  box-shadow: inset 0 1px 0
-    color-mix(in srgb, var(--md-primary) 20%, transparent);
 }
 
 .logoLink:hover .logoIcon {
@@ -403,14 +289,8 @@
   transform: translateX(0);
 }
 
-/* 使用容器查询优化导航链接 */
-@container navigation (max-width: 600px) {
-  .navLink {
-    font-size: var(--md-sys-typescale-label-small);
-  }
-}
-
-@container navigation (min-width: 600px) and (max-width: 999px) {
+/* 容器查询优化 */
+@container navigation (max-width: 999px) {
   .navLink {
     font-size: var(--md-sys-typescale-label-medium);
   }
@@ -428,32 +308,7 @@
   z-index: 1;
 }
 
-/* 关键帧动画 */
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: var(--md-sys-elevation-level1);
-  }
-
-  50% {
-    box-shadow: var(--md-sys-elevation-level2);
-  }
-}
-
+/* 动画定义 */
 @keyframes slide-in {
   from {
     transform: translateY(clamp(-8px, -1vw, -4px)) scale(0.95);
@@ -470,17 +325,8 @@
 @container navigation (max-width: 768px) {
   .nav {
     inset-block-start: clamp(6px, 1vw, 8px);
-    inset-inline: clamp(6px, 1vw, 8px);
-
-    inline-size: calc(100% - clamp(12px, 2vw, 16px));
     block-size: clamp(56px, 8vw, 64px);
     padding-inline: clamp(0.75rem, 1.5vw, 1rem);
-  }
-
-  .nav.ceilNav {
-    inset-block-start: 0;
-    inset-inline: 0;
-    inline-size: 100%;
   }
 
   .nav .logoContainer {
@@ -493,139 +339,305 @@
   }
 
   .nav .logoText {
-    font-size: var(--md-sys-typescale-title-small);
+    font-size: var(--md-sys-typescale-title-medium);
   }
 
   .nav .navList {
-    gap: clamp(2px, 0.5vw, 4px);
+    gap: clamp(4px, 0.75vw, 6px);
   }
 
   .nav .navLink {
-    padding-block: clamp(6px, 1vw, 8px);
-    padding-inline: clamp(8px, 1.5vw, 12px);
-  }
-
-  /* Show only icons on mobile - add icons to nav items */
-  .nav .navLink::after {
-    content: attr(data-icon);
-    font-size: clamp(18px, 2.5vw, 20px);
+    padding-block: clamp(8px, 1.25vw, 10px);
+    padding-inline: clamp(10px, 2vw, 14px);
+    font-size: var(--md-sys-typescale-label-medium);
   }
 
   .nav .navLinkText {
+    font-size: var(--md-sys-typescale-label-medium);
+    font-weight: 500;
+  }
+}
+
+/* 桌面端和移动端导航容器 */
+.navDesktop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.navMobile {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* 媒体查询：移动端显示移动导航，隐藏桌面导航 */
+@media (width <= 767px) {
+  .navDesktop {
     display: none;
   }
-}
 
-/* Fallback media query for older browsers */
-@media (width <= 768px) {
+  .navMobile {
+    display: flex;
+  }
+
   .nav {
-    inset-block-start: 8px;
-    inset-inline: 8px;
-
-    inline-size: calc(100% - 16px);
-    block-size: 64px;
-    padding-inline: 1rem;
-  }
-
-  .logoIcon {
-    inline-size: 36px;
-    block-size: 36px;
-  }
-
-  .logoContainer {
-    gap: 8px;
-  }
-
-  .navList {
-    gap: 4px;
-  }
-
-  .navLink {
-    padding-block: 8px;
-    padding-inline: 12px;
+    inset-block-start: clamp(0.25rem, 1%, 0.5rem);
+    inline-size: clamp(90%, 95%, 400px);
+    padding-inline: clamp(1rem, 3vw, 1.5rem);
+    backdrop-filter: blur(clamp(16px, 2vw, 20px)) saturate(1.6);
   }
 }
 
-/* Container-based extra small screens */
+.navLogoMobile {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+}
+
+.spacer {
+  width: 44px; /* 与汉堡按钮宽度相同 */
+  height: 44px;
+}
+
+/* 汉堡菜单按钮 */
+.hamburgerButton {
+  cursor: pointer;
+
+  position: relative;
+  z-index: calc(var(--z-fixed) + 1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-medium);
+
+  background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hamburgerButton:hover {
+  transform: scale(1.05);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 90%,
+    transparent
+  );
+}
+
+.hamburgerButton:active {
+  transform: scale(0.95);
+}
+
+.hamburgerLine {
+  display: block;
+
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+
+  background: var(--md-on-surface);
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 汉堡按钮激活状态 */
+.hamburgerButton.active .hamburgerLine:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburgerButton.active .hamburgerLine:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburgerButton.active .hamburgerLine:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* 汉堡按钮过渡状态 - 禁用交互 */
+.hamburgerButton.transitioning {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.hamburgerButton:disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* 背景遮罩 */
+.drawerOverlay {
+  pointer-events: none;
+  cursor: pointer;
+
+  position: fixed;
+  z-index: calc(var(--z-fixed) - 2);
+  inset: 0;
+
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  visibility: hidden;
+  opacity: 0;
+  background: color-mix(in srgb, var(--md-scrim) 40%, transparent);
+  backdrop-filter: blur(2px);
+  outline: none;
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawerOverlay.active {
+  pointer-events: auto;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* 移动端抽屉 */
+.mobileDrawer {
+  position: fixed;
+  z-index: calc(var(--z-fixed) - 1);
+  top: calc(clamp(3.5rem, 5vw, 5rem) + clamp(0.25rem, 1%, 0.5rem) + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+
+  width: clamp(90%, 95%, 400px);
+  max-height: 60vh;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+
+  visibility: hidden;
+  opacity: 0;
+  background: color-mix(in srgb, var(--md-surface-container) 95%, transparent);
+  backdrop-filter: blur(clamp(20px, 3vw, 24px)) saturate(1.6);
+  box-shadow: var(--md-sys-elevation-level4);
+
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  transition-behavior: allow-discrete;
+}
+
+.mobileDrawer.open {
+  transform: translateX(-50%) translateY(0);
+  visibility: visible;
+  opacity: 1;
+}
+
+.drawerContent {
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.mobileDrawer.transitioning {
+  pointer-events: none;
+}
+
+.drawerNavList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2vw, 12px);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.drawerNavItem {
+  position: relative;
+}
+
+.drawerNavLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: clamp(12px, 3vw, 16px);
+  border-radius: var(--md-sys-shape-corner-large);
+
+  font-size: var(--md-sys-typescale-body-large);
+  font-weight: 500;
+  color: var(--md-on-surface);
+  text-decoration: none;
+
+  background: transparent;
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawerNavLink:hover {
+  transform: translateX(4px);
+  color: var(--md-primary);
+  background: color-mix(
+    in srgb,
+    var(--md-surface-container-high) 80%,
+    transparent
+  );
+}
+
+.drawerNavLink.current {
+  font-weight: 600;
+  color: var(--md-on-primary-container);
+  background: color-mix(in srgb, var(--md-primary-container) 85%, transparent);
+}
+
+.drawerNavLinkText {
+  flex: 1;
+}
+
+.drawerNavLinkIndicator {
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+
+  background: transparent;
+
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawerNavLink:hover .drawerNavLinkIndicator {
+  background: var(--md-primary);
+}
+
+.drawerNavLink.current .drawerNavLinkIndicator {
+  background: var(--md-primary);
+}
+
+/* 小屏幕优化 */
 @container navigation (max-width: 480px) {
   .nav {
     block-size: clamp(48px, 7vw, 56px);
     padding-inline: clamp(0.5rem, 1vw, 0.75rem);
   }
 
-  .nav .logoText {
-    display: none;
-  }
-
   .nav .navLink {
     padding-inline: clamp(6px, 1vw, 8px);
   }
+
+  .nav .navLinkText {
+    font-size: clamp(12px, 3vw, 14px);
+    font-weight: 600;
+  }
 }
 
-/* Fallback for extra small screens */
-@media (width <= 480px) {
-  .nav {
-    block-size: 56px;
-    padding-inline: 0.75rem;
-  }
-
-  .logoText {
+/* 媒体查询：桌面端隐藏移动端抽屉菜单和遮罩 */
+@media (width >= 768px) {
+  .nav ~ .mobileDrawer,
+  .nav ~ .drawerOverlay {
     display: none;
   }
-
-  .navLink {
-    padding-inline: 8px;
-  }
-}
-
-/* Additional dark mode styles moved to top media query */
-
-/* Manual dark theme selector as fallback - moved to top */
-
-[data-theme="dark"] .ceilNav,
-.dark .ceilNav {
-  border-block-end: clamp(1px, 0.1vw, 2px) solid
-    color-mix(in srgb, var(--md-outline-variant) 70%, transparent);
-  background: color-mix(
-    in srgb,
-    var(--md-surface-container-high) 90%,
-    transparent
-  );
-  box-shadow: var(--md-sys-elevation-level1);
-}
-
-[data-theme="dark"] .logoContainer .logoIcon,
-.dark .logoContainer .logoIcon {
-  background: color-mix(in srgb, var(--md-surface-dim) 75%, transparent);
-  box-shadow: inset 0 1px 0
-    color-mix(in srgb, var(--md-primary) 20%, transparent);
-}
-
-[data-theme="dark"] .logoLink:hover .logoIcon,
-.dark .logoLink:hover .logoIcon {
-  background: color-mix(in srgb, var(--md-surface-variant) 85%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--md-primary) 30%, transparent),
-    0 0 clamp(8px, 1vw, 12px)
-    color-mix(in srgb, var(--md-primary) 15%, transparent);
-}
-
-[data-theme="dark"] .navLink:hover,
-.dark .navLink:hover {
-  background: color-mix(
-    in srgb,
-    var(--md-surface-container-high) 75%,
-    transparent
-  );
-  box-shadow: inset 0 1px 0
-    color-mix(in srgb, var(--md-primary) 20%, transparent);
-}
-
-[data-theme="dark"] .navLink.current,
-.dark .navLink.current {
-  background: color-mix(in srgb, var(--md-primary-container) 80%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--md-primary) 25%, transparent),
-    0 0 clamp(6px, 0.8vw, 10px)
-    color-mix(in srgb, var(--md-primary) 10%, transparent);
 }

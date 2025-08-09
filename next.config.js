@@ -21,6 +21,8 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@poupe/theme-builder'],
   },
 
+  reactStrictMode: true,
+
   // 图像优化配置 (已禁用)
   images: {
     unoptimized: true,

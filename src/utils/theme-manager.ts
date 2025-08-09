@@ -55,7 +55,7 @@ const generateTheme = (colors: string[]): ReturnType<typeof makeCSSTheme> => {
     prefix: 'md-',
     darkSuffix: '',
     lightSuffix: '',
-    scheme: 'expressive',
+    scheme: 'vibrant',
   };
 
   return makeCSSTheme(themeColors, options);

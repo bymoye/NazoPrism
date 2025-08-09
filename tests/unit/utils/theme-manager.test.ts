@@ -326,7 +326,7 @@ describe('themeManager', () => {
 
   describe('extractColorsFromImage', () => {
     test('应该从图片提取颜色', async () => {
-      const imageUrl = 'https://example.com/image.jpg';
+      const imageUrl = 'https://picsum.photos/400/300';
 
       const colors = await themeManager.extractColorsFromImage(imageUrl);
 
@@ -355,7 +355,7 @@ describe('themeManager', () => {
 
   describe('updateThemeFromImage', () => {
     test('应该从图片更新主题', async () => {
-      const imageUrl = 'https://example.com/image.jpg';
+      const imageUrl = 'https://picsum.photos/400/300';
 
       await themeManager.updateThemeFromImage(imageUrl);
 
