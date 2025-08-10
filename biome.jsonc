@@ -16,9 +16,7 @@
       "afterEach",
       "beforeAll",
       "afterAll",
-      "test",
-      "vi",
-      "vitest"
+      "test"
     ]
   },
   "linter": {

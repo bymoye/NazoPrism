@@ -18,9 +18,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed",
+
     "clean": "rimraf ./.next ./out",
     "prebuild": "npm run clean && npm run type-check"
   },
@@ -36,7 +34,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.4",
-    "@playwright/test": "^1.54.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",

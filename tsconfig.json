@@ -45,5 +45,5 @@
     "next-env.d.ts",
     "out/types/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next", "out", "dist"]
+  "exclude": ["node_modules", ".next", "out", "dist", "tests"]
 }
