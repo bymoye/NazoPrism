@@ -24,14 +24,14 @@ const GlobalError = ({
   }, [error]);
 
   return (
-    <html lang="zh-CN">
+    <html lang='zh-CN'>
       <body>
         <ErrorPage
           error={error}
-          message="应用程序遇到了严重错误。请尝试重新加载页面。"
-          onRetry={reset}
-          showDetails={process.env.NODE_ENV === 'development'}
-          title="应用程序出错"
+          handleRetry={reset}
+          isShowDetails={process.env.NODE_ENV === 'development'}
+          message='应用程序遇到了严重错误。请尝试重新加载页面。'
+          title='应用程序出错'
         />
       </body>
     </html>

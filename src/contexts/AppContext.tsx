@@ -19,9 +19,9 @@ interface AppContextType {
   /** 应用状态 */
   state: AppState;
   /** 设置加载状态 */
-  setLoading: (loading: boolean) => void;
+  setLoading: (_loading: boolean) => void;
   /** 设置错误信息 */
-  setError: (error: string | null) => void;
+  setError: (_error: string | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -44,17 +44,13 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  return (
-    <AppContext.Provider
-      value={{
-        state: { isLoading, error },
-        setLoading: setIsLoading,
-        setError,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
+  const contextValue = {
+    state: { isLoading, error },
+    setLoading: setIsLoading,
+    setError,
+  };
+
+  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };
 
 /**

@@ -20,28 +20,20 @@
   opacity: 0;
 
   /* Glass效果 */
-  background: color-mix(
-    in oklch,
-    var(--md-surface-container-high) 85%,
-    transparent
-  );
+  background: color-mix(in oklch, var(--md-surface-container-high) 85%, transparent);
   backdrop-filter: blur(clamp(1rem, 3vw, 1.25rem)) saturate(1.6);
   box-shadow: var(--md-sys-elevation-level3);
 
   transition:
-    transform var(--md-sys-motion-duration-long2)
-    var(--md-sys-motion-easing-emphasized),
-    opacity var(--md-sys-motion-duration-long1)
-    var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard),
-    box-shadow var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-emphasized),
+    opacity var(--md-sys-motion-duration-long1) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   /* 渐变叠加层 */
   &::before {
     pointer-events: none;
-    content: "";
+    content: '';
 
     position: absolute;
     z-index: 1;
@@ -57,28 +49,18 @@
       color-mix(in oklch, var(--md-surface) 2%, transparent) 100%
     );
 
-    transition: opacity var(--md-sys-motion-duration-medium1)
-      var(--md-sys-motion-easing-standard);
+    transition: opacity var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
   }
 
   /* 悬停效果 */
   &:hover {
     --scale-factor: clamp(1.01, 1.02, 1.03);
 
-    transform: translateY(clamp(-0.5rem, -2vw, -0.75rem))
-      scale(var(--scale-factor));
+    transform: translateY(clamp(-0.5rem, -2vw, -0.75rem)) scale(var(--scale-factor));
 
-    border-color: color-mix(
-      in oklch,
-      var(--md-outline) 80%,
-      var(--md-primary) 20%
-    );
+    border-color: color-mix(in oklch, var(--md-outline) 80%, var(--md-primary) 20%);
 
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container-highest) 90%,
-      var(--md-primary) 2%
-    );
+    background: color-mix(in oklch, var(--md-surface-container-highest) 90%, var(--md-primary) 2%);
     backdrop-filter: blur(clamp(1.25rem, 4vw, 1.5rem)) saturate(2);
     box-shadow: var(--md-sys-elevation-colored-2);
 
@@ -93,11 +75,7 @@
   @media (hover: none) {
     &:active {
       transform: scale(0.98);
-      background: color-mix(
-        in oklch,
-        var(--md-surface-container-high) 90%,
-        var(--md-primary) 5%
-      );
+      background: color-mix(in oklch, var(--md-surface-container-high) 90%, var(--md-primary) 5%);
     }
   }
 }
@@ -128,8 +106,7 @@
 
   inline-size: 100%;
   block-size: clamp(12rem, 25vw, 20rem); /* 响应式高度 */
-  border-radius: var(--md-sys-shape-corner-medium) 0 0
-    var(--md-sys-shape-corner-medium);
+  border-radius: var(--md-sys-shape-corner-medium) 0 0 var(--md-sys-shape-corner-medium);
 
   background-color: var(--md-surface-variant);
 }
@@ -146,10 +123,8 @@
   filter: saturate(0.95) brightness(0.98) contrast(1.05);
 
   transition:
-    transform var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-emphasized),
-    filter var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    filter var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
 }
 
 /* 容器查询优化图片显示 */
@@ -189,23 +164,17 @@
   padding-block: clamp(1.25rem, 4vw, 2rem);
   padding-inline: clamp(1.25rem, 4vw, 2rem);
 
-  background: color-mix(
-    in oklch,
-    var(--md-surface-container-low) 95%,
-    transparent
-  );
+  background: color-mix(in oklch, var(--md-surface-container-low) 95%, transparent);
   backdrop-filter: blur(clamp(0.5rem, 1vw, 0.75rem));
 
   transition:
-    background-color var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard),
-    backdrop-filter var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    backdrop-filter var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   /* 使用CSS嵌套语法 */
   &::before {
     pointer-events: none;
-    content: "";
+    content: '';
 
     position: absolute;
     z-index: -1;
@@ -219,8 +188,7 @@
       color-mix(in oklch, var(--md-surface) 2%, transparent) 100%
     );
 
-    transition: opacity var(--md-sys-motion-duration-medium1)
-      var(--md-sys-motion-easing-standard);
+    transition: opacity var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
   }
 }
 
@@ -252,21 +220,17 @@
   color: var(--md-on-surface);
   text-decoration: none;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 3px
-    color-mix(in oklch, var(--md-surface-dim) 25%, transparent);
+  text-shadow: 0 1px 3px color-mix(in oklch, var(--md-surface-dim) 25%, transparent);
   text-wrap: balance;
 
   transition:
-    color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-emphasized),
-    text-shadow var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard);
+    color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    text-shadow var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
 
   /* 使用CSS嵌套语法 */
   &:hover {
     color: color-mix(in oklch, var(--md-primary) 85%, var(--md-on-surface) 15%);
-    text-shadow: 0 2px 4px
-      color-mix(in oklch, var(--md-primary) 20%, transparent);
+    text-shadow: 0 2px 4px color-mix(in oklch, var(--md-primary) 20%, transparent);
   }
 }
 
@@ -291,28 +255,19 @@
   color: var(--md-on-secondary-container);
   text-decoration: none;
 
-  background: color-mix(
-    in oklch,
-    var(--md-secondary-container) 90%,
-    transparent
-  );
+  background: color-mix(in oklch, var(--md-secondary-container) 90%, transparent);
   box-shadow: var(--md-sys-elevation-level1);
 
   transition:
-    transform var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-emphasized),
-    background-color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard),
-    color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard),
-    box-shadow var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
 
   /* 使用CSS嵌套语法 */
   &::before {
-    content: "";
+    content: '';
 
     position: absolute;
     z-index: -1;
@@ -326,8 +281,7 @@
       color-mix(in oklch, var(--md-secondary) 5%, transparent) 100%
     );
 
-    transition: opacity var(--md-sys-motion-duration-medium1)
-      var(--md-sys-motion-easing-standard);
+    transition: opacity var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
   }
 
   &:hover {
@@ -337,11 +291,7 @@
 
     color: var(--md-on-secondary);
 
-    background: color-mix(
-      in oklch,
-      var(--md-secondary) 85%,
-      var(--md-primary) 15%
-    );
+    background: color-mix(in oklch, var(--md-secondary) 85%, var(--md-primary) 15%);
     box-shadow: var(--md-sys-elevation-level2);
 
     &::before {
@@ -419,8 +369,7 @@
   font-variant-numeric: tabular-nums; /* 等宽数字 */
   line-height: var(--md-sys-typescale-line-height-normal);
   color: var(--md-on-surface-variant);
-  text-shadow: 0 1px 2px
-    color-mix(in oklch, var(--md-surface-dim) 30%, transparent);
+  text-shadow: 0 1px 2px color-mix(in oklch, var(--md-surface-dim) 30%, transparent);
   letter-spacing: 0.0313em; /* 使用 em 单位 */
 }
 
@@ -437,8 +386,7 @@
   line-height: var(--md-sys-typescale-line-height-relaxed);
   color: var(--md-on-surface);
   text-overflow: ellipsis;
-  text-shadow: 0 1px 2px
-    color-mix(in oklch, var(--md-surface-dim) 20%, transparent);
+  text-shadow: 0 1px 2px color-mix(in oklch, var(--md-surface-dim) 20%, transparent);
   text-wrap: pretty;
   letter-spacing: 0.0156em; /* 使用 em 单位 */
 }
@@ -470,25 +418,17 @@
   background: color-mix(in oklch, var(--md-tertiary-container) 85%, transparent);
 
   transition:
-    transform var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-emphasized),
-    background-color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard),
-    color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard);
 
   /* 使用CSS嵌套语法 */
   &:hover {
     transform: translateY(clamp(-0.06rem, -0.2vw, -0.12rem)) scale(1.05);
     border-color: var(--md-tertiary);
     color: var(--md-on-tertiary);
-    background: color-mix(
-      in oklch,
-      var(--md-tertiary) 90%,
-      var(--md-primary) 10%
-    );
+    background: color-mix(in oklch, var(--md-tertiary) 90%, var(--md-primary) 10%);
   }
 }
 
@@ -510,14 +450,11 @@
   text-decoration: none;
   text-decoration-thickness: 0.0625em;
   text-underline-offset: 0.25em;
-  text-shadow: 0 1px 2px
-    color-mix(in oklch, var(--md-surface-dim) 20%, transparent);
+  text-shadow: 0 1px 2px color-mix(in oklch, var(--md-surface-dim) 20%, transparent);
 
   transition:
-    color var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-emphasized),
-    transform var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-spring);
+    color var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-spring);
 
   /* 使用CSS嵌套语法 */
   &:hover {
@@ -530,10 +467,9 @@
 
 .url::after {
   will-change: transform;
-  content: "→";
+  content: '→';
   font-size: clamp(0.75rem, 2vw, 0.9rem);
-  transition: transform var(--md-sys-motion-duration-medium1)
-    var(--md-sys-motion-easing-spring);
+  transition: transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-spring);
 }
 
 .url:hover::after {
@@ -554,18 +490,13 @@
 
     .imageA {
       block-size: 100%;
-      border-radius: var(--md-sys-shape-corner-medium)
-        var(--md-sys-shape-corner-medium) 0 0;
+      border-radius: var(--md-sys-shape-corner-medium) var(--md-sys-shape-corner-medium) 0 0;
     }
 
     .postListThumb:has(.postThumbImg) .postContentWrap {
       padding-block: clamp(1rem, 3vw, 1.5rem);
       padding-inline: clamp(1rem, 3vw, 1.5rem);
-      background: color-mix(
-        in oklch,
-        var(--md-surface-container-high) 90%,
-        transparent
-      );
+      background: color-mix(in oklch, var(--md-surface-container-high) 90%, transparent);
       backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
     }
 
@@ -639,8 +570,7 @@
 
   .imageA {
     block-size: 100%;
-    border-radius: var(--md-sys-shape-corner-medium)
-      var(--md-sys-shape-corner-medium) 0 0;
+    border-radius: var(--md-sys-shape-corner-medium) var(--md-sys-shape-corner-medium) 0 0;
   }
 }
 
@@ -658,26 +588,14 @@
 /* 暗色模式 */
 @media (prefers-color-scheme: dark) {
   .postListThumb {
-    border-color: color-mix(
-      in oklch,
-      var(--md-outline-variant) 70%,
-      transparent
-    );
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container-low) 80%,
-      transparent
-    );
+    border-color: color-mix(in oklch, var(--md-outline-variant) 70%, transparent);
+    background: color-mix(in oklch, var(--md-surface-container-low) 80%, transparent);
     backdrop-filter: blur(clamp(1.25rem, 4vw, 1.5rem)) saturate(1.4);
     box-shadow: var(--md-sys-elevation-level4);
   }
 
   .postListThumb:hover {
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container) 85%,
-      var(--md-primary) 3%
-    );
+    background: color-mix(in oklch, var(--md-surface-container) 85%, var(--md-primary) 3%);
     backdrop-filter: blur(clamp(1.5rem, 5vw, 1.75rem)) saturate(1.8);
     box-shadow: var(--md-sys-elevation-colored-3);
   }
@@ -692,83 +610,47 @@
   }
 
   .postListThumb:has(.postThumbImg) .postContentWrap {
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container-low) 70%,
-      transparent
-    );
+    background: color-mix(in oklch, var(--md-surface-container-low) 70%, transparent);
     backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
   }
 
   .postListThumb .category {
     border-color: color-mix(in oklch, var(--md-outline) 60%, transparent);
     color: var(--md-on-secondary-container);
-    background: color-mix(
-      in oklch,
-      var(--md-secondary-container) 85%,
-      transparent
-    );
+    background: color-mix(in oklch, var(--md-secondary-container) 85%, transparent);
     box-shadow: var(--md-sys-elevation-level1);
   }
 
   .postListThumb .category:hover {
     border-color: var(--md-secondary);
     color: var(--md-on-secondary);
-    background: color-mix(
-      in oklch,
-      var(--md-secondary) 90%,
-      var(--md-primary) 10%
-    );
+    background: color-mix(in oklch, var(--md-secondary) 90%, var(--md-primary) 10%);
   }
 
   .tag {
-    border-color: color-mix(
-      in oklch,
-      var(--md-outline-variant) 50%,
-      transparent
-    );
+    border-color: color-mix(in oklch, var(--md-outline-variant) 50%, transparent);
     color: var(--md-on-tertiary-container);
-    background: color-mix(
-      in oklch,
-      var(--md-tertiary-container) 80%,
-      transparent
-    );
+    background: color-mix(in oklch, var(--md-tertiary-container) 80%, transparent);
   }
 
   .tag:hover {
     border-color: var(--md-tertiary);
     color: var(--md-on-tertiary);
-    background: color-mix(
-      in oklch,
-      var(--md-tertiary) 85%,
-      var(--md-primary) 15%
-    );
+    background: color-mix(in oklch, var(--md-tertiary) 85%, var(--md-primary) 15%);
   }
 }
 
 /* 手动暗色主题选择器 */
-:global([data-theme="dark"]) {
+:global([data-theme='dark']) {
   .postListThumb {
-    border-color: color-mix(
-      in oklch,
-      var(--md-outline-variant) 70%,
-      transparent
-    );
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container-low) 80%,
-      transparent
-    );
+    border-color: color-mix(in oklch, var(--md-outline-variant) 70%, transparent);
+    background: color-mix(in oklch, var(--md-surface-container-low) 80%, transparent);
     backdrop-filter: blur(clamp(1.25rem, 4vw, 1.5rem)) saturate(1.4);
     box-shadow: var(--md-sys-elevation-level4);
   }
 
   .postListThumb:hover {
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container) 85%,
-      var(--md-primary) 3%
-    );
+    background: color-mix(in oklch, var(--md-surface-container) 85%, var(--md-primary) 3%);
     backdrop-filter: blur(clamp(1.5rem, 5vw, 1.75rem)) saturate(1.8);
     box-shadow: var(--md-sys-elevation-colored-3);
   }
@@ -783,56 +665,32 @@
   }
 
   .postListThumb:has(.postThumbImg) .postContentWrap {
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container-low) 70%,
-      transparent
-    );
+    background: color-mix(in oklch, var(--md-surface-container-low) 70%, transparent);
     backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem));
   }
 
   .postListThumb .category {
     border-color: color-mix(in oklch, var(--md-outline) 60%, transparent);
     color: var(--md-on-secondary-container);
-    background: color-mix(
-      in oklch,
-      var(--md-secondary-container) 85%,
-      transparent
-    );
+    background: color-mix(in oklch, var(--md-secondary-container) 85%, transparent);
     box-shadow: var(--md-sys-elevation-level1);
   }
 
   .postListThumb .category:hover {
     border-color: var(--md-secondary);
     color: var(--md-on-secondary);
-    background: color-mix(
-      in oklch,
-      var(--md-secondary) 90%,
-      var(--md-primary) 10%
-    );
+    background: color-mix(in oklch, var(--md-secondary) 90%, var(--md-primary) 10%);
   }
 
   .tag {
-    border-color: color-mix(
-      in oklch,
-      var(--md-outline-variant) 50%,
-      transparent
-    );
+    border-color: color-mix(in oklch, var(--md-outline-variant) 50%, transparent);
     color: var(--md-on-tertiary-container);
-    background: color-mix(
-      in oklch,
-      var(--md-tertiary-container) 80%,
-      transparent
-    );
+    background: color-mix(in oklch, var(--md-tertiary-container) 80%, transparent);
   }
 
   .tag:hover {
     border-color: var(--md-tertiary);
     color: var(--md-on-tertiary);
-    background: color-mix(
-      in oklch,
-      var(--md-tertiary) 85%,
-      var(--md-primary) 15%
-    );
+    background: color-mix(in oklch, var(--md-tertiary) 85%, var(--md-primary) 15%);
   }
 }

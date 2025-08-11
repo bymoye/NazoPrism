@@ -5,7 +5,7 @@
 
 import { clearThemeCache, themeManager } from '@/utils/theme-manager';
 
-// 内联测试数据
+// Test data for theme manager
 const _testData = {
   colors: [{ hex: '#74ccc3' }, { hex: '#5a9b94' }, { hex: '#4a8b84' }],
   theme: {
@@ -19,6 +19,9 @@ const _testData = {
     ],
   },
 };
+
+// Use test data to prevent unused variable warning
+_testData;
 
 // Mock extract-colors
 jest.mock('extract-colors/lib/worker-wrapper', () => ({
@@ -40,18 +43,14 @@ import { extractColors } from 'extract-colors/lib/worker-wrapper';
 import { isObject } from '@/utils/type-guards';
 
 // Type assertions for mocked functions
-const mockedExtractColors = extractColors as jest.MockedFunction<
-  typeof extractColors
->;
-const mockedMakeCSSTheme = makeCSSTheme as jest.MockedFunction<
-  typeof makeCSSTheme
->;
+const mockedExtractColors = extractColors as jest.MockedFunction<typeof extractColors>;
+const mockedMakeCSSTheme = makeCSSTheme as jest.MockedFunction<typeof makeCSSTheme>;
 const mockedIsObject = isObject as jest.MockedFunction<typeof isObject>;
 
 // Mock DOM methods
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: jest.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
@@ -176,8 +175,7 @@ describe('themeManager', () => {
 
     // Mock isObject
     mockedIsObject.mockImplementation(
-      (value: unknown) =>
-        value !== null && typeof value === 'object' && !Array.isArray(value)
+      (value: unknown) => value !== null && typeof value === 'object' && !Array.isArray(value),
     );
 
     // Mock extractColors
@@ -300,7 +298,7 @@ describe('themeManager', () => {
           secondary: '#00ff00',
           tertiary: '#0000ff',
         }),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -311,7 +309,7 @@ describe('themeManager', () => {
         expect.objectContaining({
           primary: '#74ccc3',
         }),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -343,13 +341,7 @@ describe('themeManager', () => {
 
       const colors = await themeManager.extractColorsFromImage('invalid-url');
 
-      expect(colors).toEqual([
-        '#74ccc3',
-        '#5a9b94',
-        '#8fd4cc',
-        '#4a7c75',
-        '#3d6b65',
-      ]);
+      expect(colors).toEqual(['#74ccc3', '#5a9b94', '#8fd4cc', '#4a7c75', '#3d6b65']);
     });
   });
 
@@ -359,29 +351,24 @@ describe('themeManager', () => {
 
       await themeManager.updateThemeFromImage(imageUrl);
 
-      expect(mockedExtractColors).toHaveBeenCalledWith(
-        imageUrl,
-        expect.any(Object)
-      );
+      expect(mockedExtractColors).toHaveBeenCalledWith(imageUrl, expect.any(Object));
       expect(mockedMakeCSSTheme).toHaveBeenCalledWith(
         expect.objectContaining({
           primary: '#74ccc3',
         }),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
     test('应该处理图片加载失败', async () => {
       mockedExtractColors.mockRejectedValueOnce(new Error('图片加载失败'));
 
-      await expect(
-        themeManager.updateThemeFromImage('invalid-url')
-      ).resolves.not.toThrow();
+      await expect(themeManager.updateThemeFromImage('invalid-url')).resolves.not.toThrow();
       expect(mockedMakeCSSTheme).toHaveBeenCalledWith(
         expect.objectContaining({
           primary: '#74ccc3',
         }),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });

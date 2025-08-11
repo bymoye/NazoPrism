@@ -1,4 +1,4 @@
-/* M3 + Morphic Glass Article List Container - converted from SCSS */
+/* 文章列表容器样式 */
 
 .page {
   display: flex;
@@ -24,19 +24,19 @@
   border: 1px solid var(--md-outline-variant);
   border-radius: var(--md-sys-shape-corner-extra-large);
 
-  /* M3 + Morphic Glass Effect */
+  /* M3 + 形态玻璃效果 */
   background: var(--md-surface-container-high);
   backdrop-filter: blur(24px) saturate(1.8);
   box-shadow: var(--md-sys-elevation-level3);
 
-  /* Smooth transitions */
+  /* 平滑过渡动画 */
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
 }
 
-/* Subtle gradient overlay for depth */
+/* 微妙的渐变叠加层增加深度 */
 .content::before {
   pointer-events: none;
-  content: "";
+  content: '';
 
   position: absolute;
   inset: 0;
@@ -46,7 +46,7 @@
   background: var(--md-surface-dim);
 }
 
-/* Enhanced glass effect on hover */
+/* 悬停时增强的玻璃效果 */
 .content:hover {
   transform: translateY(-2px);
   background: var(--md-surface-container-highest);
@@ -86,7 +86,7 @@
 }
 
 .sectionTitle::after {
-  content: "";
+  content: '';
 
   position: absolute;
   bottom: -2px;
@@ -187,7 +187,7 @@
   text-align: center;
 }
 
-/* Responsive design */
+/* 响应式设计 */
 @media (width <= 1024px) {
   .content {
     max-width: 95%;
@@ -256,7 +256,7 @@
   }
 }
 
-/* Dark mode adjustments */
+/* 深色模式调整 */
 @media (prefers-color-scheme: dark) {
   .content {
     background: var(--md-surface-container-low);

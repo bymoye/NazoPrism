@@ -23,8 +23,8 @@ jest.mock('@/utils/theme-manager', () => ({
 
 // Mock type-guards
 jest.mock('@/utils/type-guards', () => ({
-  isArray: jest.fn((value) => Array.isArray(value)),
-  isError: jest.fn((value) => value instanceof Error),
+  isArray: jest.fn(value => Array.isArray(value)),
+  isError: jest.fn(value => value instanceof Error),
 }));
 
 describe('useTheme', () => {
@@ -173,9 +173,7 @@ describe('useTheme', () => {
 
   test('应该处理不同的错误状态', () => {
     const { result } = renderHook(() => useTheme(), { wrapper });
-    expect(
-      result.current.error === null || typeof result.current.error === 'string'
-    ).toBe(true);
+    expect(result.current.error === null || typeof result.current.error === 'string').toBe(true);
   });
 
   test('应该正确处理多次连续的主题更新', async () => {
@@ -183,11 +181,11 @@ describe('useTheme', () => {
     const colors = [0xff_00_00, 0x00_ff_00, 0x00_00_ff];
 
     await Promise.all(
-      colors.map(async (color) => {
+      colors.map(async color => {
         await act(async () => {
           await result.current.updateTheme(color);
         });
-      })
+      }),
     );
 
     expect(typeof result.current.updateTheme).toBe('function');

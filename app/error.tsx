@@ -19,19 +19,17 @@ const ErrorBoundary = ({
   reset: () => void;
 }) => {
   useEffect(() => {
-    // 记录错误信息用于调试
+    /** 记录错误信息用于调试 */
     console.error('页面错误:', error);
-    // 可以在这里添加错误报告服务
-    // 示例: reportError(error);
   }, [error]);
 
   return (
     <ErrorPage
       error={error}
-      message="当前页面无法正常加载。请尝试刷新页面或返回首页。"
-      onRetry={reset}
-      showDetails={process.env.NODE_ENV === 'development'}
-      title="页面加载失败"
+      handleRetry={reset}
+      isShowDetails={process.env.NODE_ENV === 'development'}
+      message='当前页面无法正常加载。请尝试刷新页面或返回首页。'
+      title='页面加载失败'
     />
   );
 };

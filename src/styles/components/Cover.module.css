@@ -17,12 +17,9 @@
   box-shadow: var(--md-sys-elevation-level2);
 
   transition:
-    transform var(--md-sys-motion-duration-theme)
-    var(--md-sys-motion-easing-spring),
-    box-shadow var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-spring),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   /* 悬停效果 */
   &:hover {
@@ -57,32 +54,20 @@
   color: var(--md-on-surface-container-highest);
   letter-spacing: 0.025em;
 
-  background: color-mix(
-    in oklch,
-    var(--md-surface-container-highest) 90%,
-    transparent
-  );
+  background: color-mix(in oklch, var(--md-surface-container-highest) 90%, transparent);
   backdrop-filter: blur(clamp(0.75rem, 2vw, 1rem)) saturate(1.8);
 
   transition:
-    background-color var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard),
-    transform var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-emphasized),
-    box-shadow var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   /* 悬停效果 */
   &:hover {
     transform: translateY(clamp(-0.12rem, -0.5vw, -0.25rem));
     border-color: var(--md-outline);
-    background: color-mix(
-      in oklch,
-      var(--md-surface-container-highest) 95%,
-      var(--md-primary) 5%
-    );
+    background: color-mix(in oklch, var(--md-surface-container-highest) 95%, var(--md-primary) 5%);
     box-shadow: var(--md-sys-elevation-colored-1);
   }
 
@@ -152,8 +137,7 @@
 
   text-align: center;
 
-  transition: all var(--md-sys-motion-easing-emphasized)
-    var(--md-sys-motion-duration-medium2);
+  transition: all var(--md-sys-motion-easing-emphasized) var(--md-sys-motion-duration-medium2);
 }
 
 /* 使用容器查询优化头像大小 */

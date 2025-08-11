@@ -14,18 +14,18 @@ import styles from '@/styles/components/Cover.module.css';
  */
 const Cover: React.FC = () => {
   return (
-    <figure className={styles.siteCover}>
-      <div className={styles.focusInfo}>
+    <figure className={styles['siteCover']}>
+      <div className={styles['focusInfo']}>
         <Image
-          alt="网站头像"
-          className={styles.avatar}
-          height={130}
           priority
+          alt='网站头像'
+          className={styles['avatar']}
+          height={130}
           src={SITE_CONFIG.avatar}
           width={130}
         />
         {/* 网站描述文字 */}
-        <div className={styles.focusInfoText}>{SITE_CONFIG.description}</div>
+        <div className={styles['focusInfoText']}>{SITE_CONFIG.description}</div>
       </div>
     </figure>
   );

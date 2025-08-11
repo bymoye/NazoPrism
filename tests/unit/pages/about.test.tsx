@@ -27,23 +27,17 @@ const renderWithTheme = (component: React.ReactElement) => {
 describe('About Page', () => {
   it('renders without crashing', () => {
     renderWithTheme(<AboutPage />);
-    expect(
-      screen.getByRole('heading', { name: '关于我们' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '关于我们' })).toBeInTheDocument();
   });
 
   it('displays the about page title', () => {
     renderWithTheme(<AboutPage />);
-    expect(
-      screen.getByRole('heading', { name: '关于我们' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '关于我们' })).toBeInTheDocument();
   });
 
   it('has proper page content', () => {
     renderWithTheme(<AboutPage />);
-    expect(
-      screen.getByRole('heading', { name: '关于我们' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '关于我们' })).toBeInTheDocument();
     expect(screen.getByText('这里是关于页面的内容。')).toBeInTheDocument();
   });
 });

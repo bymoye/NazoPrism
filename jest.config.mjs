@@ -17,10 +17,7 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   // 测试文件匹配模式
-  testMatch: [
-    '**/tests/**/*.(ts|tsx|js|jsx)',
-    '**/*.(test|spec).(ts|tsx|js|jsx)',
-  ],
+  testMatch: ['**/tests/**/*.(ts|tsx|js|jsx)', '**/*.(test|spec).(ts|tsx|js|jsx)'],
 
   // 忽略的测试路径
   testPathIgnorePatterns: [

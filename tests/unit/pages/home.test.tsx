@@ -23,7 +23,7 @@ jest.mock('@/utils/theme-manager', () => ({
 // Mock the BackgroundCarousel
 jest.mock('@/components/ui/BackgroundCarousel', () => {
   const MockBackgroundCarousel = () => {
-    return <div data-testid="background-carousel">Background Carousel</div>;
+    return <div data-testid='background-carousel'>Background Carousel</div>;
   };
   return MockBackgroundCarousel;
 });
@@ -31,7 +31,7 @@ jest.mock('@/components/ui/BackgroundCarousel', () => {
 // Mock the Cover component
 jest.mock('@/components/ui/Cover', () => {
   const MockCover = () => {
-    return <div data-testid="cover">Cover Component</div>;
+    return <div data-testid='cover'>Cover Component</div>;
   };
   return MockCover;
 });
@@ -39,7 +39,7 @@ jest.mock('@/components/ui/Cover', () => {
 // Mock the ArticleIndex component
 jest.mock('@/components/ui/ArticleIndex', () => {
   const MockArticleIndex = () => {
-    return <div data-testid="article-index">Article Index</div>;
+    return <div data-testid='article-index'>Article Index</div>;
   };
   return MockArticleIndex;
 });

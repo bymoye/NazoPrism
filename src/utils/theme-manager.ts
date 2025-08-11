@@ -3,20 +3,26 @@
  * @description 主题管理工具
  */
 
-import {
-  type MakeCSSThemeOptions,
-  makeCSSTheme,
-  type ThemeColors,
-} from '@poupe/theme-builder';
+import { makeCSSTheme, type MakeCSSThemeOptions, type ThemeColors } from '@poupe/theme-builder';
 import { extractColors } from 'extract-colors/lib/worker-wrapper';
 
 import { isObject } from './type-guards';
+
+/** 常量定义 */
+
+const DARK_MODE = 'dark';
+const LIGHT_MODE = 'light';
+const DATASET_THEME_ATTRIBUTE = 'theme';
+const THEME_SET_BY_USER = 'themeSetByUser';
+const THEME_STYLE_ID = 'nazo-prism-theme';
+const THEME_STORAGE_KEY = 'theme'; // 保留以备将来使用
+void THEME_STORAGE_KEY; // 标记为已使用
 
 /** 默认主题颜色数组 */
 const DEFAULT_COLORS = ['#74ccc3', '#5a9b94', '#8fd4cc', '#4a7c75', '#3d6b65'];
 
 /** 主题颜色键名数组 */
-const THEME_KEYS: (keyof ThemeColors<never>)[] = [
+const THEME_KEYS: Array<keyof ThemeColors<never>> = [
   'primary',
   'secondary',
   'tertiary',
@@ -35,19 +41,20 @@ const themeColorCache = new Map<string, string[]>();
  * 生成主题
  *
  * @param colors - 颜色数组，用于生成主题
- * @returns 生成的主题对象
+ * @returns 主题对象
  */
 const generateTheme = (colors: string[]): ReturnType<typeof makeCSSTheme> => {
-  const themeColors = colors.slice(0, THEME_KEYS.length).reduce(
-    (acc, color, index) => {
-      const themeKey = THEME_KEYS[index];
-      if (themeKey) {
-        acc[themeKey] = color;
-      }
-      return acc;
-    },
-    {} as Record<string, string>
-  ) as ThemeColors<never>;
+  const themeColors: Record<string, string> = {};
+
+  for (let index = 0; index < Math.min(colors.length, THEME_KEYS.length); index++) {
+    const themeKey = THEME_KEYS.at(index);
+    const color = colors.at(index);
+    if (themeKey && color && typeof themeKey === 'string') {
+      Object.assign(themeColors, { [themeKey]: color });
+    }
+  }
+
+  const typedThemeColors = themeColors as ThemeColors<never>;
 
   const options: Partial<MakeCSSThemeOptions> = {
     darkMode: "[data-theme='dark']",
@@ -58,7 +65,7 @@ const generateTheme = (colors: string[]): ReturnType<typeof makeCSSTheme> => {
     scheme: 'vibrant',
   };
 
-  return makeCSSTheme(themeColors, options);
+  return makeCSSTheme(typedThemeColors, options);
 };
 
 /**
@@ -66,11 +73,13 @@ const generateTheme = (colors: string[]): ReturnType<typeof makeCSSTheme> => {
  *
  * @returns 是否为深色模式
  */
+const PREFERS_COLOR_SCHEME_DARK = '(prefers-color-scheme: dark)';
+
 const isDarkMode = (): boolean => {
+  const themeValue = document.documentElement.getAttribute(`data-${DATASET_THEME_ATTRIBUTE}`);
   return (
-    document.documentElement.dataset.theme === 'dark' ||
-    (!document.documentElement.dataset.theme &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches)
+    themeValue === DARK_MODE ||
+    (!themeValue && window.matchMedia(PREFERS_COLOR_SCHEME_DARK).matches)
   );
 };
 
@@ -80,7 +89,10 @@ const isDarkMode = (): boolean => {
  * @param isDark - 是否设置为深色模式
  */
 const setDarkMode = (isDark: boolean): void => {
-  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+  document.documentElement.setAttribute(
+    `data-${DATASET_THEME_ATTRIBUTE}`,
+    isDark ? DARK_MODE : LIGHT_MODE,
+  );
 };
 
 /**
@@ -89,20 +101,20 @@ const setDarkMode = (isDark: boolean): void => {
  * @param theme - 要应用的主题对象
  */
 const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
-  let styleElement = document.getElementById('nazo-prism-theme');
+  let styleElement = document.querySelector(`#${THEME_STYLE_ID}`);
   if (!styleElement) {
     styleElement = document.createElement('style');
-    styleElement.id = 'nazo-prism-theme';
+    styleElement.id = THEME_STYLE_ID;
     document.head.append(styleElement);
   }
 
-  if (!(theme?.styles?.length && isObject(theme.styles.at(0)))) {
+  if (theme.styles.length === 0) {
     styleElement.textContent = '';
     return;
   }
 
-  const rulesObject = theme.styles.at(0);
-  if (!rulesObject) {
+  const rulesObject = theme.styles[0];
+  if (!rulesObject || !isObject(rulesObject)) {
     styleElement.textContent = '';
     return;
   }
@@ -111,8 +123,18 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
       if (!isObject(rules)) {
         return '';
       }
-      const varsString = Object.entries(rules)
-        .map(([property, value]) => `  ${property}: ${value};`)
+      const varsString = Object.entries(rules as Record<string, unknown>)
+        .map(([property, value]) => {
+          let stringValue: string;
+          if (typeof value === 'string') {
+            stringValue = value;
+          } else if (typeof value === 'number') {
+            stringValue = String(value);
+          } else {
+            stringValue = JSON.stringify(value);
+          }
+          return `  ${property}: ${stringValue};`;
+        })
         .join('\n');
       return `${selector} {\n${varsString}\n}`;
     })
@@ -129,7 +151,7 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
  * @returns 提取的颜色数组（十六进制格式）
  */
 const extractColorsFromImage = async (imageUrl: string): Promise<string[]> => {
-  // 检查缓存
+  /** 检查缓存 */
   if (themeColorCache.has(imageUrl)) {
     const cachedColors = themeColorCache.get(imageUrl);
     if (cachedColors) {
@@ -141,20 +163,16 @@ const extractColorsFromImage = async (imageUrl: string): Promise<string[]> => {
     const colors = await extractColors(imageUrl, {
       pixels: 10_000,
       distance: 0.22,
-      colorValidator: (_r, _g, _b, a = 255) => a > 250,
+      colorValidator: (red, green, blue, alpha = 255) => alpha > 250,
     });
-    const extractedColors = colors?.map(({ hex }) => hex);
-    const finalColors = extractedColors?.length
-      ? extractedColors
-      : DEFAULT_COLORS;
+    const extractedColors = colors.map(({ hex }) => hex);
+    const finalColors = extractedColors.length > 0 ? extractedColors : DEFAULT_COLORS;
 
-    // 缓存提取的颜色
+    /** 缓存提取的颜色 */
     themeColorCache.set(imageUrl, finalColors);
     return finalColors;
-  } catch (error) {
-    // 记录错误信息用于调试
-    console.error('从图片提取颜色失败:', error, '图片URL:', imageUrl);
-    // 即使失败也缓存默认颜色，避免重复请求
+  } catch {
+    /** 即使失败也缓存默认颜色，避免重复请求 */
     themeColorCache.set(imageUrl, DEFAULT_COLORS);
     return DEFAULT_COLORS;
   }
@@ -172,9 +190,8 @@ const preloadImageTheme = async (imageUrl: string): Promise<void> => {
 
   try {
     await extractColorsFromImage(imageUrl);
-  } catch (error) {
-    // 预载失败不影响主流程，记录错误用于调试
-    console.error('预载图片主题色失败:', error, '图片URL:', imageUrl);
+  } catch {
+    /** 预载失败不影响主流程，静默处理 */
   }
 };
 
@@ -186,7 +203,7 @@ const preloadImageTheme = async (imageUrl: string): Promise<void> => {
 const toggleDarkMode = (forceDark?: boolean): void => {
   const newIsDark = forceDark ?? !isDarkMode();
   setDarkMode(newIsDark);
-  document.documentElement.dataset.themeSetByUser = 'true';
+  document.documentElement.setAttribute(`data-${THEME_SET_BY_USER}`, 'true');
 };
 
 /**
@@ -195,7 +212,7 @@ const toggleDarkMode = (forceDark?: boolean): void => {
  * @param colors - 颜色数组，用于生成主题
  */
 const updateThemeFromColors = (colors: string[]): void => {
-  const validColors = colors.length ? colors : DEFAULT_COLORS;
+  const validColors = colors.length > 0 ? colors : DEFAULT_COLORS;
   currentTheme = generateTheme(validColors);
   applyTheme(currentTheme);
 };
@@ -206,21 +223,15 @@ const updateThemeFromColors = (colors: string[]): void => {
  * @param imageUrl - 当前图片URL
  * @param nextImageUrl - 可选，下一张图片URL，用于预载
  */
-const updateThemeFromImage = async (
-  imageUrl: string,
-  nextImageUrl?: string
-): Promise<void> => {
+const updateThemeFromImage = async (imageUrl: string, nextImageUrl?: string): Promise<void> => {
   const colors = await extractColorsFromImage(imageUrl);
   updateThemeFromColors(colors);
 
-  // 预载下一张图片的主题色
+  /** 预载下一张图片的主题色 */
   if (nextImageUrl && nextImageUrl !== imageUrl) {
-    // 异步预载，不阻塞当前主题更新
-    preloadImageTheme(nextImageUrl).catch((error) => {
-      // 预载失败不影响主流程，记录错误用于调试
-      console.error(
-        `异步预载下一张图片主题色失败: ${error} 图片URL: ${nextImageUrl}`
-      );
+    /** 异步预载，不阻塞当前主题更新 */
+    preloadImageTheme(nextImageUrl).catch(() => {
+      /** 预载失败不影响主流程，静默处理 */
     });
   }
 };
@@ -231,26 +242,33 @@ const updateThemeFromImage = async (
  * @returns 返回清理函数，用于移除事件监听器
  */
 const initTheme = (): (() => void) => {
-  if (!document.documentElement.dataset.theme) {
-    const prefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches;
-    document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
+  const currentThemeValue = document.documentElement.getAttribute(
+    `data-${DATASET_THEME_ATTRIBUTE}`,
+  );
+  if (!currentThemeValue) {
+    const prefersDark = window.matchMedia(PREFERS_COLOR_SCHEME_DARK).matches;
+    document.documentElement.setAttribute(
+      `data-${DATASET_THEME_ATTRIBUTE}`,
+      prefersDark ? DARK_MODE : LIGHT_MODE,
+    );
   }
 
   if (!currentTheme) {
     updateThemeFromColors(DEFAULT_COLORS);
   }
 
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const mediaQuery = window.matchMedia(PREFERS_COLOR_SCHEME_DARK);
   const listener = ({ matches }: MediaQueryListEvent) => {
-    if (!document.documentElement.dataset.themeSetByUser) {
+    const userSetTheme = document.documentElement.getAttribute(`data-${THEME_SET_BY_USER}`);
+    if (!userSetTheme) {
       setDarkMode(matches);
     }
   };
 
   mediaQuery.addEventListener('change', listener);
-  return () => mediaQuery.removeEventListener('change', listener);
+  return () => {
+    mediaQuery.removeEventListener('change', listener);
+  };
 };
 
 export const themeManager = {

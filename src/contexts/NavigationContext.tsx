@@ -1,13 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useState,
-} from 'react';
+import { createContext, type ReactNode, useContext, useState } from 'react';
 
 /**
  * 导航项接口
@@ -30,18 +24,16 @@ interface NavigationContextType {
   /** 菜单是否打开 */
   isMenuOpen: boolean;
   /** 设置菜单打开状态 */
-  setMenuOpen: (open: boolean) => void;
+  setMenuOpen: (_open: boolean) => void;
   /** 关闭菜单 */
   closeMenu: () => void;
   /** 导航到指定路径 */
-  navigate: (path: string) => void;
+  navigate: (_path: string) => void;
   /** 检查是否为当前路径 */
-  isCurrentPath: (path: string) => boolean;
+  isCurrentPath: (_path: string) => boolean;
 }
 
-const NavigationContext = createContext<NavigationContextType | undefined>(
-  undefined
-);
+const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
 /**
  * 导航提供者组件属性接口
@@ -62,46 +54,36 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const setMenuOpen = useCallback((open: boolean) => {
+  const setMenuOpen = (open: boolean) => {
     setIsMenuOpen(open);
-  }, []);
+  };
 
-  const closeMenu = useCallback(() => {
+  const closeMenu = () => {
     setIsMenuOpen(false);
-  }, []);
+  };
 
-  const navigate = useCallback(
-    (path: string) => {
-      setIsMenuOpen(false);
-      router.push(path);
-    },
-    [router]
-  );
+  const navigate = (path: string) => {
+    setIsMenuOpen(false);
+    router.push(path);
+  };
 
-  const isCurrentPath = useCallback(
-    (path: string) => {
-      if (!pathname) {
-        return false;
-      }
-      return pathname === path || (path !== '/' && pathname.startsWith(path));
-    },
-    [pathname]
-  );
+  const isCurrentPath = (path: string) => {
+    if (!pathname) {
+      return false;
+    }
+    return pathname === path || (path !== '/' && pathname.startsWith(path));
+  };
 
-  return (
-    <NavigationContext.Provider
-      value={{
-        currentPath: pathname ?? '/',
-        isMenuOpen,
-        setMenuOpen,
-        closeMenu,
-        navigate,
-        isCurrentPath,
-      }}
-    >
-      {children}
-    </NavigationContext.Provider>
-  );
+  const contextValue = {
+    currentPath: pathname || '/',
+    isMenuOpen,
+    setMenuOpen,
+    closeMenu,
+    navigate,
+    isCurrentPath,
+  };
+
+  return <NavigationContext.Provider value={contextValue}>{children}</NavigationContext.Provider>;
 };
 
 /**
@@ -113,9 +95,7 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
 export const useNavigationContext = () => {
   const context = useContext(NavigationContext);
   if (context === undefined) {
-    throw new Error(
-      'useNavigationContext must be used within a NavigationProvider'
-    );
+    throw new Error('useNavigationContext 必须在 NavigationProvider 内使用');
   }
   return context;
 };

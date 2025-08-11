@@ -3,9 +3,9 @@
  * @description 交叉观察器Hook
  */
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-type ObserverCallback = (entries: IntersectionObserverEntry[]) => void;
+type ObserverCallback = (_entries: IntersectionObserverEntry[]) => void;
 
 interface UseIntersectionObserverOptions extends IntersectionObserverInit {
   enabled?: boolean;
@@ -20,14 +20,9 @@ interface UseIntersectionObserverOptions extends IntersectionObserverInit {
  */
 export const useIntersectionObserver = (
   callback: ObserverCallback,
-  options: UseIntersectionObserverOptions = {}
+  options: UseIntersectionObserverOptions = {},
 ) => {
-  const {
-    root = null,
-    rootMargin = '0px',
-    threshold = 0,
-    enabled = true,
-  } = options;
+  const { root = null, rootMargin = '0px', threshold = 0, enabled = true } = options;
   const observerRef = useRef<IntersectionObserver | null>(null);
   const targetsRef = useRef<Set<Element>>(new Set());
 
@@ -50,32 +45,34 @@ export const useIntersectionObserver = (
       observer.observe(target);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, [enabled, root, rootMargin, threshold, callback]);
 
-  const observe = useCallback(
-    (target: Element) => {
-      if (!(enabled && target)) {
-        return;
-      }
-      targetsRef.current.add(target);
-      observerRef.current?.observe(target);
-    },
-    [enabled]
-  );
-
-  const unobserve = useCallback((target: Element) => {
-    if (!target) {
+  const observe = (target: Element) => {
+    if (!enabled) {
       return;
     }
-    targetsRef.current.delete(target);
-    observerRef.current?.unobserve(target);
-  }, []);
+    targetsRef.current.add(target);
+    if (observerRef.current) {
+      observerRef.current.observe(target);
+    }
+  };
 
-  const disconnect = useCallback(() => {
-    observerRef.current?.disconnect();
+  const unobserve = (target: Element) => {
+    targetsRef.current.delete(target);
+    if (observerRef.current) {
+      observerRef.current.unobserve(target);
+    }
+  };
+
+  const disconnect = () => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
     targetsRef.current.clear();
-  }, []);
+  };
 
   return { observe, unobserve, disconnect };
 };

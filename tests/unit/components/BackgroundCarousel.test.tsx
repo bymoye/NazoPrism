@@ -5,21 +5,21 @@ import BackgroundCarousel from '@/components/ui/BackgroundCarousel';
 import { AppProvider } from '@/contexts/AppContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
-// Mock extract-colors to avoid ES module issues
+// 模拟extract-colors以避免ES模块问题
 jest.mock('extract-colors', () => ({
   extractColors: jest.fn(),
 }));
 
-// Mock lenis/react
+// 模拟lenis/react
 jest.mock('lenis/react', () => ({
   useLenis: jest.fn(),
 }));
 
-// Mock theme-manager
+// 模拟theme-manager
 jest.mock('@/utils/theme-manager', () => ({
   themeManager: {
     initTheme: jest.fn().mockReturnValue(() => {
-      // Mock cleanup function
+      // 模拟清理函数
     }),
     updateThemeFromColors: jest.fn(),
     updateThemeFromImage: jest.fn().mockResolvedValue(undefined),
@@ -28,7 +28,7 @@ jest.mock('@/utils/theme-manager', () => ({
   },
 }));
 
-// Mock the SITE_CONFIG
+// 模拟SITE_CONFIG
 jest.mock('@/lib/site.config', () => ({
   SITE_CONFIG: {
     backgroundApi: {
@@ -38,18 +38,18 @@ jest.mock('@/lib/site.config', () => ({
   },
 }));
 
-// Mock fetch
+// 模拟fetch
 global.fetch = jest.fn();
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
     <AppProvider>
       <ThemeProvider>{component}</ThemeProvider>
-    </AppProvider>
+    </AppProvider>,
   );
 };
 
-// Mock the timer functions
+// 模拟定时器函数
 jest.useFakeTimers();
 
 describe('BackgroundCarousel', () => {
@@ -59,10 +59,7 @@ describe('BackgroundCarousel', () => {
       ok: true,
       json: async () => ({
         code: 200,
-        url: [
-          'https://example.com/image1.jpg',
-          'https://example.com/image2.jpg',
-        ],
+        url: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'],
       }),
     });
   });
@@ -75,7 +72,7 @@ describe('BackgroundCarousel', () => {
   it('renders without crashing', () => {
     renderWithProviders(<BackgroundCarousel />);
 
-    // Check if the SVG element is rendered
+    // 检查SVG元素是否被渲染
     const svgElement = document.querySelector('#bg-carousel-svg');
     expect(svgElement).toBeInTheDocument();
   });
@@ -86,11 +83,11 @@ describe('BackgroundCarousel', () => {
     const svgElement = document.querySelector('#bg-carousel-svg');
     expect(svgElement).toHaveAttribute('id', 'bg-carousel-svg');
 
-    // Check for filter definition
+    // 检查滤镜定义
     const filter = document.querySelector('#bg-carousel-blur-filter');
     expect(filter).toBeInTheDocument();
 
-    // Check for gaussian blur element
+    // 检查高斯模糊元素
     const gaussianBlur = document.querySelector('feGaussianBlur');
     expect(gaussianBlur).toBeInTheDocument();
     expect(gaussianBlur).toHaveAttribute('stdDeviation', '0');
@@ -99,16 +96,16 @@ describe('BackgroundCarousel', () => {
   it('handles page visibility changes', () => {
     renderWithProviders(<BackgroundCarousel />);
 
-    // Reset document title
+    // 重置文档标题
     document.title = 'Test Page';
 
-    // Simulate page becoming hidden
+    // 模拟页面变为隐藏状态
     Object.defineProperty(document, 'hidden', { value: true, writable: true });
     document.dispatchEvent(new Event('visibilitychange'));
 
     expect(document.title).toContain('等你回来~');
 
-    // Simulate page becoming visible
+    // 模拟页面变为可见状态
     Object.defineProperty(document, 'hidden', { value: false, writable: true });
     document.dispatchEvent(new Event('visibilitychange'));
 
@@ -118,9 +115,9 @@ describe('BackgroundCarousel', () => {
   it('cleans up resources on unmount', () => {
     const { unmount } = renderWithProviders(<BackgroundCarousel />);
 
-    // Component should unmount without errors
+    // 组件应该能够正常卸载而不出错
     unmount();
-    // If we reach this point, unmount was successful
+    // 如果执行到这里，说明卸载成功
     expect(true).toBe(true);
   });
 });

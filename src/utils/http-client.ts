@@ -6,12 +6,12 @@
 /**
  * HTTP请求方法类型
  */
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type HttpMethod = 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
 
 /**
  * 查询参数类型
  */
-type QueryParams = Record<string, string | number | boolean | undefined>;
+type QueryParams = Record<string, boolean | number | string | undefined>;
 
 /**
  * 请求配置接口
@@ -61,7 +61,7 @@ export class HttpError extends Error {
     status: number,
     statusText: string,
     response?: Response,
-    data?: unknown
+    data?: unknown,
   ) {
     super(message);
     this.name = 'HttpError';
@@ -87,11 +87,7 @@ class HttpClient {
    * @param defaultHeaders - 默认请求头
    * @param defaultTimeout - 默认超时时间
    */
-  constructor(
-    baseURL = '',
-    defaultHeaders: Record<string, string> = {},
-    defaultTimeout = 10_000
-  ) {
+  constructor(baseURL = '', defaultHeaders: Record<string, string> = {}, defaultTimeout = 10_000) {
     this.#baseURL = baseURL;
     this.#defaultHeaders = {
       'Content-Type': 'application/json',
@@ -110,8 +106,16 @@ class HttpClient {
     const searchParams = new URLSearchParams();
 
     for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== null) {
-        searchParams.append(key, String(value));
+      if (value !== undefined && value !== '') {
+        let stringValue: string;
+        if (typeof value === 'string') {
+          stringValue = value;
+        } else if (typeof value === 'number' || typeof value === 'boolean') {
+          stringValue = String(value);
+        } else {
+          stringValue = JSON.stringify(value);
+        }
+        searchParams.append(key, stringValue);
       }
     }
 
@@ -139,25 +143,24 @@ class HttpClient {
    * @param headers - 请求头
    * @returns 处理后的请求体
    */
-  #processBody(
-    body: unknown,
-    headers: Record<string, string>
-  ): string | FormData | undefined {
-    if (!body) {
+  #processBody(body: unknown, headers: Record<string, string>): FormData | string | undefined {
+    if (body === null || body === undefined) {
       return;
     }
 
     if (body instanceof FormData) {
-      const { 'Content-Type': _, ...restHeaders } = headers;
+      const { 'Content-Type': contentTypeHeader, ...restHeaders } = headers;
+      void contentTypeHeader; // 标记为已使用
       Object.assign(headers, restHeaders);
       return body;
     }
 
-    if (headers['Content-Type']?.includes('application/json')) {
-      return JSON.stringify(body);
+    const contentType = headers['Content-Type'];
+    if (contentType?.includes('application/json')) {
+      return JSON.stringify(body as Record<string, unknown>);
     }
 
-    return String(body);
+    return typeof body === 'string' ? body : JSON.stringify(body);
   }
 
   /**
@@ -167,21 +170,21 @@ class HttpClient {
    * @returns 解析后的数据
    */
   async #parseResponse<T>(response: Response): Promise<T> {
-    const contentType = response.headers.get('Content-Type') || '';
+    const contentType = response.headers.get('Content-Type');
 
     try {
-      if (contentType.includes('application/json')) {
-        return await response.json();
+      if (contentType?.includes('application/json')) {
+        return (await response.json()) as T;
       }
 
-      if (contentType.includes('text/')) {
+      if (contentType?.includes('text/')) {
         return (await response.text()) as T;
       }
 
-      // 默认尝试解析为JSON
-      return await response.json();
-    } catch (_error) {
-      // 如果解析失败，返回响应文本
+      /** 默认尝试解析为JSON */
+      return (await response.json()) as T;
+    } catch {
+      /** 如果解析失败，返回响应文本 */
       return (await response.text()) as T;
     }
   }
@@ -197,7 +200,7 @@ class HttpClient {
   async #request<T = unknown>(
     method: HttpMethod,
     url: string,
-    config: RequestConfig = {}
+    config: RequestConfig = {},
   ): Promise<HttpResponse<T>> {
     const {
       headers = {},
@@ -208,24 +211,26 @@ class HttpClient {
       credentials = 'same-origin',
     } = config;
 
-    // 合并请求头
+    /** 合并请求头 */
     const mergedHeaders = { ...this.#defaultHeaders, ...headers };
 
-    // 构建URL
+    /** 构建URL */
     const fullURL = this.#buildURL(url, queryParams);
 
-    // 处理请求体
+    /** 处理请求体 */
     const processedBody = this.#processBody(body, mergedHeaders);
 
-    // 创建AbortController用于超时控制
+    /** 创建AbortController用于超时控制 */
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
 
     try {
       const response = await fetch(fullURL, {
         method,
         headers: mergedHeaders,
-        body: processedBody || null,
+        body: processedBody ?? null,
         cache,
         credentials,
         signal: controller.signal,
@@ -233,18 +238,13 @@ class HttpClient {
 
       clearTimeout(timeoutId);
 
-      // 检查响应状态
+      /** 检查响应状态 */
       if (!response.ok) {
         const errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-        throw new HttpError(
-          errorMessage,
-          response.status,
-          response.statusText,
-          response
-        );
+        throw new HttpError(errorMessage, response.status, response.statusText, response);
       }
 
-      // 解析响应数据
+      /** 解析响应数据 */
       const data = await this.#parseResponse<T>(response);
 
       return {
@@ -257,21 +257,21 @@ class HttpClient {
     } catch (error) {
       clearTimeout(timeoutId);
 
-      // 处理超时错误
+      /** 处理超时错误 */
       if (error instanceof Error && error.name === 'AbortError') {
         throw new HttpError('Request timeout', 408, 'Request Timeout');
       }
 
-      // 重新抛出HttpError
+      /** 重新抛出HttpError */
       if (error instanceof HttpError) {
         throw error;
       }
 
-      // 处理其他错误
+      /** 处理其他错误 */
       throw new HttpError(
         error instanceof Error ? error.message : 'Unknown error',
         0,
-        'Network Error'
+        'Network Error',
       );
     }
   }
@@ -285,9 +285,9 @@ class HttpClient {
    */
   async get<T = unknown>(
     url: string,
-    config?: Omit<RequestConfig, 'body'>
+    config?: Omit<RequestConfig, 'body'>,
   ): Promise<HttpResponse<T>> {
-    return await this.#request<T>('GET', url, config);
+    return this.#request<T>('GET', url, config);
   }
 
   /**
@@ -301,9 +301,9 @@ class HttpClient {
   async post<T = unknown>(
     url: string,
     body?: unknown,
-    config?: RequestConfig
+    config?: RequestConfig,
   ): Promise<HttpResponse<T>> {
-    return await this.#request<T>('POST', url, { ...config, body });
+    return this.#request<T>('POST', url, { ...config, body });
   }
 
   /**
@@ -317,9 +317,9 @@ class HttpClient {
   async put<T = unknown>(
     url: string,
     body?: unknown,
-    config?: RequestConfig
+    config?: RequestConfig,
   ): Promise<HttpResponse<T>> {
-    return await this.#request<T>('PUT', url, { ...config, body });
+    return this.#request<T>('PUT', url, { ...config, body });
   }
 
   /**
@@ -329,11 +329,8 @@ class HttpClient {
    * @param config - 请求配置
    * @returns HTTP响应
    */
-  async delete<T = unknown>(
-    url: string,
-    config?: RequestConfig
-  ): Promise<HttpResponse<T>> {
-    return await this.#request<T>('DELETE', url, config);
+  async delete<T = unknown>(url: string, config?: RequestConfig): Promise<HttpResponse<T>> {
+    return this.#request<T>('DELETE', url, config);
   }
 
   /**
@@ -347,15 +344,15 @@ class HttpClient {
   async patch<T = unknown>(
     url: string,
     body?: unknown,
-    config?: RequestConfig
+    config?: RequestConfig,
   ): Promise<HttpResponse<T>> {
-    return await this.#request<T>('PATCH', url, { ...config, body });
+    return this.#request<T>('PATCH', url, { ...config, body });
   }
 }
 
-// 创建默认的HTTP客户端实例
+/** 创建默认的HTTP客户端实例 */
 const httpClient = new HttpClient();
 
-// 导出HTTP客户端类和默认实例
+/** 导出HTTP客户端类和默认实例 */
 export { HttpClient, httpClient };
 export type { HttpResponse, RequestConfig, QueryParams };

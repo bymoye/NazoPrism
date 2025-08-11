@@ -1,34 +1,9 @@
 'use client';
 
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 import { themeManager } from '@/utils/theme-manager';
-import { isArray, isError } from '@/utils/type-guards';
-
-/**
- * 主题错误处理辅助函数
- *
- * @param error - 捕获的错误对象
- * @param operation - 执行的操作名称
- */
-const handleThemeError = (error: unknown, operation: string) => {
-  const errorMessage = isError(error) ? error.message : `${operation}失败`;
-  // 记录错误信息用于调试
-  console.error(
-    `主题操作失败 [${operation}]:`,
-    error,
-    '错误信息:',
-    errorMessage
-  );
-};
+import { isArray } from '@/utils/type-guards';
 
 /**
  * 主题上下文类型定义
@@ -47,7 +22,7 @@ interface ThemeContextType {
    * 更新主题的方法
    * @param colorOrColors - 单个颜色数值或颜色字符串数组
    */
-  updateTheme: (colorOrColors: number | string[]) => Promise<void>;
+  updateTheme: (colorOrColors: string[] | number) => void;
 
   /**
    * 从图片更新主题的方法
@@ -58,7 +33,7 @@ interface ThemeContextType {
   updateThemeFromImage: (
     imageUrl: string,
     nextImageUrl?: string,
-    onImageFailed?: (failedImageUrl: string) => void
+    onImageFailed?: (failedImageUrl: string) => void,
   ) => Promise<void>;
 
   /** 切换深色模式的方法 */
@@ -101,26 +76,25 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
    *
    * @param colorOrColors - 单个颜色数值或颜色字符串数组
    */
-  const updateTheme = useCallback(async (colorOrColors: number | string[]) => {
+  const updateTheme = (colorOrColors: string[] | number) => {
     setIsLoading(true);
     setError(null);
 
     try {
       if (isArray<string>(colorOrColors)) {
-        await themeManager.updateThemeFromColors(colorOrColors);
+        themeManager.updateThemeFromColors(colorOrColors);
       } else {
         const hexColor = `#${colorOrColors.toString(16).padStart(6, '0')}`;
-        await themeManager.updateThemeFromColors([hexColor]);
+        themeManager.updateThemeFromColors([hexColor]);
         setSeedColor(colorOrColors);
       }
       setIsDark(themeManager.isDarkMode());
-    } catch (err) {
-      handleThemeError(err, '主题更新');
+    } catch {
       setError('主题更新失败');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   /**
    * 从图片更新主题的方法
@@ -129,85 +103,63 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
    * @param nextImageUrl - 备用图片URL（可选）
    * @param onImageFailed - 图片加载失败时的回调函数（可选）
    */
-  const updateThemeFromImage = useCallback(
-    async (
-      imageUrl: string,
-      nextImageUrl?: string,
-      onImageFailed?: (failedImageUrl: string) => void
-    ) => {
-      setIsLoading(true);
-      setError(null);
+  const updateThemeFromImage = async (
+    imageUrl: string,
+    nextImageUrl?: string,
+    onImageFailed?: (failedImageUrl: string) => void,
+  ) => {
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        await themeManager.updateThemeFromImage(imageUrl, nextImageUrl);
-        setIsDark(themeManager.isDarkMode());
-      } catch (err) {
-        handleThemeError(err, '从图片更新主题');
-        setError('从图片更新主题失败');
-        onImageFailed?.(imageUrl);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
+    try {
+      await themeManager.updateThemeFromImage(imageUrl, nextImageUrl);
+      setIsDark(themeManager.isDarkMode());
+    } catch {
+      setError('从图片更新主题失败');
+      onImageFailed?.(imageUrl);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   /**
    * 设置深色模式的方法
    *
    * @param isDarkMode - 是否启用深色模式
    */
-  const setDarkMode = useCallback((isDarkMode: boolean) => {
+  const setDarkMode = (isDarkMode: boolean) => {
     themeManager.setDarkMode(isDarkMode);
     setIsDark(isDarkMode);
-  }, []);
+  };
 
   /**
    * 切换深色模式的方法
    */
-  const toggleDarkMode = useCallback(() => {
+  const toggleDarkMode = () => {
     const newIsDark = !isDark;
     setDarkMode(newIsDark);
-  }, [isDark, setDarkMode]);
+  };
 
-  // 初始化主题效果钩子
+  /** 初始化主题效果钩子 */
   useEffect(() => {
-    // 直接调用主题管理器的初始化函数，它返回同步的清理函数
-    const cleanup = themeManager.initTheme();
-
-    // 返回清理函数
-    return cleanup;
+    /** 直接调用主题管理器的初始化函数，它返回同步的清理函数 */
+    /** 返回清理函数 */
+    return themeManager.initTheme();
   }, []);
 
-  // 主题上下文值
-  const contextValue: ThemeContextType = useMemo(
-    () => ({
-      seedColor,
-      isDark,
-      isLoading,
-      error,
-      updateTheme,
-      updateThemeFromImage,
-      toggleDarkMode,
-      setDarkMode,
-    }),
-    [
-      seedColor,
-      isDark,
-      isLoading,
-      error,
-      updateTheme,
-      updateThemeFromImage,
-      toggleDarkMode,
-      setDarkMode,
-    ]
-  );
+  /** 主题上下文值 */
+  const contextValue: ThemeContextType = {
+    seedColor,
+    isDark,
+    isLoading,
+    error,
+    updateTheme,
+    updateThemeFromImage,
+    toggleDarkMode,
+    setDarkMode,
+  };
 
-  return (
-    <ThemeContext.Provider value={contextValue}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
 };
 
 /**
@@ -224,5 +176,5 @@ export const useThemeContext = () => {
   return context;
 };
 
-// 导出主题上下文类型供外部使用
+/** 导出主题上下文类型供外部使用 */
 export type { ThemeContextType };

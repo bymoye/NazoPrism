@@ -1,9 +1,5 @@
 /**
- * @file utils/type-guards.ts
- * @description 类型守卫工具集
- *
- * 提供运行时类型检查的工具函数，用于安全的类型判断和类型缩窄
- * 所有函数都使用TypeScript的类型守卫语法，确保类型安全
+ * 类型守卫工具函数集合
  */
 
 /**
@@ -20,8 +16,7 @@
  * }
  * ```
  */
-export const isString = (value: unknown): value is string =>
-  typeof value === 'string';
+export const isString = (value: unknown): value is string => typeof value === 'string';
 
 /**
  * 检查值是否为对象（非null，非数组）
@@ -54,8 +49,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> =>
  * }
  * ```
  */
-export const isArray = <T>(value: unknown): value is T[] =>
-  Array.isArray(value);
+export const isArray = <T>(value: unknown): value is T[] => Array.isArray(value);
 
 /**
  * 检查值是否为Error对象
@@ -74,5 +68,4 @@ export const isArray = <T>(value: unknown): value is T[] =>
  * }
  * ```
  */
-export const isError = (value: unknown): value is Error =>
-  value instanceof Error;
+export const isError = (value: unknown): value is Error => value instanceof Error;

@@ -1,4 +1,4 @@
-/* 现代化全局样式 */
+/* 全局样式 */
 
 @layer tokens, reset, base, components, utilities;
 
@@ -28,12 +28,11 @@
 
     /* 字体系统 */
     --font-family-base:
-      "Inter Variable", "Roboto", system-ui, -apple-system, blinkmacsystemfont,
-      "Segoe UI Variable", "Segoe UI", sans-serif;
-    --font-family-display: "Inter Variable", "Roboto", system-ui, sans-serif;
+      'Inter Variable', 'Roboto', system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI Variable',
+      'Segoe UI', sans-serif;
+    --font-family-display: 'Inter Variable', 'Roboto', system-ui, sans-serif;
     --font-family-mono:
-      "JetBrains Mono Variable", "Roboto Mono", "Fira Code", "Cascadia Code",
-      "Consolas", monospace;
+      'JetBrains Mono Variable', 'Roboto Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
 
     /* 字重系统 */
     --font-weight-thin: 100;
@@ -99,7 +98,7 @@
   }
 }
 
-/* 重置层 - 现代化重置样式 */
+/* 重置层 - 重置样式 */
 @layer reset {
   :where(*, *::before, *::after) {
     box-sizing: border-box;
@@ -113,9 +112,9 @@
     font-family: var(--font-family-base);
     font-size: clamp(16px, 0.5rem + 1vw, 18px);
     font-feature-settings:
-      "kern" 1,
-      "liga" 1,
-      "calt" 1;
+      'kern' 1,
+      'liga' 1,
+      'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: var(--line-height-normal);

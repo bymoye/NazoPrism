@@ -23,8 +23,7 @@
   background: var(--md-surface-container-high);
   box-shadow: var(--md-sys-elevation-level1);
 
-  transition: all var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
+  transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .errorContainer:hover {
@@ -78,8 +77,7 @@
 
   background: var(--md-surface-container);
 
-  transition: all var(--md-sys-motion-duration-short4)
-    var(--md-sys-motion-easing-standard);
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .errorDetails summary:hover {
@@ -141,8 +139,7 @@
   font-size: 1rem;
   font-weight: 500;
 
-  transition: all var(--md-sys-motion-duration-short4)
-    var(--md-sys-motion-easing-standard);
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .button:active {

@@ -17,10 +17,7 @@ class MockIntersectionObserver implements IntersectionObserver {
   readonly thresholds: readonly number[] = [0];
   private callback: IntersectionObserverCallback;
 
-  constructor(
-    callback: IntersectionObserverCallback,
-    options?: IntersectionObserverInit
-  ) {
+  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
     this.callback = callback;
     if (options?.root) {
       this.root = options.root;
@@ -29,9 +26,7 @@ class MockIntersectionObserver implements IntersectionObserver {
       this.rootMargin = options.rootMargin;
     }
     if (options?.threshold) {
-      this.thresholds = Array.isArray(options.threshold)
-        ? options.threshold
-        : [options.threshold];
+      this.thresholds = Array.isArray(options.threshold) ? options.threshold : [options.threshold];
     }
   }
 
@@ -52,13 +47,11 @@ class MockIntersectionObserver implements IntersectionObserver {
 // 存储创建的observer实例
 let observerInstances: MockIntersectionObserver[] = [];
 
-global.IntersectionObserver = jest
-  .fn()
-  .mockImplementation((callback, options) => {
-    const instance = new MockIntersectionObserver(callback, options);
-    observerInstances.push(instance);
-    return instance;
-  }) as jest.MockedClass<typeof IntersectionObserver>;
+global.IntersectionObserver = jest.fn().mockImplementation((callback, options) => {
+  const instance = new MockIntersectionObserver(callback, options);
+  observerInstances.push(instance);
+  return instance;
+}) as jest.MockedClass<typeof IntersectionObserver>;
 
 describe('useIntersectionObserver', () => {
   beforeEach(() => {
@@ -89,7 +82,7 @@ describe('useIntersectionObserver', () => {
 
     expect(global.IntersectionObserver).toHaveBeenCalledWith(
       callback,
-      expect.objectContaining(options)
+      expect.objectContaining(options),
     );
   });
 
@@ -151,9 +144,8 @@ describe('useIntersectionObserver', () => {
   test('应该在enabled变为false时断开observer', () => {
     const callback = jest.fn();
     const { rerender } = renderHook(
-      ({ enabled }: { enabled: boolean }) =>
-        useIntersectionObserver(callback, { enabled }),
-      { initialProps: { enabled: true } }
+      ({ enabled }: { enabled: boolean }) => useIntersectionObserver(callback, { enabled }),
+      { initialProps: { enabled: true } },
     );
 
     expect(global.IntersectionObserver).toHaveBeenCalled();
@@ -165,9 +157,7 @@ describe('useIntersectionObserver', () => {
 
   test('应该在enabled为false时忽略observe调用', () => {
     const callback = jest.fn();
-    const { result } = renderHook(() =>
-      useIntersectionObserver(callback, { enabled: false })
-    );
+    const { result } = renderHook(() => useIntersectionObserver(callback, { enabled: false }));
     const element = document.createElement('div');
 
     act(() => {
@@ -189,9 +179,8 @@ describe('useIntersectionObserver', () => {
   test('应该在选项变化时重新创建observer', () => {
     const callback = jest.fn();
     const { rerender } = renderHook(
-      ({ threshold }: { threshold: number }) =>
-        useIntersectionObserver(callback, { threshold }),
-      { initialProps: { threshold: 0 } }
+      ({ threshold }: { threshold: number }) => useIntersectionObserver(callback, { threshold }),
+      { initialProps: { threshold: 0 } },
     );
 
     expect(global.IntersectionObserver).toHaveBeenCalledTimes(1);

@@ -1,32 +1,29 @@
+/* eslint-disable */
 import '@testing-library/jest-dom';
 
 /**
- * 模拟IntersectionObserver API
- *
- * 为测试环境提供IntersectionObserver的基本实现
- * 支持observe、unobserve和disconnect方法
+ * 声明queueMicrotask全局函数
  */
-(global as any).IntersectionObserver = class MockIntersectionObserver {
-  private callback: IntersectionObserverCallback;
-  private options: IntersectionObserverInit | undefined;
-  private observedElements: Set<Element> = new Set();
+declare global {
+  function queueMicrotask(callback: () => void): void;
+}
 
-  constructor(
-    callback: IntersectionObserverCallback,
-    options?: IntersectionObserverInit
-  ) {
-    this.callback = callback;
-    this.options = options || undefined;
+/**
+ * IntersectionObserver模拟实现
+ */
+globalThis.IntersectionObserver = class MockIntersectionObserver {
+  readonly #callback: IntersectionObserverCallback;
+  readonly #options: IntersectionObserverInit | undefined;
+  readonly #observedElements = new Set<Element>();
+
+  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+    this.#callback = callback;
+    this.#options = options;
   }
 
-  /**
-   * 开始观察目标元素
-   * @param target - 要观察的DOM元素
-   */
-  observe(target: Element): void {
-    this.observedElements.add(target);
-    // 模拟立即触发回调
-    this.callback(
+  observe = (target: Element): void => {
+    this.#observedElements.add(target);
+    this.#callback(
       [
         {
           target,
@@ -35,337 +32,253 @@ import '@testing-library/jest-dom';
           boundingClientRect: target.getBoundingClientRect(),
           intersectionRect: target.getBoundingClientRect(),
           rootBounds: null,
-          time: Date.now(),
-        } as IntersectionObserverEntry,
+          time: performance.now(),
+        } satisfies IntersectionObserverEntry,
       ],
-      this as any
+      this as IntersectionObserver,
     );
-  }
+  };
 
-  /**
-   * 停止观察目标元素
-   * @param target - 要停止观察的DOM元素
-   */
-  unobserve(target: Element): void {
-    this.observedElements.delete(target);
-  }
+  unobserve = (target: Element): void => {
+    this.#observedElements.delete(target);
+  };
 
-  /**
-   * 断开观察器连接
-   */
-  disconnect(): void {
-    this.observedElements.clear();
-  }
+  disconnect = (): void => {
+    this.#observedElements.clear();
+  };
 
-  /**
-   * 获取当前观察的记录
-   */
-  takeRecords(): IntersectionObserverEntry[] {
-    return [];
-  }
+  takeRecords = (): IntersectionObserverEntry[] => [];
 
-  /**
-   * 获取当前观察的根元素
-   */
   get root(): Element | null {
-    return (this.options?.root as Element | null) || null;
+    return (this.#options?.root as Element | null) ?? null;
   }
 
-  /**
-   * 获取根边距
-   */
   get rootMargin(): string {
-    return this.options?.rootMargin || '0px';
+    return this.#options?.rootMargin ?? '0px';
   }
 
-  /**
-   * 获取阈值数组
-   */
   get thresholds(): readonly number[] {
-    const threshold = this.options?.threshold;
-    if (Array.isArray(threshold)) {
-      return threshold;
-    }
-    if (typeof threshold === 'number') {
-      return [threshold];
-    }
-    return [0];
+    const { threshold } = this.#options ?? {};
+    return Array.isArray(threshold) ? threshold : [threshold ?? 0];
   }
 };
 
 /**
- * Mock ResizeObserver API
- * 为测试环境提供ResizeObserver的模拟实现
+ * ResizeObserver模拟实现
  */
-(global as any).ResizeObserver = class MockResizeObserver {
-  /**
-   * 断开观察器连接
-   */
-  disconnect(): void {
-    // Mock implementation
-  }
-
-  /**
-   * 开始观察目标元素
-   * @param _target - 要观察的目标元素
-   * @param _options - 配置选项（在mock中不使用）
-   */
-  observe(_target: Element, _options?: ResizeObserverOptions): void {
-    // Mock implementation
-  }
-
-  /**
-   * 停止观察目标元素
-   * @param _target - 要停止观察的目标元素
-   */
-  unobserve(_target: Element): void {
-    // Mock implementation
-  }
+globalThis.ResizeObserver = class MockResizeObserver {
+  observe = (target: Element, options?: ResizeObserverOptions): void => {
+    void target;
+    void options;
+  };
+  unobserve = (target: Element): void => {
+    void target;
+  };
+  disconnect = (): void => {
+    /** ResizeObserver标准API要求的方法，用于断开所有观察 */
+  };
 };
 
 /**
- * Mock matchMedia API
- * 为测试环境提供matchMedia的模拟实现
+ * matchMedia模拟实现
  */
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(
+Object.assign(window, {
+  matchMedia: jest.fn(
     (query: string): MediaQueryList => ({
       matches: false,
       media: query,
       onchange: null,
-      addListener: jest.fn(), // deprecated but kept for compatibility
-      removeListener: jest.fn(), // deprecated but kept for compatibility
-      addEventListener: jest.fn((_type: string, callback: EventListener) => {
-        if (_type === 'load') {
-          setTimeout(callback, 0);
+      addEventListener: jest.fn((eventType: string, callback: EventListener) => {
+        if (eventType === 'load') {
+          queueMicrotask(() => {
+            callback(new Event('load'));
+          });
         }
       }),
       removeEventListener: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
       dispatchEvent: jest.fn(),
-    })
+    }),
   ),
 });
 
 /**
- * Mock Worker API with proper message handling
- * 为测试环境提供Worker的模拟实现，支持颜色提取功能
+ * Worker模拟实现
  */
-(global as any).Worker = class MockWorker {
+globalThis.Worker = class MockWorker implements Worker {
   url: string;
-  onmessage: ((event: MessageEvent) => void) | null = null;
-  onerror: ((event: ErrorEvent) => void) | null = null;
-  onmessageerror: ((event: MessageEvent) => void) | null = null;
+  readonly #handlers = new Map<string, EventListener>();
 
-  /**
-   * 构造函数
-   * @param url - Worker脚本的URL
-   */
-  constructor(url: string | URL) {
+  onerror: ((this: AbstractWorker, ev: ErrorEvent) => unknown) | null = null;
+  onmessage: ((this: Worker, ev: MessageEvent) => unknown) | null = null;
+  onmessageerror: ((this: Worker, ev: MessageEvent) => unknown) | null = null;
+
+  constructor(url: URL | string) {
     this.url = url.toString();
   }
 
-  /**
-   * 向Worker发送消息
-   * @param data - 要发送的数据
-   */
-  postMessage(data: any): void {
-    // 模拟异步Worker响应
-    setTimeout(() => {
-      if (this.onmessage) {
-        // 模拟成功的颜色提取响应
-        const mockResponse: MessageEvent = {
-          data: {
-            success: true,
-            messageId: data.messageId,
-            isPalette: data.extractMultiple ?? false,
-            ...(data.extractMultiple
-              ? {
-                  colors: [0xff_00_00, 0x00_ff_00, 0x00_00_ff], // Mock ARGB colors
-                  rgbColors: [
-                    [255, 0, 0],
-                    [0, 255, 0],
-                    [0, 0, 255],
-                  ], // Mock RGB colors
-                }
-              : {
-                  color: 0xff_00_00, // Mock ARGB color
-                  rgb: [255, 0, 0], // Mock RGB color
-                }),
-          },
-        } as MessageEvent;
-        this.onmessage(mockResponse);
+  postMessage = (data: { messageId: string; extractMultiple?: boolean }): void => {
+    queueMicrotask(() => {
+      const messageHandler = this.#handlers.get('message');
+      if (messageHandler) {
+        const mockResponseData = {
+          success: true,
+          messageId: data.messageId,
+          isPalette: data.extractMultiple ?? false,
+          ...(data.extractMultiple
+            ? {
+                colors: [0xff_00_00, 0x00_ff_00, 0x00_00_ff],
+                rgbColors: [
+                  [255, 0, 0],
+                  [0, 255, 0],
+                  [0, 0, 255],
+                ],
+              }
+            : {
+                color: 0xff_00_00,
+                rgb: [255, 0, 0],
+              }),
+        } as const;
+
+        messageHandler(new MessageEvent('message', { data: mockResponseData }));
       }
-    }, 100); // 小延迟模拟处理时间
-  }
+    });
+  };
 
-  /**
-   * 终止Worker
-   */
-  terminate(): void {
-    this.onmessage = null;
-    this.onerror = null;
-    this.onmessageerror = null;
-  }
+  terminate = (): void => {
+    this.#handlers.clear();
+  };
 
-  /**
-   * 添加事件监听器
-   * @param type - 事件类型
-   * @param listener - 事件监听器
-   */
-  addEventListener(type: string, listener: EventListener): void {
-    if (type === 'message') {
-      this.onmessage = listener as (event: MessageEvent) => void;
-    } else if (type === 'error') {
-      this.onerror = listener as (event: ErrorEvent) => void;
-    }
-  }
+  addEventListener = (type: string, listener: EventListener): void => {
+    this.#handlers.set(type, listener);
+  };
 
-  /**
-   * 移除事件监听器
-   * @param type - 事件类型
-   * @param listener - 事件监听器
-   */
-  removeEventListener(type: string, _listener: EventListener): void {
-    if (type === 'message') {
-      this.onmessage = null;
-    } else if (type === 'error') {
-      this.onerror = null;
-    }
-  }
+  removeEventListener = (type: string, listener: EventListener): void => {
+    void listener;
+    this.#handlers.delete(type);
+  };
+
+  dispatchEvent = (event: Event): boolean => {
+    void event;
+    return true;
+  };
 };
 
 /**
- * Mock OffscreenCanvas for Worker environment
- * 为Worker环境提供OffscreenCanvas的模拟实现
+ * OffscreenCanvas模拟实现
  */
-(global as any).OffscreenCanvas = class MockOffscreenCanvas {
-  width: number;
-  height: number;
+globalThis.OffscreenCanvas = class MockOffscreenCanvas {
+  readonly #eventHandlers = new Map<string, EventListener>();
+  width = 300;
+  height = 150;
+  oncontextlost: ((this: OffscreenCanvas, ev: Event) => unknown) | null = null;
+  oncontextrestored: ((this: OffscreenCanvas, ev: Event) => unknown) | null = null;
 
-  /**
-   * 构造函数
-   * @param width - 画布宽度
-   * @param height - 画布高度
-   */
-  constructor(width: number, height: number) {
+  getContext = jest.fn().mockReturnValue({
+    canvas: this,
+    drawImage: jest.fn(),
+    getImageData: jest.fn(() => ({
+      data: new Uint8ClampedArray(4),
+      width: 1,
+      height: 1,
+      colorSpace: 'srgb' as PredefinedColorSpace,
+    })),
+  });
+
+  constructor(width = 300, height = 150) {
     this.width = width;
     this.height = height;
   }
 
-  /**
-   * 获取绘图上下文
-   * @param _type - 上下文类型（在mock中不使用）
-   * @returns 模拟的绘图上下文
-   */
-  getContext(_type: string): any {
-    return {
-      drawImage: jest.fn(),
-      getImageData: jest.fn(() => ({
-        data: new Uint8ClampedArray(this.width * this.height * 4),
-        width: this.width,
-        height: this.height,
-      })),
-    };
-  }
+  transferToImageBitmap = (): ImageBitmap =>
+    ({
+      width: this.width,
+      height: this.height,
+      close: jest.fn(),
+    }) satisfies ImageBitmap;
 
-  /**
-   * 转换为Blob对象
-   * @returns Promise<Blob>
-   */
-  convertToBlob(): Promise<Blob> {
-    return Promise.resolve(new Blob());
-  }
+  /** eslint-disable-next-line unicorn/no-useless-promise-resolve-reject */
+  convertToBlob = async (): Promise<Blob> => Promise.resolve(new Blob());
+
+  addEventListener = (type: string, listener: EventListener): void => {
+    this.#eventHandlers.set(type, listener);
+    if (type === 'contextlost') this.oncontextlost = listener as typeof this.oncontextlost;
+    else if (type === 'contextrestored')
+      this.oncontextrestored = listener as typeof this.oncontextrestored;
+  };
+
+  removeEventListener = (type: string, listener: EventListener): void => {
+    void listener;
+    this.#eventHandlers.delete(type);
+    if (type === 'contextlost') this.oncontextlost = null;
+    else if (type === 'contextrestored') this.oncontextrestored = null;
+  };
+
+  dispatchEvent = (event: Event): boolean => {
+    void event;
+    return true;
+  };
 };
 
 /**
- * Mock createImageBitmap API
- * 为测试环境提供createImageBitmap的模拟实现
+ * createImageBitmap模拟实现
  */
-(global as any).createImageBitmap = jest.fn(() =>
-  Promise.resolve({
-    width: 100,
-    height: 100,
-    close: jest.fn(),
-  })
-);
+declare global {
+  function createImageBitmap(image: ImageBitmapSource): Promise<ImageBitmap>;
+}
+
+globalThis.createImageBitmap = jest.fn().mockResolvedValue({
+  width: 100,
+  height: 100,
+  close: jest.fn(),
+} satisfies ImageBitmap);
 
 /**
- * Mock localStorage API
- * 为测试环境提供localStorage的模拟实现
+ * localStorage模拟实现
  */
-const localStorageMock: Storage = {
-  length: 0,
-  key: jest.fn(),
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-};
-(global as any).localStorage = localStorageMock;
+Object.assign(globalThis, {
+  localStorage: {
+    length: 0,
+    key: jest.fn(),
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  } satisfies Storage,
+});
 
 /**
- * Console方法的原始实现备份
- * 用于在需要时恢复原始的console行为
+ * 控制台过滤实现
  */
-const originalError = console.error;
-const originalWarn = console.warn;
-const originalLog = console.log;
+const { error: originalError, warn: originalWarn } = console;
 
-/**
- * 过滤并抑制测试环境中的噪音日志
- * 只抑制React act()警告和组件日志，保留其他重要错误信息
- */
+const errorFilters = [
+  'Warning: An update to',
+  'not wrapped in act',
+  'ReactDOMTestUtils.act',
+  'The current testing environment is not configured to support act',
+  'You seem to have overlapping act() calls',
+  '主题更新失败',
+  '从图片更新主题失败',
+  '从图片提取颜色失败',
+  '主题操作失败',
+];
 
-/**
- * 重写console.error以过滤测试噪音
- * @param args - 传递给console.error的参数
- */
-console.error = (...args: unknown[]): void => {
-  const message = args.at(0);
-  if (
-    typeof message === 'string' &&
-    (message.includes('Warning: An update to') ||
-      message.includes('not wrapped in act') ||
-      message.includes('ReactDOMTestUtils.act') ||
-      message.includes(
-        'The current testing environment is not configured to support act'
-      ) ||
-      message.includes('You seem to have overlapping act() calls') ||
-      message.includes('主题更新失败') ||
-      message.includes('从图片更新主题失败') ||
-      message.includes('从图片提取颜色失败') ||
-      message.includes('主题操作失败'))
-  ) {
-    return; // 抑制React act警告和主题错误
-  }
-  originalError.apply(console, args);
-};
+const warnFilters = ['[BackgroundCarousel]'];
 
-/**
- * 重写console.warn以过滤测试噪音
- * @param args - 传递给console.warn的参数
- */
-console.warn = (...args: unknown[]): void => {
-  const message = args.at(0);
-  if (typeof message === 'string' && message.includes('[BackgroundCarousel]')) {
-    return; // 抑制BackgroundCarousel警告
-  }
-  originalWarn.apply(console, args);
-};
+const shouldFilter = (message: unknown, filters: string[]): boolean =>
+  typeof message === 'string' && filters.some(filter => message.includes(filter));
 
-/**
- * 重写console.log以过滤测试噪音
- * @param args - 传递给console.log的参数
- */
-console.log = (...args: unknown[]): void => {
-  const message = args.at(0);
-  if (
-    typeof message === 'string' &&
-    (message.includes('[BackgroundCarousel]') ||
-      message.includes('Actual seed color value'))
-  ) {
-    return; // 抑制BackgroundCarousel日志和测试调试日志
-  }
-  originalLog.apply(console, args);
-};
+Object.assign(console, {
+  error: (...args: unknown[]): void => {
+    if (!shouldFilter(args[0], errorFilters)) {
+      originalError(...args);
+    }
+  },
+  warn: (...args: unknown[]): void => {
+    if (!shouldFilter(args[0], warnFilters)) {
+      originalWarn(...args);
+    }
+  },
+});

@@ -30,14 +30,11 @@ export const Providers = ({ children }: ProvidersProps) => {
   );
 };
 
-// 重新导出类型
+/** 重新导出类型 */
 export type { AppContextType, AppState } from './AppContext';
-// 重新导出所有上下文和Hook以便使用
+/** 重新导出所有上下文和Hook以便使用 */
 export { AppProvider, useAppContext } from './AppContext';
-export type {
-  NavigationContextType,
-  NavigationItem,
-} from './NavigationContext';
+export type { NavigationContextType, NavigationItem } from './NavigationContext';
 export { NavigationProvider, useNavigationContext } from './NavigationContext';
 export type { ThemeContextType } from './ThemeContext';
 export { ThemeProvider, useThemeContext } from './ThemeContext';

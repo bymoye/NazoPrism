@@ -13,11 +13,11 @@ interface ErrorPageProps {
   /** 错误对象 */
   error?: Error;
   /** 是否显示错误详情 */
-  showDetails?: boolean;
+  isShowDetails?: boolean;
   /** 重试回调函数 */
-  onRetry?: () => void;
+  handleRetry?: () => void;
   /** 返回首页回调函数 */
-  onGoHome?: () => void;
+  handleGoHome?: () => void;
 }
 
 /**
@@ -30,9 +30,9 @@ const ErrorPage = ({
   title = '页面出错了',
   message = '抱歉，页面遇到了意外错误。请稍后重试或返回首页。',
   error,
-  showDetails = false,
-  onRetry,
-  onGoHome,
+  isShowDetails = false,
+  handleRetry: onRetry,
+  handleGoHome: onGoHome,
 }: ErrorPageProps) => {
   const handleRetry = () => {
     if (onRetry) {
@@ -51,55 +51,55 @@ const ErrorPage = ({
   };
 
   return (
-    <div className={styles.errorPage}>
-      <div className={styles.errorContainer}>
-        <div className={styles.errorIcon}>
+    <div className={styles['errorPage']}>
+      <div className={styles['errorContainer']}>
+        <div className={styles['errorIcon']}>
           <svg
-            aria-label="错误图标"
-            fill="none"
-            height="64"
-            role="img"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            width="64"
+            aria-label='错误图标'
+            fill='none'
+            height='64'
+            role='img'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            width='64'
           >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="15" x2="9" y1="9" y2="15" />
-            <line x1="9" x2="15" y1="9" y2="15" />
+            <circle cx='12' cy='12' r='10' />
+            <line x1='15' x2='9' y1='9' y2='15' />
+            <line x1='9' x2='15' y1='9' y2='15' />
           </svg>
         </div>
 
-        <h1 className={styles.errorTitle}>{title}</h1>
-        <p className={styles.errorMessage}>{message}</p>
+        <h1 className={styles['errorTitle']}>{title}</h1>
+        <p className={styles['errorMessage']}>{message}</p>
 
-        {error && showDetails && (
-          <details className={styles.errorDetails}>
-            <summary>查看错误详情</summary>
-            <div className={styles.errorInfo}>
+        {Boolean(error && isShowDetails) && (
+          <details className={styles['errorDetails']}>
+            <summary>错误详情</summary>
+            <div className={styles['errorInfo']}>
               <h3>错误信息:</h3>
-              <pre>{error.message}</pre>
-              {error.stack && (
+              <pre>{error?.message}</pre>
+              {Boolean(error?.stack) && (
                 <>
                   <h3>错误堆栈:</h3>
-                  <pre>{error.stack}</pre>
+                  <pre>{error?.stack}</pre>
                 </>
               )}
             </div>
           </details>
         )}
 
-        <div className={styles.errorActions}>
+        <div className={styles['errorActions']}>
           <button
-            className={`${styles.button} ${styles.primaryButton}`}
+            className={`${styles['button']} ${styles['primaryButton']}`}
+            type='button'
             onClick={handleRetry}
-            type="button"
           >
             重新加载
           </button>
           <button
-            className={`${styles.button} ${styles.secondaryButton}`}
+            className={`${styles['button']} ${styles['secondaryButton']}`}
+            type='button'
             onClick={handleGoHome}
-            type="button"
           >
             返回首页
           </button>

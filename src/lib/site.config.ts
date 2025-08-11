@@ -34,20 +34,20 @@ export const SITE_CONFIG: SiteConfiguration = {
   author: 'nazo',
   url: 'https://nazo-prism.vercel.app',
 
-  // 导航链接
+  /** 导航链接 */
   navigation: [
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'Users', href: '/users' },
   ] as const,
 
-  // 社交链接
+  /** 社交链接 */
   social: {
     github: 'https://github.com/bymoye',
     twitter: 'https://twitter.com/bymoye',
   } as const,
 
-  // 背景图片API配置
+  /** 背景图片API配置 */
   backgroundApi: {
     endpoint: 'https://api.nmxc.ltd/randimg',
     fallbackImages: [
@@ -57,7 +57,7 @@ export const SITE_CONFIG: SiteConfiguration = {
     ] as const,
   } as const,
 
-  // 头像
+  /** 头像 */
   avatar: 'https://avatars.githubusercontent.com/u/1?v=4',
 } as const;
 
@@ -73,9 +73,9 @@ export const SAMPLE_ARTICLES: ExtendedArticle[] = [
   {
     id: 1,
     url: '/articles/modern-web-development',
-    title: '现代Web开发的最佳实践',
+    title: 'Web开发实践指南',
     time: '2024-01-15',
-    content: '探索现代Web开发中的最新技术栈和最佳实践。',
+    content: '探索Web开发中的技术栈和开发实践。',
     category: '前端开发',
     cover: 'https://picsum.photos/800/600?random=1',
     author: 'NazoPrism',

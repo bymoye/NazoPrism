@@ -8,24 +8,29 @@ const nextConfig = {
 
   poweredByHeader: false,
 
+  /** 编译器配置 */
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
     styledComponents: true,
   },
 
-  // 实验性功能配置
+  /** 实验性功能 */
   experimental: {
-    // 启用ESM外部化
+    /** 启用ESM外部模块 */
     esmExternals: true,
-    // 优化包导入
-    optimizePackageImports: ['lucide-react', '@poupe/theme-builder'],
+    /** 包导入优化 */
+    optimizePackageImports: ['@poupe/theme-builder', 'gsap', 'lenis', 'extract-colors'],
+    /** React编译器支持 */
+    reactCompiler: true,
   },
 
+  /** 启用React严格模式 */
   reactStrictMode: true,
 
-  // 图像优化配置 (已禁用)
+  /** 图片配置 */
   images: {
     unoptimized: true,
+    formats: ['image/webp', 'image/avif'],
   },
 };
 

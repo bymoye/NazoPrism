@@ -1,4 +1,4 @@
-/* M3 ToTop Button - converted from SCSS */
+/* 回到顶部按钮样式 */
 
 /* 按钮主体 */
 .toTopBtn {
@@ -43,14 +43,10 @@
 
   /* M3 过渡动画 */
   transition:
-    opacity var(--md-sys-motion-duration-theme)
-    var(--md-sys-motion-easing-emphasized),
-    transform var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-emphasized),
-    background-color var(--md-sys-motion-duration-theme)
-    var(--md-sys-motion-easing-standard),
-    box-shadow var(--md-sys-motion-duration-short4)
-    var(--md-sys-motion-easing-standard);
+    opacity var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-emphasized),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-theme) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 /* 显示状态 */
@@ -65,8 +61,7 @@
   width: 24px;
   height: 24px;
   color: inherit;
-  transition: transform var(--md-sys-motion-duration-short4)
-    var(--md-sys-motion-easing-standard);
+  transition: transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 /* M3 悬停状态 */

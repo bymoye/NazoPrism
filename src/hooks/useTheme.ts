@@ -1,7 +1,5 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
-
 import { useThemeContext } from '@/contexts/ThemeContext';
 import type { UseThemeReturn } from '@/types/hooks';
 
@@ -25,55 +23,47 @@ export const useTheme = (): UseThemeReturn => {
    * 更新主题颜色
    *
    * @param color - 种子颜色值
+   * @returns Promise<void>
    */
-  const updateTheme = useCallback(
-    async (color: number) => {
-      await contextUpdateTheme(color);
-    },
-    [contextUpdateTheme]
-  );
+  const updateTheme = async (color: number): Promise<void> => {
+    return new Promise<void>(resolve => {
+      contextUpdateTheme(color);
+      resolve();
+    });
+  };
 
   /**
    * 设置深色模式
    *
    * @param isDark - 是否为深色模式
    */
-  const setDarkMode = useCallback(
-    (darkMode: boolean) => {
-      contextSetDarkMode(darkMode);
-    },
-    [contextSetDarkMode]
-  );
+  const setDarkMode = (darkMode: boolean) => {
+    contextSetDarkMode(darkMode);
+  };
 
   /**
    * 切换深色模式
    */
-  const toggleDarkMode = useCallback(() => {
+  const toggleDarkMode = () => {
     contextToggleDarkMode();
-  }, [contextToggleDarkMode]);
+  };
 
-  // 主题对象
-  const theme = useMemo(
-    () => ({
-      seedColor,
-      isDark,
-      cssVariables: {}, // CSS variables handled by theme-manager
-    }),
-    [seedColor, isDark]
-  );
+  /** 主题对象 */
+  const theme = {
+    seedColor,
+    isDark,
+    cssVariables: {} /** CSS变量由theme-manager处理 */,
+  };
 
   /**
    * 返回主题状态和操作方法对象
    */
-  return useMemo(
-    () => ({
-      theme,
-      updateTheme,
-      setDarkMode,
-      toggleDarkMode,
-      isLoading,
-      error,
-    }),
-    [theme, updateTheme, setDarkMode, toggleDarkMode, isLoading, error]
-  );
+  return {
+    theme,
+    updateTheme,
+    setDarkMode,
+    toggleDarkMode,
+    isLoading,
+    error,
+  };
 };

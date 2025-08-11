@@ -13,9 +13,9 @@ export interface UseThemeReturn {
     cssVariables: Record<string, string>;
   };
   /** 更新主题颜色 */
-  updateTheme: (color: number) => Promise<void>;
+  updateTheme: (_color: number) => Promise<void>;
   /** 直接设置深色模式 */
-  setDarkMode: (isDark: boolean) => void;
+  setDarkMode: (_isDark: boolean) => void;
   /** 切换深色模式 */
   toggleDarkMode: () => void;
   /** 是否正在加载 */

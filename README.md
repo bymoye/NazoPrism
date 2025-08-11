@@ -95,35 +95,32 @@ export const SITE_CONFIG: SiteConfiguration = {
   description: '一个现代化的博客系统',
   author: 'Your Name',
   url: 'https://yourdomain.com',
-  
+
   // 导航配置
   navigation: [
     { name: '首页', href: '/' },
     { name: '关于', href: '/about' },
     { name: '文章', href: '/articles' },
-    { name: '联系', href: '/contact' }
+    { name: '联系', href: '/contact' },
   ],
-  
+
   // 社交链接
   social: {
     github: 'https://github.com/yourusername',
     twitter: 'https://twitter.com/yourusername',
-    email: 'your.email@example.com'
+    email: 'your.email@example.com',
   },
-  
+
   // 背景图片 API 配置
   backgroundApi: {
     baseUrl: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image',
-    prompts: [
-      'abstract geometric patterns',
-      'minimalist landscape',
-      'digital art background'
-    ],
-    imageSize: 'landscape_16_9' as const
+    prompts: ['abstract geometric patterns', 'minimalist landscape', 'digital art background'],
+    imageSize: 'landscape_16_9' as const,
   },
-  
+
   // 头像配置
-  avatar: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20avatar&image_size=square'
+  avatar:
+    'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20avatar&image_size=square',
 };
 ```
 
@@ -134,30 +131,30 @@ export const SITE_CONFIG: SiteConfiguration = {
 ```javascript
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',           // 静态导出模式
-  distDir: 'dist',           // 构建输出目录
-  trailingSlash: true,       // URL 尾部斜杠
-  poweredByHeader: false,    // 移除 X-Powered-By 头
-  
+  output: 'export', // 静态导出模式
+  distDir: 'dist', // 构建输出目录
+  trailingSlash: true, // URL 尾部斜杠
+  poweredByHeader: false, // 移除 X-Powered-By 头
+
   // Turbopack 配置 (开发模式)
   turbopack: true,
-  
+
   // 编译器配置
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
-    styledComponents: true
+    styledComponents: true,
   },
-  
+
   // 实验性功能
   experimental: {
     esmExternals: true,
-    optimizePackageImports: ['gsap', 'lenis']
+    optimizePackageImports: ['gsap', 'lenis'],
   },
-  
+
   // 图片配置
   images: {
-    unoptimized: true        // 静态导出需要
-  }
+    unoptimized: true, // 静态导出需要
+  },
 };
 
 module.exports = nextConfig;
@@ -215,12 +212,12 @@ interface ButtonProps extends BaseComponentProps {
  * @param props 按钮属性
  * @returns 按钮组件
  */
-export default function Button({ 
-  children, 
-  onClick, 
+export default function Button({
+  children,
+  onClick,
   variant = 'primary',
   className = '',
-  ...props 
+  ...props
 }: ButtonProps) {
   const baseClasses = 'px-4 py-2 rounded-lg font-medium transition-colors';
   const variantClasses = {
@@ -272,7 +269,7 @@ import { useScrollDirection } from '@/hooks/useScrollDirection';
 function MyComponent() {
   const isMobile = useMobileDetection();
   const scrollDirection = useScrollDirection();
-  
+
   return (
     <div className={`
       ${isMobile ? 'mobile-layout' : 'desktop-layout'}
@@ -293,6 +290,7 @@ npm run build
 ```
 
 构建完成后，将 `dist` 目录部署到：
+
 - GitHub Pages
 - Netlify
 - Vercel

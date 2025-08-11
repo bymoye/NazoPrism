@@ -17,8 +17,8 @@ describe('AppContext', () => {
     test('应该渲染子组件', () => {
       render(
         <AppProvider>
-          <div data-testid="child">Test Child</div>
-        </AppProvider>
+          <div data-testid='child'>Test Child</div>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('child')).toBeInTheDocument();
@@ -30,8 +30,8 @@ describe('AppContext', () => {
         const { state } = useAppContext();
         return (
           <div>
-            <div data-testid="loading">{state.isLoading.toString()}</div>
-            <div data-testid="error">{state.error || 'null'}</div>
+            <div data-testid='loading'>{state.isLoading.toString()}</div>
+            <div data-testid='error'>{state.error || 'null'}</div>
           </div>
         );
       };
@@ -39,7 +39,7 @@ describe('AppContext', () => {
       render(
         <AppProvider>
           <TestComponent />
-        </AppProvider>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
@@ -51,18 +51,10 @@ describe('AppContext', () => {
         const { setLoading, setError } = useAppContext();
         return (
           <div>
-            <button
-              data-testid="set-loading"
-              onClick={() => setLoading(true)}
-              type="button"
-            >
+            <button data-testid='set-loading' onClick={() => setLoading(true)} type='button'>
               Set Loading
             </button>
-            <button
-              data-testid="set-error"
-              onClick={() => setError('Test error')}
-              type="button"
-            >
+            <button data-testid='set-error' onClick={() => setError('Test error')} type='button'>
               Set Error
             </button>
           </div>
@@ -72,7 +64,7 @@ describe('AppContext', () => {
       render(
         <AppProvider>
           <TestComponent />
-        </AppProvider>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('set-loading')).toBeInTheDocument();
@@ -82,9 +74,9 @@ describe('AppContext', () => {
     test('应该处理多个子组件', () => {
       render(
         <AppProvider>
-          <div data-testid="child1">Child 1</div>
-          <div data-testid="child2">Child 2</div>
-        </AppProvider>
+          <div data-testid='child1'>Child 1</div>
+          <div data-testid='child2'>Child 2</div>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('child1')).toBeInTheDocument();
@@ -122,11 +114,11 @@ describe('AppContext', () => {
         const { state, setLoading } = useAppContext();
         return (
           <div>
-            <div data-testid="loading">{state.isLoading.toString()}</div>
+            <div data-testid='loading'>{state.isLoading.toString()}</div>
             <button
-              data-testid="toggle-loading"
+              data-testid='toggle-loading'
               onClick={() => setLoading(!state.isLoading)}
-              type="button"
+              type='button'
             >
               Toggle Loading
             </button>
@@ -137,7 +129,7 @@ describe('AppContext', () => {
       render(
         <AppProvider>
           <TestComponent />
-        </AppProvider>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
@@ -154,19 +146,11 @@ describe('AppContext', () => {
         const { state, setError } = useAppContext();
         return (
           <div>
-            <div data-testid="error">{state.error || 'null'}</div>
-            <button
-              data-testid="set-error"
-              onClick={() => setError('Test error')}
-              type="button"
-            >
+            <div data-testid='error'>{state.error || 'null'}</div>
+            <button data-testid='set-error' onClick={() => setError('Test error')} type='button'>
               Set Error
             </button>
-            <button
-              data-testid="clear-error"
-              onClick={() => setError(null)}
-              type="button"
-            >
+            <button data-testid='clear-error' onClick={() => setError(null)} type='button'>
               Clear Error
             </button>
           </div>
@@ -176,7 +160,7 @@ describe('AppContext', () => {
       render(
         <AppProvider>
           <TestComponent />
-        </AppProvider>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('error')).toHaveTextContent('null');
@@ -199,12 +183,8 @@ describe('AppContext', () => {
         const { state, setLoading } = useAppContext();
         return (
           <div>
-            <div data-testid="loading1">{state.isLoading.toString()}</div>
-            <button
-              data-testid="set-loading1"
-              onClick={() => setLoading(true)}
-              type="button"
-            >
+            <div data-testid='loading1'>{state.isLoading.toString()}</div>
+            <button data-testid='set-loading1' onClick={() => setLoading(true)} type='button'>
               Set Loading
             </button>
           </div>
@@ -213,14 +193,14 @@ describe('AppContext', () => {
 
       const Component2 = () => {
         const { state } = useAppContext();
-        return <div data-testid="loading2">{state.isLoading.toString()}</div>;
+        return <div data-testid='loading2'>{state.isLoading.toString()}</div>;
       };
 
       render(
         <AppProvider>
           <Component1 />
           <Component2 />
-        </AppProvider>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('loading1')).toHaveTextContent('false');
@@ -245,9 +225,7 @@ describe('AppContext', () => {
       expect(state).toHaveProperty('isLoading');
       expect(state).toHaveProperty('error');
       expect(typeof state.isLoading).toBe('boolean');
-      expect(state.error === null || typeof state.error === 'string').toBe(
-        true
-      );
+      expect(state.error === null || typeof state.error === 'string').toBe(true);
     });
 
     test('AppContextType类型应该正确', () => {
@@ -272,17 +250,17 @@ describe('AppContext', () => {
         const { state, setLoading, setError } = useAppContext();
         return (
           <div>
-            <div data-testid="loading">{state.isLoading.toString()}</div>
-            <div data-testid="error">{state.error || 'null'}</div>
+            <div data-testid='loading'>{state.isLoading.toString()}</div>
+            <div data-testid='error'>{state.error || 'null'}</div>
             <button
-              data-testid="rapid-updates"
+              data-testid='rapid-updates'
               onClick={() => {
                 setLoading(true);
                 setError('Error 1');
                 setLoading(false);
                 setError('Error 2');
               }}
-              type="button"
+              type='button'
             >
               Rapid Updates
             </button>
@@ -293,7 +271,7 @@ describe('AppContext', () => {
       render(
         <AppProvider>
           <TestComponent />
-        </AppProvider>
+        </AppProvider>,
       );
 
       act(() => {
@@ -307,7 +285,7 @@ describe('AppContext', () => {
     test('应该处理嵌套Provider', () => {
       const TestComponent = () => {
         const { state } = useAppContext();
-        return <div data-testid="nested">{state.isLoading.toString()}</div>;
+        return <div data-testid='nested'>{state.isLoading.toString()}</div>;
       };
 
       render(
@@ -315,7 +293,7 @@ describe('AppContext', () => {
           <AppProvider>
             <TestComponent />
           </AppProvider>
-        </AppProvider>
+        </AppProvider>,
       );
 
       expect(screen.getByTestId('nested')).toHaveTextContent('false');

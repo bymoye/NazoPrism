@@ -22,8 +22,8 @@ jest.mock('@/utils/theme-manager', () => ({
 
 // Mock type-guards
 jest.mock('@/utils/type-guards', () => ({
-  isArray: jest.fn((value) => Array.isArray(value)),
-  isError: jest.fn((value) => value instanceof Error),
+  isArray: jest.fn(value => Array.isArray(value)),
+  isError: jest.fn(value => value instanceof Error),
 }));
 
 const renderWithTheme = (component: React.ReactElement) => {
