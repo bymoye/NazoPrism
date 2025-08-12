@@ -102,7 +102,12 @@ const Navigation = () => {
    * 滚动隐藏逻辑
    */
   const lenis = useLenis(({ scroll }) => {
-    setIsHidden(scroll > SCROLL_HIDE_THRESHOLD && scroll >= lastScrollY.current && !isDrawerOpen);
+    /* 滚动距离小于5px时，不处理 */
+    if (Math.abs(scroll - lastScrollY.current) < 5) {
+      return;
+    }
+
+    setIsHidden(scroll > SCROLL_HIDE_THRESHOLD && scroll > lastScrollY.current && !isDrawerOpen);
     lastScrollY.current = scroll;
   });
 
