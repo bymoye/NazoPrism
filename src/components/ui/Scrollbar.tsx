@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/styles/components/Scrollbar.module.css';
+import styles from '@/styles/components/Scrollbar.module.scss';
 
 /**
  * 滚动条组件

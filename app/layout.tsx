@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import ClientLayout from '@/components/layouts/ClientLayout';
 import { Providers } from '@/contexts';
 
-import '@/styles/globals.css';
+import '@/styles/globals.scss';
 
 // 常量定义
 const SITE_NAME = 'NazoPrism';

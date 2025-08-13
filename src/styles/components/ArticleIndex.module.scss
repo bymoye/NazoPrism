@@ -1,4 +1,6 @@
-/* 文章列表容器样式 */
+/* ArticleIndex.module.scss - 文章列表页面样式 */
+
+/* 使用SCSS嵌套语法优化代码结构 */
 
 .page {
   display: flex;
@@ -24,34 +26,34 @@
   border: 1px solid var(--md-outline-variant);
   border-radius: var(--md-sys-shape-corner-extra-large);
 
-  /* M3 + 形态玻璃效果 */
+  /* M3 Glass morphism effect */
   background: var(--md-surface-container-high);
   backdrop-filter: blur(24px) saturate(1.8);
   box-shadow: var(--md-sys-elevation-level3);
 
-  /* 平滑过渡动画 */
+  /* Smooth transition animation */
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-}
 
-/* 微妙的渐变叠加层增加深度 */
-.content::before {
-  pointer-events: none;
-  content: '';
+  /* Subtle gradient overlay for depth */
+  &::before {
+    pointer-events: none;
+    content: '';
 
-  position: absolute;
-  inset: 0;
+    position: absolute;
+    inset: 0;
 
-  border-radius: inherit;
+    border-radius: inherit;
 
-  background: var(--md-surface-dim);
-}
+    background: var(--md-surface-dim);
+  }
 
-/* 悬停时增强的玻璃效果 */
-.content:hover {
-  transform: translateY(-2px);
-  background: var(--md-surface-container-highest);
-  backdrop-filter: blur(28px) saturate(2);
-  box-shadow: var(--md-sys-elevation-level4);
+  /* Enhanced glass effect on hover */
+  &:hover {
+    transform: translateY(-2px);
+    background: var(--md-surface-container-highest);
+    backdrop-filter: blur(28px) saturate(2);
+    box-shadow: var(--md-sys-elevation-level4);
+  }
 }
 
 .title {
@@ -83,20 +85,20 @@
   font-size: var(--md-sys-typescale-headline-medium);
   font-weight: 600;
   color: var(--md-primary);
-}
 
-.sectionTitle::after {
-  content: '';
+  &::after {
+    content: '';
 
-  position: absolute;
-  bottom: -2px;
-  left: 0;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
 
-  width: 60px;
-  height: 2px;
-  border-radius: 1px;
+    width: 60px;
+    height: 2px;
+    border-radius: 1px;
 
-  background: var(--md-primary);
+    background: var(--md-primary);
+  }
 }
 
 .pagination {
@@ -132,21 +134,21 @@
   backdrop-filter: blur(8px);
 
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-}
 
-.paginationButton:hover {
-  transform: translateY(-1px);
+  &:hover {
+    transform: translateY(-1px);
 
-  border-color: var(--md-outline);
+    border-color: var(--md-outline);
 
-  color: var(--md-primary);
+    color: var(--md-primary);
 
-  background: var(--md-surface-container-high);
-  box-shadow: var(--md-sys-elevation-level2);
-}
+    background: var(--md-surface-container-high);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
 
-.paginationButton:active {
-  transform: translateY(0);
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .paginationActive {
@@ -154,13 +156,13 @@
   color: var(--md-on-primary-container);
   background: var(--md-primary-container);
   box-shadow: var(--md-sys-elevation-level3);
-}
 
-.paginationActive:hover {
-  transform: translateY(-1px);
-  color: var(--md-on-primary);
-  background: var(--md-primary);
-  box-shadow: var(--md-sys-elevation-level4);
+  &:hover {
+    transform: translateY(-1px);
+    color: var(--md-on-primary);
+    background: var(--md-primary);
+    box-shadow: var(--md-sys-elevation-level4);
+  }
 }
 
 .paginationEllipsis {
@@ -187,7 +189,7 @@
   text-align: center;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (width <= 1024px) {
   .content {
     max-width: 95%;

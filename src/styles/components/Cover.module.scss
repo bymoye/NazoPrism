@@ -1,4 +1,6 @@
-/* ===== 基础选择器部分 - 特异性 (0, 1, 0) ===== */
+/* Cover.module.scss - 网站封面组件样式 */
+
+/* 使用SCSS嵌套语法优化代码结构 */
 
 /* 头像样式 */
 .avatar {
@@ -84,8 +86,6 @@
   }
 }
 
-/* ===== 特异性更高的选择器部分 ===== */
-
 /* 网站封面容器 */
 .siteCover {
   z-index: -1;
@@ -100,7 +100,7 @@
   margin: 0;
   padding: 0;
 
-  /* 交互增强 */
+  /* 交互增强 - 头像悬停时影响文本 */
   &:has(.avatar:hover) {
     .focusInfoText {
       transform: translateY(clamp(-0.06rem, -0.25vw, -0.12rem));
@@ -112,6 +112,7 @@
     }
   }
 
+  /* 交互增强 - 文本悬停时影响头像 */
   &:has(.focusInfoText:hover) {
     .avatar {
       transform: rotate(clamp(15deg, 30deg, 45deg)) scale(1.02);

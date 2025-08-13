@@ -3,7 +3,7 @@
 import { useLenis } from 'lenis/react';
 import { useState } from 'react';
 
-import styles from '@/styles/components/ToTop.module.css';
+import styles from '@/styles/components/ToTop.module.scss';
 import type { ToTopProps } from '@/types/components';
 
 /**

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
-import styles from '@/styles/components/Article.module.css';
+import styles from '@/styles/components/Article.module.scss';
 import type { ArticleProps } from '@/types/components';
 
 /**

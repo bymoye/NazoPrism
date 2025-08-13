@@ -1,4 +1,6 @@
-/* Footer组件样式 - Material Design 3现代CSS */
+/* Footer.module.scss - 页脚组件样式 */
+
+/* 使用SCSS嵌套语法和混合器优化代码结构 */
 
 .footer {
   will-change: transform, background-color, box-shadow;
@@ -24,21 +26,21 @@
 
   /* 平滑过渡动画 */
   transition: all 0.3s var(--md-sys-motion-easing-emphasized);
-}
 
-/* 增强悬停效果 */
-.footer:hover {
-  transform: translateY(clamp(-1px, -0.25vw, -2px));
-  background: color-mix(in srgb, var(--md-surface-container-highest) 95%, transparent);
-  backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
-  box-shadow: var(--md-sys-elevation-level3);
-}
-
-/* 触摸设备交互 */
-@media (hover: none) and (pointer: coarse) {
-  .footer:active {
-    transform: scale(0.995);
+  /* 增强悬停效果 */
+  &:hover {
+    transform: translateY(clamp(-1px, -0.25vw, -2px));
     background: color-mix(in srgb, var(--md-surface-container-highest) 95%, transparent);
+    backdrop-filter: blur(clamp(18px, 2.5vw, 20px)) saturate(1.6);
+    box-shadow: var(--md-sys-elevation-level3);
+  }
+
+  /* 触摸设备交互 */
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.995);
+      background: color-mix(in srgb, var(--md-surface-container-highest) 95%, transparent);
+    }
   }
 }
 
@@ -57,16 +59,16 @@
 
 .copyright {
   text-align: center;
-}
 
-.copyright p {
-  margin: 0;
+  p {
+    margin: 0;
 
-  font-size: var(--md-sys-typescale-body-medium);
-  font-weight: 500;
-  color: var(--md-on-surface-variant);
-  text-wrap: balance;
-  letter-spacing: clamp(0.15px, 0.25px, 0.35px);
+    font-size: var(--md-sys-typescale-body-medium);
+    font-weight: 500;
+    color: var(--md-on-surface-variant);
+    text-wrap: balance;
+    letter-spacing: clamp(0.15px, 0.25px, 0.35px);
+  }
 }
 
 .socialLinks {
@@ -145,16 +147,16 @@
 .additionalInfo {
   margin-top: 0.5rem;
   text-align: center;
-}
 
-.additionalInfo p {
-  margin: 0;
+  p {
+    margin: 0;
 
-  font-size: var(--md-sys-typescale-body-small);
-  font-weight: 400;
-  color: var(--md-on-surface-variant);
-  text-wrap: balance;
-  letter-spacing: clamp(0.3px, 0.4px, 0.5px);
+    font-size: var(--md-sys-typescale-body-small);
+    font-weight: 400;
+    color: var(--md-on-surface-variant);
+    text-wrap: balance;
+    letter-spacing: clamp(0.3px, 0.4px, 0.5px);
+  }
 }
 
 /* 基于容器的响应式设计 */
@@ -182,11 +184,11 @@
   .socialLink {
     inline-size: clamp(28px, 4.5vw, 36px);
     block-size: clamp(28px, 4.5vw, 36px);
-  }
 
-  .socialLink svg {
-    inline-size: clamp(14px, 2.25vw, 18px);
-    block-size: clamp(14px, 2.25vw, 18px);
+    svg {
+      inline-size: clamp(14px, 2.25vw, 18px);
+      block-size: clamp(14px, 2.25vw, 18px);
+    }
   }
 
   .additionalInfo p {
@@ -213,11 +215,11 @@
   .socialLink {
     inline-size: 36px;
     block-size: 36px;
-  }
 
-  .socialLink svg {
-    inline-size: 18px;
-    block-size: 18px;
+    svg {
+      inline-size: 18px;
+      block-size: 18px;
+    }
   }
 }
 
@@ -242,11 +244,11 @@
   .socialLink {
     inline-size: clamp(24px, 4vw, 32px);
     block-size: clamp(24px, 4vw, 32px);
-  }
 
-  .socialLink svg {
-    inline-size: clamp(12px, 2vw, 16px);
-    block-size: clamp(12px, 2vw, 16px);
+    svg {
+      inline-size: clamp(12px, 2vw, 16px);
+      block-size: clamp(12px, 2vw, 16px);
+    }
   }
 }
 
@@ -271,11 +273,11 @@
   .socialLink {
     inline-size: 32px;
     block-size: 32px;
-  }
 
-  .socialLink svg {
-    inline-size: 16px;
-    block-size: 16px;
+    svg {
+      inline-size: 16px;
+      block-size: 16px;
+    }
   }
 }
 
@@ -352,4 +354,3 @@
   border: clamp(1px, 0.1vw, 2px) solid color-mix(in srgb, var(--md-outline) 80%, transparent);
   background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
 }
-

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { SITE_CONFIG } from '@/lib/site.config';
-import styles from '@/styles/components/Footer.module.css';
+import styles from '@/styles/components/Footer.module.scss';
 import type { FooterProps } from '@/types/components';
 
 /**

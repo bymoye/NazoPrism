@@ -1,3 +1,7 @@
+/* ErrorPage.module.scss - 错误页面组件样式 */
+
+/* 使用SCSS嵌套语法优化代码结构 */
+
 .errorPage {
   display: flex;
   align-items: center;
@@ -24,24 +28,24 @@
   box-shadow: var(--md-sys-elevation-level1);
 
   transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
-}
 
-.errorContainer:hover {
-  transform: translateY(-2px);
-  border-color: var(--md-outline);
-  box-shadow: var(--md-sys-elevation-level2);
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--md-outline);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
 }
 
 .errorIcon {
   margin-bottom: 2rem;
   color: var(--md-error);
-}
 
-.errorIcon svg {
-  width: 64px;
-  height: 64px;
-  filter: drop-shadow(0 2px 8px var(--md-surface-dim));
-  stroke-width: 1.5;
+  svg {
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 2px 8px var(--md-surface-dim));
+    stroke-width: 1.5;
+  }
 }
 
 .errorTitle {
@@ -65,60 +69,60 @@
   border-radius: var(--md-sys-shape-corner-medium);
 
   text-align: left;
-}
 
-.errorDetails summary {
-  cursor: pointer;
+  summary {
+    cursor: pointer;
 
-  padding: 1rem;
+    padding: 1rem;
 
-  font-weight: 500;
-  color: var(--md-on-surface-container);
+    font-weight: 500;
+    color: var(--md-on-surface-container);
 
-  background: var(--md-surface-container);
+    background: var(--md-surface-container);
 
-  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
-}
+    transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 
-.errorDetails summary:hover {
-  background: var(--md-surface-container-high);
+    &:hover {
+      background: var(--md-surface-container-high);
+    }
+  }
 }
 
 .errorInfo {
   padding: 1rem;
   color: var(--md-on-surface-container-low);
   background: var(--md-surface-container-low);
-}
 
-.errorInfo h3 {
-  margin: 1rem 0 0.5rem;
+  h3 {
+    margin: 1rem 0 0.5rem;
 
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--md-on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--md-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 
-.errorInfo h3:first-child {
-  margin-top: 0;
-}
+    &:first-child {
+      margin-top: 0;
+    }
+  }
 
-.errorInfo pre {
-  overflow-x: auto;
+  pre {
+    overflow-x: auto;
 
-  margin: 0.5rem 0 1rem;
-  padding: 1rem;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--md-sys-shape-corner-small);
+    margin: 0.5rem 0 1rem;
+    padding: 1rem;
+    border: 1px solid var(--md-outline-variant);
+    border-radius: var(--md-sys-shape-corner-small);
 
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: var(--md-on-surface-container);
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--md-on-surface-container);
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 
-  background: var(--md-surface-container);
+    background: var(--md-surface-container);
+  }
 }
 
 .errorActions {
@@ -140,15 +144,27 @@
   font-weight: 500;
 
   transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
-}
 
-.button:active {
-  transform: translateY(1px);
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 .primaryButton {
+  cursor: pointer;
+
+  min-width: 120px;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-small);
+
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--md-on-primary);
+
   background: var(--md-primary);
+
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .primaryButton:hover {
@@ -171,9 +187,21 @@
 }
 
 .secondaryButton {
+  cursor: pointer;
+
+  min-width: 120px;
+  padding: 0.75rem 2rem;
+  border: none;
   border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sys-shape-corner-small);
+
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--md-on-surface);
+
   background: transparent;
+
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .secondaryButton:hover {

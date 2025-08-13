@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigationContext } from '@/contexts/NavigationContext';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
 import { SITE_CONFIG } from '@/lib/site.config';
-import styles from '@/styles/components/Navigation.module.css';
+import styles from '@/styles/components/Navigation.module.scss';
 
 /**
  * Logo component for the navigation

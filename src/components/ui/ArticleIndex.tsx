@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Article from './Article';
 
 import { SAMPLE_ARTICLES } from '@/lib/site.config';
-import styles from '@/styles/components/ArticleIndex.module.css';
+import styles from '@/styles/components/ArticleIndex.module.scss';
 import type { ArticleIndexProps } from '@/types/components';
 
 /**

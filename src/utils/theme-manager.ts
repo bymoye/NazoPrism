@@ -96,7 +96,7 @@ const setDarkMode = (isDark: boolean): void => {
 };
 /**
  * 将值转换为CSS字符串
- * 
+ *
  * @param value - 要转换的值
  * @returns CSS字符串表示
  */
@@ -136,12 +136,12 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
   const cssContent = Object.entries(rulesObject)
     .map(([selector, rules]) => {
       if (!isObject(rules)) return '';
-      
+
       // 构建CSS变量声明
       const cssVars = Object.entries(rules as Record<string, unknown>)
         .map(([property, value]) => `  ${property}: ${toCSSValue(value)};`)
         .join('\n');
-        
+
       return `${selector} {\n${cssVars}\n}`;
     })
     .filter(Boolean)

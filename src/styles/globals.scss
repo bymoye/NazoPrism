@@ -1,4 +1,4 @@
-/* 全局样式 */
+/* 全局样式 - SCSS版本 */
 
 @layer tokens, reset, base, components, utilities;
 
@@ -155,6 +155,7 @@
     --md-sys-elevation-colored-3: 0 8px 16px color-mix(in oklch, var(--md-primary) 12%, transparent);
   }
 
+  /* 暗色主题阴影优化 */
   [data-theme='dark'] {
     --md-sys-elevation-level1:
       0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 1px 3px 1px oklch(0% 0 0deg / 30%);
@@ -225,9 +226,12 @@
         0 6px 10px 4px oklch(0% 0 0deg / 30%), 0 2px 3px 0 oklch(0% 0 0deg / 60%);
       --md-sys-elevation-level5:
         0 8px 12px 6px oklch(0% 0 0deg / 30%), 0 4px 4px 0 oklch(0% 0 0deg / 60%);
-      --md-sys-elevation-colored-1: 0 2px 4px color-mix(in oklch, var(--md-primary) 30%, transparent);
-      --md-sys-elevation-colored-2: 0 4px 8px color-mix(in oklch, var(--md-primary) 25%, transparent);
-      --md-sys-elevation-colored-3: 0 8px 16px color-mix(in oklch, var(--md-primary) 20%, transparent);
+      --md-sys-elevation-colored-1: 0 2px 4px
+        color-mix(in oklch, var(--md-primary) 30%, transparent);
+      --md-sys-elevation-colored-2: 0 4px 8px
+        color-mix(in oklch, var(--md-primary) 25%, transparent);
+      --md-sys-elevation-colored-3: 0 8px 16px
+        color-mix(in oklch, var(--md-primary) 20%, transparent);
     }
   }
 
@@ -280,13 +284,6 @@
 
     color-scheme: light dark;
   }
-}
-
-/* 响应式字体大小 */
-@media (width >= 768px) {
-  :where(html) {
-    font-size: clamp(16px, 0.5rem + 0.75vw, 18px);
-  }
 
   :where(body) {
     overflow-x: hidden;
@@ -304,6 +301,13 @@
     transition:
       background-color var(--duration-theme) var(--ease-emphasized),
       color var(--duration-theme) var(--ease-emphasized);
+  }
+
+  /* 响应式字体大小 */
+  @media (width >= 768px) {
+    :where(html) {
+      font-size: clamp(16px, 0.5rem + 0.75vw, 18px);
+    }
   }
 }
 

@@ -21,6 +21,11 @@ declare module '*.sass' {
   export default content;
 }
 
+declare module '*.scss' {
+  const content: Record<string, string>;
+  export default content;
+}
+
 /**
  * 图片文件声明
  */

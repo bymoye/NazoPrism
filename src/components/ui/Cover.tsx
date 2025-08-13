@@ -4,7 +4,7 @@ import Image from 'next/image';
 import type React from 'react';
 
 import { SITE_CONFIG } from '@/lib/site.config';
-import styles from '@/styles/components/Cover.module.css';
+import styles from '@/styles/components/Cover.module.scss';
 
 /**
  * 网站封面组件
