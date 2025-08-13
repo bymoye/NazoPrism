@@ -11,12 +11,31 @@
     --breakpoint-desktop: 75rem;
     --breakpoint-wide: 90rem;
 
-    /* 动画系统 */
+    /* 动画系统 - 统一使用Material Design规范 */
     --duration-instant: 0ms;
     --duration-fast: clamp(100ms, 0.15s, 200ms);
     --duration-normal: clamp(200ms, 0.3s, 400ms);
     --duration-slow: clamp(400ms, 0.5s, 600ms);
     --duration-theme: clamp(1000ms, 1.5s, 2000ms);
+
+    /* Material Design动画时长 */
+    --md-sys-motion-duration-short1: 0.05s;
+    --md-sys-motion-duration-short2: 0.1s;
+    --md-sys-motion-duration-short3: 0.15s;
+    --md-sys-motion-duration-short4: 0.2s;
+    --md-sys-motion-duration-medium1: 0.25s;
+    --md-sys-motion-duration-medium2: 0.3s;
+    --md-sys-motion-duration-medium3: 0.35s;
+    --md-sys-motion-duration-medium4: 0.4s;
+    --md-sys-motion-duration-long1: 0.45s;
+    --md-sys-motion-duration-long2: 0.5s;
+    --md-sys-motion-duration-long3: 0.55s;
+    --md-sys-motion-duration-long4: 0.6s;
+    --md-sys-motion-duration-extra-long1: 0.7s;
+    --md-sys-motion-duration-extra-long2: 0.8s;
+    --md-sys-motion-duration-extra-long3: 0.9s;
+    --md-sys-motion-duration-extra-long4: 1s;
+    --md-sys-motion-duration-theme: 1.5s;
 
     /* 缓动函数 */
     --ease-linear: linear;
@@ -25,6 +44,11 @@
     --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
     --ease-emphasized: cubic-bezier(0.25, 0, 0.4, 1);
     --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Material Design缓动函数 */
+    --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --md-sys-motion-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     /* 字体系统 */
     --font-family-base:
@@ -47,6 +71,11 @@
     --line-height-tight: clamp(1.1, 1.2, 1.3);
     --line-height-normal: clamp(1.4, 1.5, 1.6);
     --line-height-relaxed: clamp(1.5, 1.6, 1.8);
+
+    /* Material Design行高系统 */
+    --md-sys-typescale-line-height-tight: 1.25;
+    --md-sys-typescale-line-height-normal: 1.5;
+    --md-sys-typescale-line-height-relaxed: 1.75;
 
     /* 间距系统 */
     --spacing-0: 0;
@@ -72,6 +101,13 @@
     --radius-3xl: clamp(2rem, 2.5vw, 2.5rem);
     --radius-full: 50%;
 
+    /* Material Design形状系统 */
+    --md-sys-shape-corner-small: clamp(0.5rem, 1vw, 0.75rem);
+    --md-sys-shape-corner-medium: clamp(0.75rem, 1.5vw, 1rem);
+    --md-sys-shape-corner-large: clamp(1rem, 2vw, 1.25rem);
+    --md-sys-shape-corner-extra-large: clamp(1.75rem, 3vw, 2rem);
+    --md-sys-shape-corner-full: 50%;
+
     /* 层级系统 */
     --z-dropdown: 1000;
     --z-sticky: 1020;
@@ -86,14 +122,135 @@
     --container-xl: 1280px;
     --nav-height: clamp(3.5rem, 5vw, 5rem);
 
-    /* 字体大小系统 */
-    --font-size-base: clamp(0.95rem, 0.75vw, 1rem);
+    /* 字体大小系统 - 桌面端优先 */
+    --font-size-base: clamp(1rem, 0.75vw, 1.125rem);
+
+    /* Material Design排版系统 - 桌面端优先，移动端适配 */
+    --md-sys-typescale-display-small: clamp(1.75rem, 2vw, 2.25rem);
+    --md-sys-typescale-headline-large: clamp(1.5rem, 1.75vw, 2rem);
+    --md-sys-typescale-headline-medium: clamp(1.25rem, 1.5vw, 1.75rem);
+    --md-sys-typescale-headline-small: clamp(1.1rem, 1.25vw, 1.5rem);
+    --md-sys-typescale-title-large: clamp(1rem, 1vw, 1.25rem);
+    --md-sys-typescale-title-medium: clamp(0.9rem, 0.75vw, 1.1rem);
+    --md-sys-typescale-title-small: clamp(0.85rem, 0.5vw, 1rem);
+    --md-sys-typescale-body-large: clamp(1rem, 0.75vw, 1.125rem);
+    --md-sys-typescale-body-medium: clamp(0.9rem, 0.5vw, 1rem);
+    --md-sys-typescale-body-small: clamp(0.85rem, 0.25vw, 0.9rem);
+    --md-sys-typescale-label-large: clamp(0.9rem, 0.5vw, 1rem);
+    --md-sys-typescale-label-medium: clamp(0.85rem, 0.25vw, 0.9rem);
+    --md-sys-typescale-label-small: clamp(0.8rem, 0.125vw, 0.85rem);
+
+    /* Material Design阴影系统 */
+    --md-sys-elevation-level1:
+      0 1px 2px 0 oklch(0% 0 0deg / 30%), 0 1px 3px 1px oklch(0% 0 0deg / 15%);
+    --md-sys-elevation-level2:
+      0 1px 2px 0 oklch(0% 0 0deg / 30%), 0 2px 6px 2px oklch(0% 0 0deg / 15%);
+    --md-sys-elevation-level3:
+      0 4px 8px 3px oklch(0% 0 0deg / 15%), 0 1px 3px 0 oklch(0% 0 0deg / 30%);
+    --md-sys-elevation-level4:
+      0 6px 10px 4px oklch(0% 0 0deg / 15%), 0 2px 3px 0 oklch(0% 0 0deg / 30%);
+
+    /* 彩色阴影 */
+    --md-sys-elevation-colored-2: 0 4px 8px color-mix(in oklch, var(--md-primary) 15%, transparent);
+    --md-sys-elevation-colored-3: 0 8px 16px color-mix(in oklch, var(--md-primary) 12%, transparent);
   }
 
-  /* 响应式字体优化 */
+  [data-theme='dark'] {
+    --md-sys-elevation-level1:
+      0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 1px 3px 1px oklch(0% 0 0deg / 30%);
+    --md-sys-elevation-level2:
+      0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 2px 6px 2px oklch(0% 0 0deg / 30%);
+    --md-sys-elevation-level3:
+      0 4px 8px 3px oklch(0% 0 0deg / 30%), 0 1px 3px 0 oklch(0% 0 0deg / 60%);
+    --md-sys-elevation-level4:
+      0 6px 10px 4px oklch(0% 0 0deg / 30%), 0 2px 3px 0 oklch(0% 0 0deg / 60%);
+    --md-sys-elevation-level5:
+      0 8px 12px 6px oklch(0% 0 0deg / 30%), 0 4px 4px 0 oklch(0% 0 0deg / 60%);
+  }
+
+  /* 桌面端字体优化 - 更小的字体大小，符合视觉审美 */
   @media (width >= 768px) {
     :root {
-      --font-size-base: clamp(0.875rem, 0.5vw, 0.9rem);
+      --font-size-base: clamp(0.875rem, 0.25vw, 0.9rem);
+
+      /* 桌面端Material Design字体优化 - 更小更精致 */
+      --md-sys-typescale-display-small: clamp(1.5rem, 1vw, 1.75rem);
+      --md-sys-typescale-headline-large: clamp(1.25rem, 0.75vw, 1.5rem);
+      --md-sys-typescale-headline-medium: clamp(1.125rem, 0.5vw, 1.25rem);
+      --md-sys-typescale-headline-small: clamp(1rem, 0.25vw, 1.125rem);
+      --md-sys-typescale-title-large: clamp(0.9rem, 0.125vw, 1rem);
+      --md-sys-typescale-title-medium: clamp(0.875rem, 0.0625vw, 0.9rem);
+      --md-sys-typescale-title-small: clamp(0.8rem, 0.0313vw, 0.875rem);
+      --md-sys-typescale-body-large: clamp(0.9rem, 0.125vw, 1rem);
+      --md-sys-typescale-body-medium: clamp(0.875rem, 0.0625vw, 0.9rem);
+      --md-sys-typescale-body-small: clamp(0.8rem, 0.0313vw, 0.875rem);
+      --md-sys-typescale-label-large: clamp(0.875rem, 0.0625vw, 0.9rem);
+      --md-sys-typescale-label-medium: clamp(0.8rem, 0.0313vw, 0.875rem);
+      --md-sys-typescale-label-small: clamp(0.75rem, 0.0156vw, 0.8rem);
+    }
+  }
+
+  /* 移动端字体适配 - 确保移动端可读性 */
+  @media (width <= 767px) {
+    :root {
+      --font-size-base: clamp(0.9rem, 3vw, 1rem);
+
+      /* 移动端字体缩小以适应小屏幕 */
+      --md-sys-typescale-display-small: clamp(1.5rem, 5vw, 1.75rem);
+      --md-sys-typescale-headline-large: clamp(1.25rem, 4vw, 1.5rem);
+      --md-sys-typescale-headline-medium: clamp(1.125rem, 3.5vw, 1.25rem);
+      --md-sys-typescale-headline-small: clamp(1rem, 3vw, 1.125rem);
+      --md-sys-typescale-title-large: clamp(0.9rem, 2.5vw, 1rem);
+      --md-sys-typescale-title-medium: clamp(0.85rem, 2vw, 0.9rem);
+      --md-sys-typescale-title-small: clamp(0.8rem, 1.5vw, 0.85rem);
+      --md-sys-typescale-body-large: clamp(0.9rem, 2.5vw, 1rem);
+      --md-sys-typescale-body-medium: clamp(0.85rem, 2vw, 0.9rem);
+      --md-sys-typescale-body-small: clamp(0.8rem, 1.5vw, 0.85rem);
+      --md-sys-typescale-label-large: clamp(0.85rem, 2vw, 0.9rem);
+      --md-sys-typescale-label-medium: clamp(0.8rem, 1.5vw, 0.85rem);
+      --md-sys-typescale-label-small: clamp(0.75rem, 1vw, 0.8rem);
+    }
+  }
+
+  /* 暗色主题阴影优化 */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --md-sys-elevation-level1:
+        0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 1px 3px 1px oklch(0% 0 0deg / 30%);
+      --md-sys-elevation-level2:
+        0 1px 2px 0 oklch(0% 0 0deg / 60%), 0 2px 6px 2px oklch(0% 0 0deg / 30%);
+      --md-sys-elevation-level3:
+        0 4px 8px 3px oklch(0% 0 0deg / 30%), 0 1px 3px 0 oklch(0% 0 0deg / 60%);
+      --md-sys-elevation-level4:
+        0 6px 10px 4px oklch(0% 0 0deg / 30%), 0 2px 3px 0 oklch(0% 0 0deg / 60%);
+      --md-sys-elevation-level5:
+        0 8px 12px 6px oklch(0% 0 0deg / 30%), 0 4px 4px 0 oklch(0% 0 0deg / 60%);
+      --md-sys-elevation-colored-1: 0 2px 4px color-mix(in oklch, var(--md-primary) 30%, transparent);
+      --md-sys-elevation-colored-2: 0 4px 8px color-mix(in oklch, var(--md-primary) 25%, transparent);
+      --md-sys-elevation-colored-3: 0 8px 16px color-mix(in oklch, var(--md-primary) 20%, transparent);
+    }
+  }
+
+  /* 性能优化 - 减少动画时长 */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --md-sys-motion-duration-short1: 0.01s;
+      --md-sys-motion-duration-short2: 0.01s;
+      --md-sys-motion-duration-short3: 0.01s;
+      --md-sys-motion-duration-short4: 0.01s;
+      --md-sys-motion-duration-medium1: 0.01s;
+      --md-sys-motion-duration-medium2: 0.01s;
+      --md-sys-motion-duration-medium3: 0.01s;
+      --md-sys-motion-duration-medium4: 0.01s;
+      --md-sys-motion-duration-long1: 0.01s;
+      --md-sys-motion-duration-long2: 0.01s;
+      --md-sys-motion-duration-long3: 0.01s;
+      --md-sys-motion-duration-long4: 0.01s;
+      --md-sys-motion-duration-extra-long1: 0.01s;
+      --md-sys-motion-duration-extra-long2: 0.01s;
+      --md-sys-motion-duration-extra-long3: 0.01s;
+      --md-sys-motion-duration-extra-long4: 0.01s;
+      --md-sys-motion-duration-theme: 0.01s;
     }
   }
 }
@@ -128,7 +285,7 @@
 /* 响应式字体大小 */
 @media (width >= 768px) {
   :where(html) {
-    font-size: clamp(14px, 0.25rem + 0.75vw, 16px);
+    font-size: clamp(16px, 0.5rem + 0.75vw, 18px);
   }
 
   :where(body) {
@@ -239,32 +396,5 @@
 @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
-  }
-}
-
-/* 打印样式 */
-@media print {
-  :where(*) {
-    color: black;
-    text-shadow: none;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  :where(body) {
-    font-size: 12pt;
-    line-height: 1.4;
-  }
-
-  :is(h1, h2, h3, h4, h5, h6) {
-    break-after: avoid;
-  }
-
-  :is(p, blockquote) {
-    break-inside: avoid;
-  }
-
-  :is(blockquote, pre) {
-    break-inside: avoid;
   }
 }

@@ -539,11 +539,11 @@
     padding-inline: clamp(0.75rem, 2vw, 1rem);
   }
 
-  .postCard .title {
+  .title {
     font-size: var(--md-sys-typescale-title-large);
   }
 
-  .postCard .category {
+  .category {
     block-size: clamp(1.5rem, 3vw, 1.75rem);
     padding-inline: clamp(0.5rem, 1vw, 0.75rem);
     font-size: var(--md-sys-typescale-label-small);

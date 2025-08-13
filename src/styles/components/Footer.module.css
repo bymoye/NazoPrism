@@ -353,16 +353,3 @@
   background: color-mix(in srgb, var(--md-surface-container) 85%, transparent);
 }
 
-/* 打印样式 */
-@media print {
-  .footer {
-    border: 1px solid var(--md-outline-variant);
-    background: transparent;
-    backdrop-filter: none;
-    box-shadow: none;
-  }
-
-  .socialLinks {
-    display: none;
-  }
-}

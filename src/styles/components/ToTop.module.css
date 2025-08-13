@@ -147,9 +147,3 @@
   }
 }
 
-/* 打印样式 */
-@media print {
-  .toTopBtn {
-    display: none;
-  }
-}

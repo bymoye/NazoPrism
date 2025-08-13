@@ -5,7 +5,7 @@ node_modules/
 .kiro
 .trae
 .vscode
-
+.codebuddy
 # testing
 coverage/
 

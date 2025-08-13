@@ -94,6 +94,17 @@ const setDarkMode = (isDark: boolean): void => {
     isDark ? DARK_MODE : LIGHT_MODE,
   );
 };
+/**
+ * 将值转换为CSS字符串
+ * 
+ * @param value - 要转换的值
+ * @returns CSS字符串表示
+ */
+const toCSSValue = (value: unknown): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return JSON.stringify(value);
+};
 
 /**
  * 应用主题到DOM
@@ -101,6 +112,7 @@ const setDarkMode = (isDark: boolean): void => {
  * @param theme - 要应用的主题对象
  */
 const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
+  // 获取或创建样式元素
   let styleElement = document.querySelector(`#${THEME_STYLE_ID}`);
   if (!styleElement) {
     styleElement = document.createElement('style');
@@ -108,6 +120,7 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
     document.head.append(styleElement);
   }
 
+  // 如果没有样式，清空内容并返回
   if (theme.styles.length === 0) {
     styleElement.textContent = '';
     return;
@@ -118,30 +131,24 @@ const applyTheme = (theme: ReturnType<typeof makeCSSTheme>): void => {
     styleElement.textContent = '';
     return;
   }
+
+  // 构建CSS内容
   const cssContent = Object.entries(rulesObject)
     .map(([selector, rules]) => {
-      if (!isObject(rules)) {
-        return '';
-      }
-      const varsString = Object.entries(rules as Record<string, unknown>)
-        .map(([property, value]) => {
-          let stringValue: string;
-          if (typeof value === 'string') {
-            stringValue = value;
-          } else if (typeof value === 'number') {
-            stringValue = String(value);
-          } else {
-            stringValue = JSON.stringify(value);
-          }
-          return `  ${property}: ${stringValue};`;
-        })
+      if (!isObject(rules)) return '';
+      
+      // 构建CSS变量声明
+      const cssVars = Object.entries(rules as Record<string, unknown>)
+        .map(([property, value]) => `  ${property}: ${toCSSValue(value)};`)
         .join('\n');
-      return `${selector} {\n${varsString}\n}`;
+        
+      return `${selector} {\n${cssVars}\n}`;
     })
     .filter(Boolean)
     .join('\n\n');
 
-  styleElement.textContent = cssContent;
+  // 应用到样式元素
+  styleElement.textContent = `@layer tokens {\n${cssContent}\n}`;
 };
 
 /**

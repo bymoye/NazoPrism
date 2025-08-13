@@ -6,7 +6,6 @@ import ClientLayout from '@/components/layouts/ClientLayout';
 import { Providers } from '@/contexts';
 
 import '@/styles/globals.css';
-import '@/styles/md-sys-variables.css';
 
 // 常量定义
 const SITE_NAME = 'NazoPrism';
